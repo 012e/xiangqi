@@ -99,6 +99,9 @@ importers:
       '@vitest/ui':
         specifier: 3.0.9
         version: 3.0.9(vitest@3.1.1)
+      chess.js:
+        specifier: ^1.1.0
+        version: 1.1.0
       dedent:
         specifier: ^1.5.3
         version: 1.5.3
@@ -862,6 +865,9 @@ packages:
   check-error@2.1.1:
     resolution: {integrity: sha512-OAlb+T7V4Op9OwdkjmguYRqncdlx5JiofwOAUkmTF+jNdHwzTaTs4sRAGpzLF3oOz5xAyDGrPgeIDFQmDOTiJw==}
     engines: {node: '>= 16'}
+
+  chess.js@1.1.0:
+    resolution: {integrity: sha512-IfdeaJnpdU1LddIenp36O7Fz19nIxk3x4cznwo2Qf25T1XSeP85XRBrjWUsSpk1RpDeXdijraoLxXt3PCaudVg==}
 
   class-variance-authority@0.7.1:
     resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
@@ -2391,6 +2397,8 @@ snapshots:
       supports-color: 7.2.0
 
   check-error@2.1.1: {}
+
+  chess.js@1.1.0: {}
 
   class-variance-authority@0.7.1:
     dependencies:
