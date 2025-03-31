@@ -308,7 +308,7 @@ describe('Xiangqi', () => {
         ....K....
         RNBA.ABNR`);
       const xiangqi = new Xiangqi(fen);
-      xiangqi.move({ from: 'e2', to: 'f3' });
+      xiangqi.move({ from: 'e2', to: 'f2' });
 
       const s = xiangqi.boardAsStr();
       const expected = dedent`
@@ -319,8 +319,8 @@ describe('Xiangqi', () => {
         .........
         .........
         P.P.P.P.P
-        .C...K.C.
-        .........
+        .C.....C.
+        .....K...
         RNBA.ABNR`;
       expect(s).toBe(expected);
     });
@@ -368,7 +368,6 @@ describe('Xiangqi', () => {
         .........
         RNBA.ABNR`);
       const xiangqi = new Xiangqi(fen);
-      xiangqi.move({ from: 'e3', to: 'e4' });
 
       const s = xiangqi.boardAsStr();
       expect(() => xiangqi.move({ from: 'e3', to: 'e4' })).toThrowError(

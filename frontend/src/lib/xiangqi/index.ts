@@ -6,7 +6,7 @@ import {
   inBoundValiator,
 } from './generalValidators';
 import {
-  validAvisorMoveValidator,
+  validAdvisorMoveValidator,
   validBishopMoveValidator,
   validCannonMoveValidator,
   validKingMoveValidator,
@@ -227,7 +227,7 @@ export default class Xiangqi {
         validators.push(validBishopMoveValidator);
         break;
       case 'a':
-        validators.push(validAvisorMoveValidator);
+        validators.push(validAdvisorMoveValidator);
         break;
       case 'k':
         validators.push(validKingMoveValidator);
