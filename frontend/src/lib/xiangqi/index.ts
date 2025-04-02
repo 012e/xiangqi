@@ -49,6 +49,12 @@ export function crossedRiver(
   }
   return row >= 5;
 }
+export function sameColor(piece: string, destinationPiece: string): boolean {
+  return (
+    piece === piece.toUpperCase() &&
+    destinationPiece === destinationPiece.toUpperCase()
+  );
+}
 
 export default class Xiangqi {
   private board: string[][] = [];
@@ -185,7 +191,9 @@ export default class Xiangqi {
   private invalidMove(from: [number, number], to: [number, number]) {
     return {
       ok: false,
-      message: `Invalid pawn move ${this.coordinatesToPosition(from)} -> ${this.coordinatesToPosition(to)}`,
+      message: `Invalid pawn move ${this.coordinatesToPosition(
+        from,
+      )} -> ${this.coordinatesToPosition(to)}`,
     };
   }
 
@@ -206,9 +214,7 @@ export default class Xiangqi {
       fromPieceValidator,
       correctTurnValidator,
       captureOwnPieceValidator,
-      // pinned piece validator
-      // checkMoveValidator: con vua khong duoc duy chuyen vao vi tri dang bi chieu
-      // flyingGeneralValidator: hai con vua khong the doi mat nhau
+      this.moveInCheckValidator, // pinned piece, king move in check, kings face to face
     ];
     const [fromRow, fromCol] = fromCoords;
     const piece = this.board[fromRow][fromCol];
@@ -300,29 +306,90 @@ export default class Xiangqi {
     };
   }
 
+  // king in check when move
+  moveInCheckValidator(
+    [fromRow, fromCol]: [number, number],
+    [toRow, toCol]: [number, number],
+  ): Result {
+    const previousBoard = cloneStringMatrix(this.board);
+
+    this.move({
+      from: this.coordinatesToPosition([fromRow, fromCol]),
+      to: this.coordinatesToPosition([toRow, toCol]),
+    });
+
+    if (this.isInCheck(this.currentPlayer)) {
+      this.board = previousBoard; // Revert the move
+      return { ok: false, message: 'Move leaves the king in check.' };
+    }
+    return OK_RESULT;
+  }
+
   isCheckmate(color: 'w' | 'b' = 'w'): boolean {
-    // ANH LÀM Ở ĐÂY!!!!!!!!!
-    throw new Error('Not implemented');
+    return this.isInCheck(color) && this.generateMove(color) === 0;
   }
 
   isGameOver(): boolean {
-    // ANH LÀM Ở ĐÂY!!!!!!!!!
-    throw new Error('Not implemented');
+    return (
+      this.moveCount >= 120 ||
+      this.isCheckmate() ||
+      this.isStalemate() ||
+      this.isDraw()
+    );
   }
 
   isInCheck(color: 'w' | 'b' = 'w'): boolean {
-    // ANH LÀM Ở ĐÂY!!!!!!!!!
     throw new Error('Not implemented');
   }
 
+  // in draw
+  isDraw(): boolean {
+    return this.isStalemate() || this.isInsufficientMaterial();
+  }
+
+  isInsufficientMaterial(): boolean {
+    const pieces = this.board.flat().filter((piece) => piece !== '');
+    const pieceCount = pieces.reduce(
+      (count, piece) => {
+        if (piece.toLowerCase() === 'p') {
+          count.pawn += 1;
+        } else if (piece.toLowerCase() === 'n') {
+          count.knight += 1;
+        } else if (piece.toLowerCase() === 'c') {
+          count.cannon += 1;
+        } else if (piece.toLowerCase() === 'r') {
+          count.rook += 1;
+        } else if (piece.toLowerCase() === 'k') {
+          count.king += 1;
+        }
+
+        return count;
+      },
+      { pawn: 0, knight: 0, king: 0, rook: 0, cannon: 0 },
+    );
+    if (pieces.length === 2) return true;
+    else if (
+      pieceCount.knight === 0 &&
+      pieceCount.rook === 0 &&
+      pieceCount.cannon === 0 &&
+      pieceCount.pawn === 0
+    )
+      return true;
+    return false;
+  }
+
   isStalemate(color: 'w' | 'b' = 'w'): boolean {
-    // ANH LÀM Ở ĐÂY!!!!!!!!!
+    return !this.isInCheck(color) && this.generateMove(color) === 0;
+  }
+
+  generateMove(color: 'w' | 'b' = 'w'): number {
     throw new Error('Not implemented');
   }
 
   getWinner(): 'w' | 'b' | null {
-    // ANH LÀM Ở ĐÂY!!!!!!!!!
-    throw new Error('Not implemented');
+    if (this.isCheckmate('w')) return 'b'; // Black wins
+    if (this.isCheckmate('b')) return 'w'; // White/Red wins
+    return null; // No winner yet / draw
   }
 
   /**
