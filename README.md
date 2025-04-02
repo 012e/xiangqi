@@ -30,3 +30,7 @@
 -   Tải các thư viện cần thiết: **_pnpm i_**
 -   Run test: **_pnpm test_**
     (Các test sử dụng để kiểm tra tính đúng đắn của các hàm logic)
+
+# Documentation
+
+- Có thể xem chi tiết hành động/topic khi sử dụng websocket ở [docs.md](./docs.md)
