@@ -19,7 +19,7 @@ API WebSocket Cờ vua cho phép người dùng chơi cờ với máy tính bằ
 ```
 
 ### Nhận nước đi
-Máy chủ sẽ phản hồi với trạng thái cập nhật của ván đấu thông qua STOMP topic:
+Máy chủ sẽ phản hồi với trạng thái cập nhật của ván đấu thông qua STOMP topic `/topic/game/{id}` (xem bên dưới)
 
 ---
 
@@ -76,6 +76,19 @@ Nếu một nước đi không hợp lệ được gửi, máy chủ sẽ trả 
     - `black_win`
     - `draw`
   - `reason` (string): Giải thích lý do kết thúc ván đấu.
+    - Trắng thắng (`white_win`)
+      - `black_resign` - Đen đầu hàng.
+      - `black_timeout` - Đen hết thời gian.
+      - `black_checkmate` - Đen bị chiếu hết.
+    - Đen thắng (`black_win`)
+      - `white_resign` - Trắng đầu hàng.
+      - `white_timeout` - Trắng hết thời gian.
+      - `white_checkmate` - Trắng bị chiếu hết.
+    - Hòa (`draw`)
+      - `stalemate` - Hết nước đi hợp lệ, nhưng không bị chiếu (hòa do hết nước đi).
+      - `insufficient_material` - Không đủ quân để chiếu hết (hòa do thiếu quân).
+      - `fifty_move_rule` - Không có nước bắt quân hoặc đi tốt trong 50 nước liên tiếp (hòa do luật 50 nước).
+      - `mutual_agreement` - Hai bên đồng ý hòa.
 
 #### Ví dụ:
 ##### Đen thắng
@@ -84,7 +97,7 @@ Nếu một nước đi không hợp lệ được gửi, máy chủ sẽ trả 
    "type": "State.GameEnd",
    "data": {
      "status": "black_win",
-     "reason": "Trắng hết thời gian"
+     "reason": "white_timeout"
    }
 }
 ```
