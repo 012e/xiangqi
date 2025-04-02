@@ -1,4 +1,4 @@
-import { Result, OK_RESULT, BoardContext } from ".";
+import { Result, OK_RESULT, BoardContext } from '.';
 
 /**
  * Validates that both the starting and ending positions are within the game board boundaries.
@@ -9,22 +9,22 @@ import { Result, OK_RESULT, BoardContext } from ".";
  * @returns {Result} Result object indicating if the move is valid.
  */
 export function inBoundValiator(
-	[fromRow, fromCol]: [number, number],
-	[toRow, toCol]: [number, number]
+  [fromRow, fromCol]: [number, number],
+  [toRow, toCol]: [number, number],
 ): Result {
-	if (
-		fromRow < 0 ||
-		fromRow >= 10 ||
-		fromCol < 0 ||
-		fromCol >= 9 ||
-		toRow < 0 ||
-		toRow >= 10 ||
-		toCol < 0 ||
-		toCol >= 9
-	) {
-		return { ok: false, message: "Move out of bounds." };
-	}
-	return OK_RESULT;
+  if (
+    fromRow < 0 ||
+    fromRow >= 10 ||
+    fromCol < 0 ||
+    fromCol >= 9 ||
+    toRow < 0 ||
+    toRow >= 10 ||
+    toCol < 0 ||
+    toCol >= 9
+  ) {
+    return { ok: false, message: 'Move out of bounds.' };
+  }
+  return OK_RESULT;
 }
 
 /**
@@ -36,15 +36,15 @@ export function inBoundValiator(
  * @returns {Result} Result object indicating if the move is valid.
  */
 export function fromPieceValidator(
-	[fromRow, fromCol]: [number, number],
-	_to: [number, number],
-	{ board }: BoardContext
+  [fromRow, fromCol]: [number, number],
+  _to: [number, number],
+  { board }: BoardContext,
 ): Result {
-	const piece = board[fromRow][fromCol];
-	if (!piece) {
-		return { ok: false, message: "No piece at the starting position." };
-	}
-	return OK_RESULT;
+  const piece = board[fromRow][fromCol];
+  if (!piece) {
+    return { ok: false, message: 'No piece at the starting position.' };
+  }
+  return OK_RESULT;
 }
 
 /**
@@ -55,13 +55,13 @@ export function fromPieceValidator(
  * @returns {Result} Result object indicating if the move is valid.
  */
 export function duplicateMoveValidator(
-	[fromRow, fromCol]: [number, number],
-	[toRow, toCol]: [number, number]
+  [fromRow, fromCol]: [number, number],
+  [toRow, toCol]: [number, number],
 ): Result {
-	if (fromRow === toRow && fromCol === toCol) {
-		return { ok: false, message: "Can't move to the same position." };
-	}
-	return OK_RESULT;
+  if (fromRow === toRow && fromCol === toCol) {
+    return { ok: false, message: "Can't move to the same position." };
+  }
+  return OK_RESULT;
 }
 
 /**
@@ -74,21 +74,21 @@ export function duplicateMoveValidator(
  * @returns {Result} Result object indicating if the move is valid.
  */
 export function correctTurnValidator(
-	[fromRow, fromCol]: [number, number],
-	_to: [number, number],
-	{ board, currentPlayer }: BoardContext
+  [fromRow, fromCol]: [number, number],
+  _to: [number, number],
+  { board, currentPlayer }: BoardContext,
 ): Result {
-	const piece = board[fromRow][fromCol];
-	if (!piece) {
-		return { ok: false, message: "No piece at the starting position." };
-	}
-	const isPieceRed = piece === piece.toUpperCase();
-	if (isPieceRed && currentPlayer !== "w") {
-		return { ok: false, message: "Not the current player's piece." };
-	} else if (!isPieceRed && currentPlayer !== "b") {
-		return { ok: false, message: "Not the current player's piece." };
-	}
-	return OK_RESULT;
+  const piece = board[fromRow][fromCol];
+  if (!piece) {
+    return { ok: false, message: 'No piece at the starting position.' };
+  }
+  const isPieceRed = piece === piece.toUpperCase();
+  if (isPieceRed && currentPlayer !== 'w') {
+    return { ok: false, message: "Not the current player's piece." };
+  } else if (!isPieceRed && currentPlayer !== 'b') {
+    return { ok: false, message: "Not the current player's piece." };
+  }
+  return OK_RESULT;
 }
 
 /**
@@ -101,18 +101,18 @@ export function correctTurnValidator(
  * @returns {Result} Result object indicating if the move is valid.
  */
 export function captureOwnPieceValidator(
-	[fromRow, fromCol]: [number, number],
-	[toRow, toCol]: [number, number],
-	{ board }: BoardContext
+  [fromRow, fromCol]: [number, number],
+  [toRow, toCol]: [number, number],
+  { board }: BoardContext,
 ): Result {
-	const piece = board[fromRow][fromCol];
-	const targetPiece = board[toRow][toCol];
-	if (targetPiece) {
-		const isPieceRed = piece === piece.toUpperCase();
-		const isTargetRed = targetPiece === targetPiece.toUpperCase();
-		if ((isPieceRed && isTargetRed) || (!isPieceRed && !isTargetRed)) {
-			return { ok: false, message: "Can't capture own piece." };
-		}
-	}
-	return OK_RESULT;
+  const piece = board[fromRow][fromCol];
+  const targetPiece = board[toRow][toCol];
+  if (targetPiece) {
+    const isPieceRed = piece === piece.toUpperCase();
+    const isTargetRed = targetPiece === targetPiece.toUpperCase();
+    if ((isPieceRed && isTargetRed) || (!isPieceRed && !isTargetRed)) {
+      return { ok: false, message: "Can't capture own piece." };
+    }
+  }
+  return OK_RESULT;
 }
