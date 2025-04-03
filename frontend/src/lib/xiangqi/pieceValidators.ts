@@ -91,8 +91,8 @@ export function validKnightMoveValidator(
     [2, -1, 1, 0], // Down-left
     [2, 1, 1, 0], // Down-right
     [-1, -2, 0, -1], // Left-up
-    [-1, 2, 0, -1], // Left-down
-    [1, -2, 0, 1], // Right-up
+    [1, -2, 0, -1], // Left-down
+    [-1, 2, 0, 1], // Right-up
     [1, 2, 0, 1], // Right-down
   ];
 
@@ -103,6 +103,9 @@ export function validKnightMoveValidator(
       fromCol + dy === toCol &&
       !board[fromRow + dxb][fromCol + dyb]
     ) {
+      console.log(
+        `dx: ${dx}, dy: ${dy}, dxb: ${dxb}, dyb: ${dyb} \n from: ${fromRow},${fromCol} to: ${toRow}, ${toCol}`,
+      );
       return OK_RESULT;
     }
   }
