@@ -194,10 +194,28 @@ describe('Xiangqi', () => {
       expect(s).toBe(expected);
     });
 
-    it('should throw error when horse is blocked (horse leg rule)', () => {
+    it('should throw error when horse is blocked (blocked top/bottom)', () => {
       const xiangqi = new Xiangqi();
       expect(() => xiangqi.move({ from: 'b1', to: 'd2' })).toThrowError(
         'Invalid move: b1 -> d2',
+      );
+    });
+
+    it('should throw error when horse is blocked (blocked left/right)', () => {
+      const fen = boardStrToFen(dedent`
+        rnbakabnr
+        .........
+        .c.....c.
+        p.p.p.p.p
+        .........
+        .........
+        P.P.P.P.P
+        .CN....C.
+        .........
+        R.BAKABNR`);
+      const xiangqi = new Xiangqi(fen);
+      expect(() => xiangqi.move({ from: 'c3', to: 'a2' })).toThrowError(
+        'Invalid move: c3 -> a2',
       );
     });
   });

@@ -20,9 +20,9 @@
 -   Clone git về: <a href="https://github.com/012e/xiangqi">xiangqi</a>
 -   Dùng IntelliJ (có thể dùng bất kỳ IDE nào ở đây chúng tôi dùng IntelliJ)
 -   Mở terminal tại thư mục **_xiangqi/backend_**
--   Download **_Docker_** tại flugin (đã tải docker thì bỏ qua)
+-   Download **_Docker_** tại plugin (đã tải docker thì bỏ qua)
 -   Download **_docker desktop_**
--   Click vào nút ![alt text](image.png) ngang với service trong xiangqi/backend/compose.yaml (hoặc chạy lệnh trong terminal: **_docker-compose run_**)
+-   Click vào nút ![image](https://github.com/user-attachments/assets/3884b122-3af4-405a-9db0-32d9967cd67e) ngang với service trong xiangqi/backend/compose.yaml (hoặc chạy lệnh trong terminal: **_docker-compose run_**)
 -   Vào website và xem thành quả: <a href="http://localhost:8080/swagger-ui/index.html">Swagger UI</a>
 
 # Hướng dẫn sử dụng _test_ cho logic bàn cờ
@@ -30,3 +30,7 @@
 -   Tải các thư viện cần thiết: **_pnpm i_**
 -   Run test: **_pnpm test_**
     (Các test sử dụng để kiểm tra tính đúng đắn của các hàm logic)
+
+# Documentation
+
+- Có thể xem chi tiết hành động/topic khi sử dụng websocket ở [docs.md](./docs.md)
