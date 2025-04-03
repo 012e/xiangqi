@@ -214,7 +214,7 @@ export default class Xiangqi {
       fromPieceValidator,
       correctTurnValidator,
       captureOwnPieceValidator,
-      this.moveInCheckValidator, // pinned piece, king move in check, kings face to face
+      // this.moveInCheckValidator, // pinned piece, king move in check, kings face to face
     ];
     const [fromRow, fromCol] = fromCoords;
     const piece = this.board[fromRow][fromCol];
