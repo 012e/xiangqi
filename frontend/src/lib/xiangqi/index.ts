@@ -60,6 +60,7 @@ export default class Xiangqi {
   private board: string[][] = [];
   private currentPlayer: 'w' | 'b' = 'w'; // 'w' for red, 'b' for black
   private moveCount = 0;
+  private kings = { b: [0, 4], w: [9, 4] }; // Initial positions of kings
 
   /**
    * Initialize a Xiangqi game from FEN notation
@@ -284,9 +285,13 @@ export default class Xiangqi {
     this.board[fromRow][fromCol] = '';
 
     // Update player and move count
+    if (this.board[fromRow][fromCol] === 'k') {
+      this.kings.b = [toRow, toCol];
+    } else if (this.board[fromRow][fromCol] === 'K') {
+      this.kings.w = [toRow, toCol];
+    }
     this.currentPlayer = this.currentPlayer === 'w' ? 'b' : 'w';
     this.moveCount++;
-
     return true;
   }
 
@@ -313,10 +318,10 @@ export default class Xiangqi {
   ): Result {
     const previousBoard = cloneStringMatrix(this.board);
 
-    this.move({
-      from: this.coordinatesToPosition([fromRow, fromCol]),
-      to: this.coordinatesToPosition([toRow, toCol]),
-    });
+    // this.move({
+    //   from: this.coordinatesToPosition([fromRow, fromCol]),
+    //   to: this.coordinatesToPosition([toRow, toCol]),
+    // });
 
     if (this.isInCheck(this.currentPlayer)) {
       this.board = previousBoard; // Revert the move
@@ -339,7 +344,44 @@ export default class Xiangqi {
   }
 
   isInCheck(color: 'w' | 'b' = 'w'): boolean {
-    throw new Error('Not implemented');
+    const kingPosition = this.findKing(color);
+    if (!kingPosition) {
+      return false; // King not found, cannot be in check
+    }
+
+    const [kingRow, kingCol] = kingPosition;
+    const opponentColor = color === 'w' ? 'b' : 'w';
+
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 9; col++) {
+        const piece = this.board[row][col];
+        if (
+          piece &&
+          piece.toLowerCase() !== piece &&
+          piece.toLowerCase() !== 'k'
+        ) {
+          const fromCoords: [number, number] = [row, col];
+          const toCoords: [number, number] = [kingRow, kingCol];
+          const result = this.isLegalMove(fromCoords, toCoords);
+          if (!result.ok) {
+            return true; // King is in check
+          }
+        }
+      }
+    }
+
+    return false; // King is not in check
+  }
+  findKing(color: string) {
+    const kingPiece = color === 'w' ? 'K' : 'k';
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (this.board[row][col] === kingPiece) {
+          return [row, col]; // Return the position of the king
+        }
+      }
+    }
+    return null; // King not found
   }
 
   // in draw
