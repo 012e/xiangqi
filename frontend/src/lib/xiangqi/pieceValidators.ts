@@ -324,6 +324,9 @@ export function validKnightMoveValidator(
       fromCol + dy === toCol &&
       !board[fromRow + dxb][fromCol + dyb]
     ) {
+      console.log(
+        `dx: ${dx}, dy: ${dy}, dxb: ${dxb}, dyb: ${dyb} \n from: ${fromRow},${fromCol} to: ${toRow}, ${toCol}`,
+      );
       return OK_RESULT;
     }
   }
