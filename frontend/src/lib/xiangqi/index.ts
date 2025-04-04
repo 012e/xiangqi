@@ -6,7 +6,7 @@ import {
   inBoundValiator,
 } from './generalValidators';
 import {
-  validAvisorMoveValidator,
+  validAdvisorMoveValidator,
   validBishopMoveValidator,
   validCannonMoveValidator,
   validKingMoveValidator,
@@ -234,7 +234,7 @@ export default class Xiangqi {
         validators.push(validBishopMoveValidator);
         break;
       case 'a':
-        validators.push(validAvisorMoveValidator);
+        validators.push(validAdvisorMoveValidator);
         break;
       case 'k':
         validators.push(validKingMoveValidator);
@@ -371,17 +371,6 @@ export default class Xiangqi {
     }
 
     return false; // King is not in check
-  }
-  findKing(color: string) {
-    const kingPiece = color === 'w' ? 'K' : 'k';
-    for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 9; col++) {
-        if (this.board[row][col] === kingPiece) {
-          return [row, col]; // Return the position of the king
-        }
-      }
-    }
-    return null; // King not found
   }
 
   // in draw
