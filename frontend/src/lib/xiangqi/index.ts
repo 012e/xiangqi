@@ -227,8 +227,6 @@ export default class Xiangqi {
       fromPieceValidator,
       correctTurnValidator,
       captureOwnPieceValidator,
-      // this.test,
-      // this.moveInCheckValidator, // pinned piece, king move in check, kings face to face
     ];
     const [fromRow, fromCol] = fromCoords;
     const piece = this.board[fromRow][fromCol];
@@ -272,6 +270,7 @@ export default class Xiangqi {
         return this.invalidMove(fromCoords, toCoords);
       }
     }
+
     return OK_RESULT;
   }
 
@@ -293,15 +292,16 @@ export default class Xiangqi {
     const [fromRow, fromCol] = fromCoords;
     const [toRow, toCol] = toCoords;
 
+    if (this.board[fromRow][fromCol] === 'k') {
+      this.kings.b = toCoords;
+    } else if (this.board[fromRow][fromCol] === 'K') {
+      this.kings.w = toCoords;
+    }
+
     this.board[toRow][toCol] = this.board[fromRow][fromCol];
     this.board[fromRow][fromCol] = '';
 
     // Update player and move count
-    if (this.board[fromRow][fromCol] === 'k') {
-      this.kings.b = [toRow, toCol];
-    } else if (this.board[fromRow][fromCol] === 'K') {
-      this.kings.w = [toRow, toCol];
-    }
     this.currentPlayer = this.currentPlayer === 'w' ? 'b' : 'w';
     this.moveCount++;
     return true;
@@ -342,6 +342,7 @@ export default class Xiangqi {
     // Kiểm tra xem nước đi có hợp lệ
     const invalidMove =
       this.isInCheck(this.currentPlayer) || this.isKingFaceToFace(this.board);
+
     if (invalidMove) {
       // Hoàn tác nước đi
       if (this.board[toRow][toCol] === color) {
