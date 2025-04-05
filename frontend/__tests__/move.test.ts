@@ -625,202 +625,83 @@ describe('Xiangqi', () => {
       // Moving within the line of pin (staying on the same file) should be allowed
       expect(xiangqi.boardAsStr()).toBe(expected);
     });
+  });
 
-    //   it('should handle complex pinning scenarios with multiple pieces', () => {
-    //     const fen = boardStrToFen(dedent`
-    //     ....k...
-    //     ........
-    //     ........
-    //     ..p.....
-    //     ..N.....
-    //     ..B.....
-    //     ........
-    //     ........
-    //     ..r.....
-    //     ....K...`);
-    //     const xiangqi = new Xiangqi(fen);
-
-    //     // Horse is pinned by rook through bishop
-    //     expect(() => xiangqi.move({ from: 'c4', to: 'e5' })).toThrowError(
-    //       'Invalid move: cannot expose king to check',
-    //     );
-
-    //     // Bishop is pinned and cannot move out of line
-    //     expect(() => xiangqi.move({ from: 'c3', to: 'd4' })).toThrowError(
-    //       'Invalid move: cannot expose king to check',
-    //     );
-
-    //     // Bishop can move along the pin line
-    //     expect(() => xiangqi.move({ from: 'c3', to: 'c2' })).not.toThrow();
-    //   });
-    // });
-
-    describe('King Must Move - Check and Fork', () => {
-      // it('should force king to move when in direct check', () => {
-      //   const fen = boardStrToFen(dedent`
-      //   r.b.k..r
-      //   ........
-      //   .c.....c
-      //   p.p.p.p.p
-      //   ........
-      //   ........
-      //   P.P.P.P.P
-      //   .C.....C
-      //   ....R...
-      //   RNB.K..R`);
-      //   const xiangqi = new Xiangqi(fen);
-      //   /*
-      //    * King is in check by rook
-      //    * Ensure that king must move to escape check
-      //    */
-      //   expect(() => xiangqi.move({ from: 'e1', to: 'd1' })).not.toThrow();
-      //   // Reset game state
-      //   const newXiangqi = new Xiangqi(fen);
-      //   // Other moves should fail when king is in check
-      //   expect(() => newXiangqi.move({ from: 'a1', to: 'a2' })).toThrowError(
-      //     'King is in check: must move king or block check',
-      //   );
-      //   // A piece that blocks the check should be allowed to move
-      //   expect(() => newXiangqi.move({ from: 'c1', to: 'e2' })).not.toThrow();
-      // });
-      // it('should allow pieces to capture the checking piece to resolve check', () => {
-      //   const fen = boardStrToFen(dedent`
-      //   r.b.k..r
-      //   ........
-      //   .c.....c
-      //   p.p.p.p.p
-      //   ........
-      //   ........
-      //   P.P.P.P.P
-      //   .C.....C
-      //   ....R...
-      //   RNB.K..R`);
-      //   const xiangqi = new Xiangqi(fen);
-      //   // Cannon can capture the checking rook
-      //   expect(() => xiangqi.move({ from: 'b2', to: 'e2' })).not.toThrow();
-      //   const expected = dedent`
-      //   r.b.k..r
-      //   ........
-      //   .c.....c
-      //   p.p.p.p.p
-      //   ........
-      //   ........
-      //   P.P.P.P.P
-      //   .....C.C
-      //   ........
-      //   RNB.K..R`;
-      //   expect(xiangqi.boardAsStr()).toBe(expected);
-      // });
-      // it('should not allow non-king pieces to move when king is in check unless they resolve the check', () => {
-      //   const fen = boardStrToFen(dedent`
-      //   r.b.k..r
-      //   ........
-      //   .c.....c
-      //   p.p.p.p.p
-      //   ........
-      //   ....r...
-      //   P.P.P.P.P
-      //   .C.....C
-      //   ........
-      //   RNB.K..R`);
-      //   const xiangqi = new Xiangqi(fen);
-      //   // Moving a piece that does not resolve check is invalid
-      //   expect(() => xiangqi.move({ from: 'a1', to: 'a2' })).toThrowError(
-      //     'King is in check: must move king or block check',
-      //   );
-      //   // Moving a piece to block the check should be valid
-      //   expect(() => xiangqi.move({ from: 'c1', to: 'e3' })).not.toThrow();
-      //   // Reset game state
-      //   const newXiangqi = new Xiangqi(fen);
-      //   // Moving advisor to protect king should be valid
-      //   expect(() => newXiangqi.move({ from: 'd1', to: 'e2' })).not.toThrow();
-      // });
-      // it('should force king to move when under a double check (fork)', () => {
-      //   const fen = boardStrToFen(dedent`
-      //   ....k...
-      //   ........
-      //   ....N...
-      //   ........
-      //   ....R...
-      //   ........
-      //   ........
-      //   ........
-      //   ........
-      //   ....K...`);
-      //   const xiangqi = new Xiangqi(fen);
-      //   // Ensure that ONLY king can move during double check
-      //   expect(() => xiangqi.move({ from: 'e1', to: 'd1' })).not.toThrow();
-      //   // Reset game state
-      //   const newXiangqi = new Xiangqi(fen);
-      //   // No other piece can resolve a double check by moving
-      //   expect(() => newXiangqi.move({ from: 'a1', to: 'a2' })).toThrowError(
-      //     'King is in double check: king must move',
-      //   );
-      //   expect(() => newXiangqi.move({ from: 'c1', to: 'e3' })).toThrowError(
-      //     'King is in double check: king must move',
-      //   );
-      //   // King can move to safety
-      //   expect(() => newXiangqi.move({ from: 'e1', to: 'f1' })).not.toThrow();
-      // });
-      // it('should handle cannon-delivered check correctly', () => {
-      //   const fen = boardStrToFen(dedent`
-      //   r.b.k..r
-      //   ........
-      //   .c.....c
-      //   p.p.p.p.p
-      //   ........
-      //   ........
-      //   P.P.P.P.P
-      //   .C.....C
-      //   ..P.....
-      //   RNB.K..R`);
-      //   const xiangqi = new Xiangqi(fen);
-      //   // Move cannon to deliver check by jumping over pawn
-      //   xiangqi.move({ from: 'b2', to: 'e2' });
-      //   // King must move to resolve check
-      //   expect(() => xiangqi.move({ from: 'e10', to: 'd10' })).not.toThrow();
-      //   // Moving pawn does not resolve the check (the jumping piece)
-      //   const newXiangqi = new Xiangqi(
-      //     boardStrToFen(dedent`
-      //     r.b.k..r
-      //     ........
-      //     .c.....c
-      //     p.p.p.p.p
-      //     ........
-      //     ........
-      //     P.P.P.P.P
-      //     ...C...C
-      //     ..P.....
-      //     RNB.K..R`),
-      //   );
-      //   expect(() => newXiangqi.move({ from: 'c2', to: 'c3' })).toThrowError(
-      //     'King is in check: must move king or block check',
-      //   );
-      // });
+  describe('King Must Move - Check and Fork', () => {
+    it('should force king to move when in direct check', () => {
+      const fen = boardStrToFen(
+        dedent`
+        rnb.k.bnr
+        .........
+        .c..R..c.
+        p.p.p.p.p
+        .........
+        .........
+        P.P.P.P.P
+        .C.....C.
+        .........
+        RNB.K.BNR`,
+        'b',
+      );
+      const xiangqi = new Xiangqi(fen);
+      /*
+       * King is in check by rook
+       * Ensure that king must move to escape check
+       */
+      // console.log(xiangqi.move({ from: 'e1', to: 'd1' }));
+      expect(() => xiangqi.move({ from: 'e10', to: 'd10' })).not.toThrow();
+      // Reset game state
+      const newXiangqi = new Xiangqi(fen);
+      // Other moves should fail when king is in check
+      expect(() => newXiangqi.move({ from: 'a10', to: 'a9' })).toThrowError(
+        'Invalid move: a10 -> a9',
+      );
+      // A piece that blocks the check should be allowed to move
+      expect(() => newXiangqi.move({ from: 'c10', to: 'e8' })).not.toThrow();
     });
 
-    describe('Check prevention and detection', () => {
-      it('should detect when king is in check', () => {
-        const fen = boardStrToFen(dedent`
-       ....k...
-       ........
-       ........
-       ........
-       ....R...
-       ........
-       ........
-       ........
-       ........
-       ....K...`);
-        const xiangqi = new Xiangqi(fen);
+    it('should force king to move when under a double check (fork)', () => {
+      const fen = boardStrToFen(dedent`
+        ....k....
+        .........
+        .........
+        .........
+        ....R....
+        .........
+        .........
+        .........
+        ....R....
+        ....K....`);
+      const xiangqi = new Xiangqi(fen);
+      // Ensure that ONLY king can move during double check
+      expect(() => xiangqi.move({ from: 'e1', to: 'e2' })).toThrowError(
+        'Invalid move: e1 -> e2',
+      );
+    });
+  });
 
-        expect(xiangqi.isInCheck('b')).toBe(true);
-        expect(xiangqi.isInCheck('w')).toBe(false);
-      });
+  describe('Check prevention and detection', () => {
+    it('should detect when king is in check', () => {
+      const fen = boardStrToFen(dedent`
+       ....k....
+       .........
+       .........
+       .........
+       ....R....
+       .........
+       .........
+       .........
+       .........
+       ....K....`);
+      const xiangqi = new Xiangqi(fen);
 
-      it('should prevent moves that would put own king in check', () => {
-        const fen = boardStrToFen(
-          dedent`
+      expect(xiangqi.isInCheck('b')).toBe(true);
+      expect(xiangqi.isInCheck('w')).toBe(false);
+    });
+
+    it('should prevent moves that would put own king in check', () => {
+      const fen = boardStrToFen(
+        dedent`
        .....k..
        ........
        ........
@@ -831,19 +712,19 @@ describe('Xiangqi', () => {
        ........
        ........
        ....K...`,
-          'b',
-        );
-        const xiangqi = new Xiangqi(fen);
+        'b',
+      );
+      const xiangqi = new Xiangqi(fen);
 
-        // Moving the king into check should be invalid
-        expect(() => xiangqi.move({ from: 'f10', to: 'e10' })).toThrowError(
-          'Invalid move: f10 -> e10',
-        );
-      });
+      // Moving the king into check should be invalid
+      expect(() => xiangqi.move({ from: 'f10', to: 'e10' })).toThrowError(
+        'Invalid move: f10 -> e10',
+      );
+    });
 
-      it('should detect checkmate correctly', () => {
-        const fen = boardStrToFen(
-          dedent`
+    it('should detect checkmate correctly', () => {
+      const fen = boardStrToFen(
+        dedent`
       R...k...
       .......R
       ........
@@ -854,21 +735,21 @@ describe('Xiangqi', () => {
       ........
       ........
       ...K....`,
-          'b',
-        );
-        const xiangqi = new Xiangqi(fen);
-        // King is in checkmate with rooks at e9 and h7
-        expect(xiangqi.isCheckmate('b')).toBe(true);
-        expect(xiangqi.isCheckmate('w')).toBe(false);
+        'b',
+      );
+      const xiangqi = new Xiangqi(fen);
+      // King is in checkmate with rooks at e9 and h7
+      expect(xiangqi.isCheckmate('b')).toBe(true);
+      expect(xiangqi.isCheckmate('w')).toBe(false);
 
-        // Game should be over
-        expect(xiangqi.isGameOver()).toBe(true);
-        expect(xiangqi.getWinner()).toBe('red');
-      });
+      // Game should be over
+      expect(xiangqi.isGameOver()).toBe(true);
+      expect(xiangqi.getWinner()).toBe('red');
+    });
 
-      it('should handle stalemate correctly', () => {
-        const fen = boardStrToFen(
-          dedent`
+    it('should handle stalemate correctly', () => {
+      const fen = boardStrToFen(
+        dedent`
       ..P.k.P.
       .......R
       ........
@@ -879,17 +760,16 @@ describe('Xiangqi', () => {
       ........
       ........
       ...K....`,
-          'b',
-        );
-        const xiangqi = new Xiangqi(fen);
-        // Black king has no legal moves but is not in check (stalemate)
-        expect(xiangqi.isInCheck('b')).toBe(false);
-        expect(xiangqi.isStalemate('b')).toBe(true);
+        'b',
+      );
+      const xiangqi = new Xiangqi(fen);
+      // Black king has no legal moves but is not in check (stalemate)
+      expect(xiangqi.isInCheck('b')).toBe(false);
+      expect(xiangqi.isStalemate('b')).toBe(true);
 
-        // Game should be over
-        expect(xiangqi.isGameOver()).toBe(true);
-        expect(xiangqi.getWinner()).toBe('draw');
-      });
+      // Game should be over
+      expect(xiangqi.isGameOver()).toBe(true);
+      expect(xiangqi.getWinner()).toBe('draw');
     });
   });
 });
