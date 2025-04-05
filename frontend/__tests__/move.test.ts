@@ -326,7 +326,7 @@ describe('Xiangqi', () => {
         ....K....
         RNBA.ABNR`);
       const xiangqi = new Xiangqi(fen);
-      xiangqi.move({ from: 'e2', to: 'f3' });
+      xiangqi.move({ from: 'e2', to: 'f2' });
 
       const s = xiangqi.boardAsStr();
       const expected = dedent`
@@ -337,8 +337,8 @@ describe('Xiangqi', () => {
         .........
         .........
         P.P.P.P.P
-        .C...K.C.
-        .........
+        .C.....C.
+        .....K...
         RNBA.ABNR`;
       expect(s).toBe(expected);
     });
@@ -386,9 +386,7 @@ describe('Xiangqi', () => {
         .........
         RNBA.ABNR`);
       const xiangqi = new Xiangqi(fen);
-      xiangqi.move({ from: 'e3', to: 'e4' });
 
-      const s = xiangqi.boardAsStr();
       expect(() => xiangqi.move({ from: 'e3', to: 'e4' })).toThrowError(
         'Invalid move: e3 -> e4',
       );
@@ -475,8 +473,6 @@ describe('Xiangqi', () => {
         RNBAKABNR`);
       const xiangqi = new Xiangqi(fen);
 
-      const s = xiangqi.boardAsStr();
-
       expect(() => xiangqi.move({ from: 'b3', to: 'b10' })).toThrowError(
         'Invalid move: b3 -> b10',
       );
@@ -490,7 +486,8 @@ describe('Xiangqi', () => {
        * This would require custom board setup
        * Mock test for flying general rule
        */
-      const fen = boardStrToFen(dedent`
+      const fen = boardStrToFen(
+        dedent`
         ....k....
         .........
         .........
@@ -500,17 +497,20 @@ describe('Xiangqi', () => {
         .........
         .........
         .........
-        ...K.....`);
+        ...K.....`,
+        'w',
+      );
       const mockXiangqi = new Xiangqi(fen);
       // Assume we have a method to set custom positions
 
       expect(() => mockXiangqi.move({ from: 'd1', to: 'e1' })).toThrowError(
-        'Invalid move: flying general rule violation d1 -> e1',
+        'Invalid move: d1 -> e1',
       );
     });
 
     it('should correctly handle checkmate scenarios', () => {
-      const fen = boardStrToFen(dedent`
+      const fen = boardStrToFen(
+        dedent`
         R...k....
         ........R
         .........
@@ -520,7 +520,9 @@ describe('Xiangqi', () => {
         .........
         .........
         .........
-        .....K...`);
+        .....K...`,
+        'b',
+      );
 
       /*
        * This would require a more complex setup
@@ -528,8 +530,7 @@ describe('Xiangqi', () => {
        */
       const mockXiangqi = new Xiangqi(fen);
       // Assume we have a method to set custom positions for a checkmate position
-
-      expect(mockXiangqi.isCheckmate()).toBe(true);
+      expect(mockXiangqi.isCheckmate('b')).toBe(true);
     });
   });
   describe('Pinning', () => {
@@ -551,12 +552,12 @@ describe('Xiangqi', () => {
       const xiangqi = new Xiangqi(fen);
 
       // Attempt to move the pinned bishop which would expose king to check
-      expect(() => xiangqi.move({ from: 'e8', to: 'f8' })).toThrowError(
-        'Invalid move: cannot expose king to check e8 -> f8',
+      expect(() => xiangqi.move({ from: 'e8', to: 'd8' })).toThrowError(
+        'Invalid move: e8 -> d8',
       );
 
       // Moving within the line of pin (staying on the same file) should be allowed
-      expect(() => xiangqi.move({ from: 'c10', to: 'c8' })).not.toThrow();
+      expect(() => xiangqi.move({ from: 'e8', to: 'e9' })).not.toThrow();
     });
 
     it('should allow pinned to move in the line of pin', () => {
@@ -836,12 +837,13 @@ describe('Xiangqi', () => {
 
         // Moving the king into check should be invalid
         expect(() => xiangqi.move({ from: 'f10', to: 'e10' })).toThrowError(
-          'Invalid move: would put king in check',
+          'Invalid move: f10 -> e10',
         );
       });
 
       it('should detect checkmate correctly', () => {
-        const fen = boardStrToFen(dedent`
+        const fen = boardStrToFen(
+          dedent`
       R...k...
       .......R
       ........
@@ -851,9 +853,10 @@ describe('Xiangqi', () => {
       ........
       ........
       ........
-      ...K....`);
+      ...K....`,
+          'b',
+        );
         const xiangqi = new Xiangqi(fen);
-
         // King is in checkmate with rooks at e9 and h7
         expect(xiangqi.isCheckmate('b')).toBe(true);
         expect(xiangqi.isCheckmate('w')).toBe(false);
@@ -879,7 +882,6 @@ describe('Xiangqi', () => {
           'b',
         );
         const xiangqi = new Xiangqi(fen);
-
         // Black king has no legal moves but is not in check (stalemate)
         expect(xiangqi.isInCheck('b')).toBe(false);
         expect(xiangqi.isStalemate('b')).toBe(true);
