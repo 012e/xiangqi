@@ -60,6 +60,7 @@ export default class Xiangqi {
   private board: string[][] = [];
   private currentPlayer: 'w' | 'b' = 'w'; // 'w' for red, 'b' for black
   private moveCount = 0;
+  private kings = { b: [0, 4], w: [9, 4] }; // Initial positions of kings
 
   /**
    * Initialize a Xiangqi game from FEN notation
@@ -69,8 +70,20 @@ export default class Xiangqi {
     fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0',
   ) {
     this.parseFen(fen);
+    this.kings.b = this.findKing('b', this.board);
+    this.kings.w = this.findKing('w', this.board);
   }
-
+  findKing(Color: 'w' | 'b' = 'w', board: string[][]): number[] {
+    const king = Color === 'w' ? 'K' : 'k';
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (board[row][col] === king) {
+          return [row, col];
+        }
+      }
+    }
+    throw new Error(`King not found for color ${Color}`);
+  }
   boardAsStr(): string {
     let s = '';
     for (let i = 0; i < 10; i++) {
@@ -214,7 +227,6 @@ export default class Xiangqi {
       fromPieceValidator,
       correctTurnValidator,
       captureOwnPieceValidator,
-      // this.moveInCheckValidator, // pinned piece, king move in check, kings face to face
     ];
     const [fromRow, fromCol] = fromCoords;
     const piece = this.board[fromRow][fromCol];
@@ -254,7 +266,7 @@ export default class Xiangqi {
         board: clonedBoard,
         currentPlayer: this.currentPlayer,
       });
-      if (!result.ok) {
+      if (!result.ok || !this.moveInCheckValidator(fromCoords, toCoords).ok) {
         return this.invalidMove(fromCoords, toCoords);
       }
     }
@@ -280,13 +292,18 @@ export default class Xiangqi {
     const [fromRow, fromCol] = fromCoords;
     const [toRow, toCol] = toCoords;
 
+    if (this.board[fromRow][fromCol] === 'k') {
+      this.kings.b = toCoords;
+    } else if (this.board[fromRow][fromCol] === 'K') {
+      this.kings.w = toCoords;
+    }
+
     this.board[toRow][toCol] = this.board[fromRow][fromCol];
     this.board[fromRow][fromCol] = '';
 
     // Update player and move count
     this.currentPlayer = this.currentPlayer === 'w' ? 'b' : 'w';
     this.moveCount++;
-
     return true;
   }
 
@@ -311,17 +328,37 @@ export default class Xiangqi {
     [fromRow, fromCol]: [number, number],
     [toRow, toCol]: [number, number],
   ): Result {
-    const previousBoard = cloneStringMatrix(this.board);
+    const color = this.currentPlayer === 'w' ? 'K' : 'k';
+    const moveFrom = this.board[fromRow][fromCol];
+    const moveTo = this.board[toRow][toCol];
 
-    this.move({
-      from: this.coordinatesToPosition([fromRow, fromCol]),
-      to: this.coordinatesToPosition([toRow, toCol]),
-    });
+    // Giả lập nước đi
+    if (this.board[fromRow][fromCol] === color) {
+      this.kings[this.currentPlayer] = [toRow, toCol];
+    }
+    this.board[toRow][toCol] = moveFrom;
+    this.board[fromRow][fromCol] = '';
 
-    if (this.isInCheck(this.currentPlayer)) {
-      this.board = previousBoard; // Revert the move
+    // Kiểm tra xem nước đi có hợp lệ
+    const invalidMove =
+      this.isInCheck(this.currentPlayer) || this.isKingFaceToFace(this.board);
+
+    if (invalidMove) {
+      // Hoàn tác nước đi
+      if (this.board[toRow][toCol] === color) {
+        this.kings[this.currentPlayer] = [fromRow, fromCol];
+      }
+      this.board[fromRow][fromCol] = moveFrom;
+      this.board[toRow][toCol] = moveTo;
       return { ok: false, message: 'Move leaves the king in check.' };
     }
+    // reset
+    if (this.board[toRow][toCol] === color) {
+      this.kings[this.currentPlayer] = [fromRow, fromCol];
+    }
+    this.board[fromRow][fromCol] = moveFrom;
+    this.board[toRow][toCol] = moveTo;
+
     return OK_RESULT;
   }
 
@@ -332,16 +369,135 @@ export default class Xiangqi {
   isGameOver(): boolean {
     return (
       this.moveCount >= 120 ||
-      this.isCheckmate() ||
+      this.isCheckmate('w') ||
+      this.isCheckmate('b') ||
       this.isStalemate() ||
       this.isDraw()
     );
   }
 
-  isInCheck(color: 'w' | 'b' = 'w'): boolean {
-    throw new Error('Not implemented');
+  isKingFaceToFace(board: string[][]): boolean {
+    const [wRow, wCol] = this.findKing('w', board);
+    const [bRow, bCol] = this.findKing('b', board);
+    if (wCol === bCol) {
+      for (let i = wRow - 1; i > bRow; i--) {
+        if (this.board[i][wCol]) return false;
+      }
+      return true;
+    }
+    return false;
   }
+  isInCheck(Color: 'w' | 'b' = 'w'): boolean {
+    const enemy = Color === 'w' ? 'b' : 'w';
+    // current w - enemy b
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 9; col++) {
+        // r
+        const piece = this.board[row][col];
+        if (!piece) continue;
 
+        const isEnemy =
+          (enemy === 'b' && piece === piece.toLowerCase()) ||
+          (enemy === 'w' && piece === piece.toUpperCase());
+
+        if (
+          isEnemy &&
+          this.canMove(row, col, this.kings[Color][0], this.kings[Color][1])
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false; // King is not in check
+  }
+  canMove(
+    fromRow: number,
+    fromCol: number,
+    toRow: number,
+    toCol: number,
+  ): boolean {
+    const piece = this.board[fromRow][fromCol];
+    const target = this.board[toRow][toCol];
+    if (!piece || !target) return false;
+
+    const dr = toRow - fromRow; // move row
+    const dc = toCol - fromCol; // move col
+
+    switch (piece.toUpperCase()) {
+      case 'R': // Xe
+        if (dr !== 0 && dc !== 0) return false;
+        if (dr === 0) {
+          const step = dc > 0 ? 1 : -1;
+          for (let c = fromCol + step; c !== toCol; c += step) {
+            if (this.board[fromRow][c]) return false;
+          }
+        } else {
+          const step = dr > 0 ? 1 : -1;
+          for (let r = fromRow + step; r !== toRow; r += step) {
+            if (this.board[r][fromCol]) return false;
+          }
+        }
+        return true;
+
+      case 'C': {
+        // Pháo
+        if (dr !== 0 && dc !== 0) return false;
+        let count = 0;
+        if (dr === 0) {
+          const step = dc > 0 ? 1 : -1;
+          for (let c = fromCol + step; c !== toCol; c += step) {
+            if (this.board[fromRow][c]) count++;
+          }
+        } else {
+          const step = dr > 0 ? 1 : -1;
+          for (let r = fromRow + step; r !== toRow; r += step) {
+            if (this.board[r][fromCol]) count++;
+          }
+        }
+        if (count === 0 && !target) return true;
+        if (count === 1 && target) return true;
+        return false;
+      }
+
+      case 'N': // Mã
+        if (
+          !(
+            (Math.abs(dr) === 2 && Math.abs(dc) === 1) ||
+            (Math.abs(dr) === 1 && Math.abs(dc) === 2)
+          )
+        )
+          return false;
+
+        if (Math.abs(dr) === 2) {
+          const blockRow = fromRow + (dr > 0 ? 1 : -1);
+          if (this.board[blockRow][fromCol]) return false;
+        } else {
+          const blockCol = fromCol + (dc > 0 ? 1 : -1);
+          if (this.board[fromRow][blockCol]) return false;
+        }
+        return true;
+
+      case 'P': // pawn
+        if (piece === 'p') {
+          if (crossedRiver([fromRow, fromCol], true)) {
+            if (dr === 1 && Math.abs(dc) <= 1) return true;
+          } else {
+            if (dr === 1 && dc === 0) return true;
+          }
+        } else {
+          if (crossedRiver([fromRow, fromCol], false)) {
+            if (dr === -1 && Math.abs(dc) <= 1) return true;
+          } else {
+            if (dr === -1 && dc === 0) return true;
+          }
+        }
+        return false;
+
+      default:
+        return false;
+    }
+  }
   // in draw
   isDraw(): boolean {
     return this.isStalemate() || this.isInsufficientMaterial();
@@ -383,43 +539,292 @@ export default class Xiangqi {
   }
 
   generateMove(color: 'w' | 'b' = 'w'): number {
-    throw new Error('Not implemented');
+    let moveCount = 0;
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 9; col++) {
+        const piece = this.board[row][col];
+        if (!piece) continue;
+
+        const isPlayerPiece =
+          (color === 'w' && piece === piece.toUpperCase()) ||
+          (color === 'b' && piece === piece.toLowerCase());
+
+        if (isPlayerPiece) {
+          switch (piece.toLowerCase()) {
+            case 'r': {
+              // Duyệt theo hàng (ngang)
+              for (let c = col - 1; c >= 0; c--) {
+                if (this.board[row][c] !== '') {
+                  if (this.canMove(row, col, row, c) && !this.isInCheck(color))
+                    moveCount++;
+                  break;
+                }
+                if (this.canMove(row, col, row, c) && !this.isInCheck(color))
+                  moveCount++;
+              }
+              for (let c = col + 1; c < 9; c++) {
+                if (this.board[row][c] !== '') {
+                  if (this.canMove(row, col, row, c) && !this.isInCheck(color))
+                    moveCount++;
+                  break;
+                }
+                if (this.canMove(row, col, row, c) && !this.isInCheck(color))
+                  moveCount++;
+              }
+
+              // Duyệt theo cột (dọc)
+              for (let r = row - 1; r >= 0; r--) {
+                if (this.board[r][col] !== '') {
+                  if (this.canMove(row, col, r, col) && !this.isInCheck(color))
+                    moveCount++;
+                  break;
+                }
+                if (this.canMove(row, col, r, col) && !this.isInCheck(color))
+                  moveCount++;
+              }
+              for (let r = row + 1; r < 10; r++) {
+                if (this.board[r][col] !== '') {
+                  if (this.canMove(row, col, r, col) && !this.isInCheck(color))
+                    moveCount++;
+                  break;
+                }
+                if (this.canMove(row, col, r, col) && !this.isInCheck(color))
+                  moveCount++;
+              }
+              break;
+            }
+            case 'n': {
+              const horseMoves = [
+                { dr: -2, dc: -1, blockR: -1, blockC: 0 }, // Lên 2 trái 1
+                { dr: -2, dc: 1, blockR: -1, blockC: 0 }, // Lên 2 phải 1
+                { dr: -1, dc: -2, blockR: 0, blockC: -1 }, // Lên 1 trái 2
+                { dr: -1, dc: 2, blockR: 0, blockC: 1 }, // Lên 1 phải 2
+                { dr: 1, dc: -2, blockR: 0, blockC: -1 }, // Xuống 1 trái 2
+                { dr: 1, dc: 2, blockR: 0, blockC: 1 }, // Xuống 1 phải 2
+                { dr: 2, dc: -1, blockR: 1, blockC: 0 }, // Xuống 2 trái 1
+                { dr: 2, dc: 1, blockR: 1, blockC: 0 }, // Xuống 2 phải 1
+              ];
+
+              for (const move of horseMoves) {
+                const toR = row + move.dr;
+                const toC = col + move.dc;
+                const blockR = row + move.blockR;
+                const blockC = col + move.blockC;
+
+                // Kiểm tra trong biên
+                if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
+
+                // Kiểm tra bị cản chân mã
+                if (this.board[blockR]?.[blockC] !== '') continue;
+
+                // Nếu đi được và không bị chiếu, tăng moveCount
+                if (
+                  this.canMove(row, col, toR, toC) &&
+                  !this.isInCheck(color)
+                ) {
+                  moveCount++;
+                }
+              }
+              break;
+            }
+            case 'b': {
+              const bishopMoves = [
+                { dr: -2, dc: -2, eyeR: -1, eyeC: -1 },
+                { dr: -2, dc: 2, eyeR: -1, eyeC: 1 },
+                { dr: 2, dc: -2, eyeR: 1, eyeC: -1 },
+                { dr: 2, dc: 2, eyeR: 1, eyeC: 1 },
+              ];
+
+              for (const move of bishopMoves) {
+                const toR = row + move.dr;
+                const toC = col + move.dc;
+                const eyeR = row + move.eyeR;
+                const eyeC = col + move.eyeC;
+
+                // Kiểm tra biên bàn cờ
+                if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
+
+                // Kiểm tra giới hạn sông
+                const isRed =
+                  this.board[row][col] === this.board[row][col].toUpperCase();
+                if (isRed && toR > 4) continue;
+                if (!isRed && toR < 5) continue;
+
+                // Kiểm tra mắt tượng bị chặn
+                if (this.board[eyeR]?.[eyeC] !== '') continue;
+
+                if (
+                  this.canMove(row, col, toR, toC) &&
+                  !this.isInCheck(color)
+                ) {
+                  moveCount++;
+                }
+              }
+              break;
+            }
+            case 'a': {
+              const advisorMoves = [
+                { dr: -1, dc: -1 },
+                { dr: -1, dc: 1 },
+                { dr: 1, dc: -1 },
+                { dr: 1, dc: 1 },
+              ];
+
+              for (const move of advisorMoves) {
+                const toR = row + move.dr;
+                const toC = col + move.dc;
+
+                // Kiểm tra biên bàn cờ
+                if (toR < 0 || toR >= 10 || toC < 3 || toC > 5) continue;
+
+                // Kiểm tra trong cung
+                const isRed =
+                  this.board[row][col] === this.board[row][col].toUpperCase();
+                if (isRed && toR > 2) continue;
+                if (!isRed && toR < 7) continue;
+
+                if (
+                  this.canMove(row, col, toR, toC) &&
+                  !this.isInCheck(color)
+                ) {
+                  moveCount++;
+                }
+              }
+              break;
+            }
+            case 'k': {
+              const kingMoves = [
+                { dr: -1, dc: 0 },
+                { dr: 1, dc: 0 },
+                { dr: 0, dc: -1 },
+                { dr: 0, dc: 1 },
+              ];
+
+              const isRed =
+                this.board[row][col] === this.board[row][col].toUpperCase();
+
+              for (const move of kingMoves) {
+                const toR = row + move.dr;
+                const toC = col + move.dc;
+
+                // Kiểm tra trong cung
+                if (toC < 3 || toC > 5) continue;
+                if (isRed && (toR < 0 || toR > 2)) continue;
+                if (!isRed && (toR < 7 || toR > 9)) continue;
+
+                if (
+                  this.canMove(row, col, toR, toC) &&
+                  !this.isInCheck(color)
+                ) {
+                  moveCount++;
+                }
+              }
+
+              // Kiểm tra tướng đối mặt (cùng cột, không bị cản)
+              let enemyKingRow = -1;
+              for (let r = 0; r < 10; r++) {
+                const piece = this.board[r][col];
+                if (piece === '') continue;
+                if (piece.toLowerCase() === 'k' && r !== row) {
+                  enemyKingRow = r;
+                  break;
+                } else break; // bị cản
+              }
+
+              if (
+                enemyKingRow !== -1 &&
+                this.canMove(row, col, enemyKingRow, col) &&
+                !this.isInCheck(color)
+              ) {
+                moveCount++;
+              }
+
+              break;
+            }
+            case 'c': {
+              // Di chuyển theo 4 hướng
+              const directions = [
+                { dr: -1, dc: 0 },
+                { dr: 1, dc: 0 },
+                { dr: 0, dc: -1 },
+                { dr: 0, dc: 1 },
+              ];
+
+              for (const { dr, dc } of directions) {
+                let r = row + dr;
+                let c = col + dc;
+                let hasJumped = false;
+
+                while (r >= 0 && r < 10 && c >= 0 && c < 9) {
+                  const target = this.board[r][c];
+
+                  if (!hasJumped) {
+                    if (target === '') {
+                      if (
+                        this.canMove(row, col, r, c) &&
+                        !this.isInCheck(color)
+                      )
+                        moveCount++;
+                    } else {
+                      hasJumped = true;
+                    }
+                  } else {
+                    if (target !== '') {
+                      if (
+                        this.canMove(row, col, r, c) &&
+                        !this.isInCheck(color)
+                      )
+                        moveCount++;
+                      break;
+                    }
+                  }
+
+                  r += dr;
+                  c += dc;
+                }
+              }
+              break;
+            }
+            case 'p': {
+              const isRed =
+                this.board[row][col] === this.board[row][col].toUpperCase();
+              const forward = isRed ? 1 : -1;
+
+              // Đi thẳng
+              const toR = row + forward;
+              if (toR >= 0 && toR < 10) {
+                if (this.canMove(row, col, toR, col) && !this.isInCheck(color))
+                  moveCount++;
+              }
+
+              // Nếu đã qua sông, có thể đi ngang
+              const crossedRiver = isRed ? row >= 5 : row <= 4;
+              if (crossedRiver) {
+                for (const dc of [-1, 1]) {
+                  const toC = col + dc;
+                  if (toC >= 0 && toC < 9) {
+                    if (
+                      this.canMove(row, col, row, toC) &&
+                      !this.isInCheck(color)
+                    )
+                      moveCount++;
+                  }
+                }
+              }
+
+              break;
+            }
+          }
+        }
+      }
+    }
+    return moveCount;
   }
 
-  getWinner(): 'w' | 'b' | null {
-    if (this.isCheckmate('w')) return 'b'; // Black wins
-    if (this.isCheckmate('b')) return 'w'; // White/Red wins
+  getWinner(): 'black' | 'red' | 'draw' | null {
+    if (this.isCheckmate('w')) return 'black'; // Black wins
+    if (this.isCheckmate('b')) return 'red'; // White/Red wins
+    if (this.isStalemate('w') || this.isStalemate('b')) return 'draw'; // Black wins by stalemate
     return null; // No winner yet / draw
-  }
-
-  /**
-   * Rotates a 10x9 string matrix by 180 degrees
-   * @param matrix - A 10x9 2D array of strings
-   * @returns Rotated 10x9 matrix
-   */
-  private rotateMatrix180(matrix: string[][]): string[][] {
-    if (matrix.length !== 10 || matrix.some((row) => row.length !== 9)) {
-      throw new Error('Matrix must be of size 10x9');
-    }
-
-    return matrix.map((row) => [...row].reverse()).reverse();
-  }
-
-  /**
-   * Converts a coordinate [row, col] after a 180-degree rotation on a 10x9 board
-   * @param coord - The coordinate [row, col] before rotation
-   * @returns The new coordinate [row, col] after rotation
-   */
-  private rotateCoordinate180(coord: [number, number]): [number, number] {
-    const [row, col] = coord;
-
-    if (row < 0 || row >= 10 || col < 0 || col >= 9) {
-      throw new Error(`Coordinate out of bounds: [${row}, ${col}]`);
-    }
-
-    const newRow = 9 - row;
-    const newCol = 8 - col;
-
-    return [newRow, newCol];
   }
 }
