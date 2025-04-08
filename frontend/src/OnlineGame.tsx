@@ -10,6 +10,7 @@ export default function OnlineGame() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { game, onMove } = useOnlineGame(id);
 
   // Validate player and game ID
   const player = searchParams.get("player") as BoardOrientation;
@@ -24,7 +25,6 @@ export default function OnlineGame() {
   }
 
   // Use the new custom hook
-  const { game, onMove } = useOnlineGame(id);
   function getPieceColor(piece: string): "white" | "black" {
     return piece[0] === "b" ? "black" : "white";
   }
