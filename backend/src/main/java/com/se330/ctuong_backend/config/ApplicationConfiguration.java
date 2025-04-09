@@ -1,17 +1,16 @@
 package com.se330.ctuong_backend.config;
 
+import com.auth0.client.mgmt.ManagementAPI;
 import dto.response.Game;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.security.OAuthFlow;
-import io.swagger.v3.oas.models.security.OAuthFlows;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.net.http.HttpClient;
 import java.util.Random;
 
 
@@ -31,6 +30,7 @@ public class ApplicationConfiguration {
 
     @Bean
     public OpenAPI customOpenAPI() {
+        var scopes = new Scopes();
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList("okta"))
                 .components(new Components()
@@ -43,6 +43,10 @@ public class ApplicationConfiguration {
                                                 .authorizationCode(new OAuthFlow()
                                                         .authorizationUrl(authorizationUrl)
                                                         .tokenUrl(tokenUrl)
+                                                        .scopes(new Scopes()
+                                                                .addString("openid", "openid")
+                                                                .addString("email", "email")
+                                                                .addString("profile", "profile"))
                                                 )
                                         )
                         )
@@ -52,5 +56,22 @@ public class ApplicationConfiguration {
     @Bean
     public Random random() {
         return new Random();
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
+    }
+
+    @Value("${auth0.domain}")
+    private String issuerUri;
+    @Value("${auth0.apiToken}")
+    private String apiToken;
+
+    @Bean
+    public ManagementAPI managementAPI() {
+        return ManagementAPI.newBuilder(issuerUri, apiToken).build();
     }
 }
