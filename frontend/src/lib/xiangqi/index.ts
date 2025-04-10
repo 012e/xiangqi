@@ -277,7 +277,6 @@ export default class Xiangqi {
         return this.invalidMove(fromCoords, toCoords);
       }
     }
-
     return OK_RESULT;
   }
 
@@ -345,11 +344,9 @@ export default class Xiangqi {
     }
     this.board[toRow][toCol] = moveFrom;
     this.board[fromRow][fromCol] = '';
-
     // Kiểm tra xem nước đi có hợp lệ
     const invalidMove =
       this.isInCheck(this.currentPlayer) || this.isKingFaceToFace(this.board);
-
     if (invalidMove) {
       // Hoàn tác nước đi
       if (this.board[toRow][toCol] === color) {

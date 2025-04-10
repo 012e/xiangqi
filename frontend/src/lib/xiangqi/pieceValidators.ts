@@ -3,11 +3,11 @@ import { BoardContext, Result, OK_RESULT, crossedRiver, sameColor } from '.';
 export function validPawnMoveValidator( // tốt
   [fromRow, fromCol]: [number, number],
   [toRow, toCol]: [number, number],
-  { board }: BoardContext
+  { board }: BoardContext,
 ): Result {
   const piece = board[fromRow][fromCol];
   if (!piece) {
-    return { ok: false, message: "No piece at the starting position." };
+    return { ok: false, message: 'No piece at the starting position.' };
   }
   const isPieceRed = piece === piece.toUpperCase();
   const direction = isPieceRed ? -1 : 1; // Red moves up, Black moves down
@@ -24,20 +24,19 @@ export function validPawnMoveValidator( // tốt
       return OK_RESULT;
     }
   }
-  return { ok: false, message: "Invalid pawn move." };
+  return { ok: false, message: 'Invalid pawn move.' };
 }
 
 export function validKingMoveValidator( // tướng
   [fromRow, fromCol]: [number, number],
   [toRow, toCol]: [number, number],
-  { board }: BoardContext
+  { board }: BoardContext,
 ): Result {
   const piece = board[fromRow][fromCol];
   if (!piece) {
-    return { ok: false, message: "No piece at the starting position." };
+    return { ok: false, message: 'No piece at the starting position.' };
   }
   const isPieceRed = piece === piece.toUpperCase();
-  const direction = isPieceRed ? -1 : 1; // Red moves up, Black moves down
   // King can only move one point orthogonally and may not leave the 3x3 palace
   if (
     toRow >= (isPieceRed ? 7 : 0) &&
@@ -48,20 +47,19 @@ export function validKingMoveValidator( // tướng
   ) {
     return OK_RESULT;
   }
-  return { ok: false, message: "Invalid king move." };
+  return { ok: false, message: 'Invalid king move.' };
 }
 
 export function validAdvisorMoveValidator( // sĩ
   [fromRow, fromCol]: [number, number],
   [toRow, toCol]: [number, number],
-  { board }: BoardContext
+  { board }: BoardContext,
 ): Result {
   const piece = board[fromRow][fromCol];
   if (!piece) {
-    return { ok: false, message: "No piece at the starting position." };
+    return { ok: false, message: 'No piece at the starting position.' };
   }
   const isPieceRed = piece === piece.toUpperCase();
-  const direction = isPieceRed ? -1 : 1; // Red moves up, Black moves down
   // Advisor can move one point diagonally and may not leave the 3x3 palace
   if (
     toRow >= (isPieceRed ? 7 : 0) &&
@@ -73,9 +71,8 @@ export function validAdvisorMoveValidator( // sĩ
   ) {
     return OK_RESULT;
   }
-  return { ok: false, message: "Invalid advisor move." };
+  return { ok: false, message: 'Invalid advisor move.' };
 }
-
 
 export function validBishopMoveValidator( // tượng
   [fromRow, fromCol]: [number, number],
