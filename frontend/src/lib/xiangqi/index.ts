@@ -210,6 +210,13 @@ export default class Xiangqi {
     };
   }
 
+  isLegalMove({ from, to }: { from: string; to: string }): Result {
+    const fromCoords = this.positionToCoordinates(from);
+    const toCoords = this.positionToCoordinates(to);
+
+    return this._isLegalMove(fromCoords, toCoords);
+  }
+
   /**
    * Check if a move is legal
    * This is a simplified implementation and doesn't check all Xiangqi rules
@@ -217,7 +224,7 @@ export default class Xiangqi {
    * @param toCoords - Target coordinates [row, col]
    * @returns Boolean indicating if move is legal
    */
-  isLegalMove(
+  private _isLegalMove(
     fromCoords: [number, number],
     toCoords: [number, number],
   ): Result {
@@ -282,7 +289,7 @@ export default class Xiangqi {
     const fromCoords = this.positionToCoordinates(from);
     const toCoords = this.positionToCoordinates(to);
 
-    const checkResult = this.isLegalMove(fromCoords, toCoords);
+    const checkResult = this._isLegalMove(fromCoords, toCoords);
     if (!checkResult.ok) {
       throw new Error(`Invalid move: ${from} -> ${to}`);
     }
