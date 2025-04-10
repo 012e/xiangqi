@@ -8,7 +8,8 @@
     "build": "tsc -b --noCheck && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest --ui"
+    "test": "vitest --ui",
+    "bench": "vitest bench"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
@@ -43,6 +44,7 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.1",
     "@vitest/ui": "3.0.9",
+    "chess.js": "^1.1.0",
     "dedent": "^1.5.3",
     "eslint": "^9.23.0",
     "eslint-plugin-react-hooks": "^5.2.0",
