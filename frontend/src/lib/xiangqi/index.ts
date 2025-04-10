@@ -41,6 +41,7 @@ function cloneStringMatrix(matrix: string[][]): string[][] {
 }
 
 export function crossedRiver(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [row, _col]: [number, number],
   isWhite = true,
 ): boolean {
@@ -347,9 +348,6 @@ export default class Xiangqi {
     // Kiểm tra xem nước đi có hợp lệ
     const invalidMove =
       this.isInCheck(this.currentPlayer) || this.isKingFaceToFace();
-    console.log(this.isKingFaceToFace());
-    console.log(this.kings.b);
-    console.log(this.kings.w);
     if (invalidMove) {
       // Hoàn tác nước đi
       if (this.board[toRow][toCol] === color) {
@@ -514,6 +512,7 @@ export default class Xiangqi {
         return false;
     }
   }
+
   // in draw
   isDraw(): boolean {
     return this.isStalemate() || this.isInsufficientMaterial();
@@ -553,7 +552,269 @@ export default class Xiangqi {
   isStalemate(color: 'w' | 'b' = 'w'): boolean {
     return !this.isInCheck(color) && this.generateMove(color) === 0;
   }
+  createMoveRook(col: number, row: number, color: 'w' | 'b' = 'w'): number {
+    let moveCount = 0;
+    // Duyệt theo hàng (ngang)
+    for (let c = col - 1; c >= 0; c--) {
+      if (this.board[row][c] !== '') {
+        if (this.canMove(row, col, row, c) && !this.isInCheck(color))
+          moveCount++;
+        break;
+      }
+      if (this.canMove(row, col, row, c) && !this.isInCheck(color)) moveCount++;
+    }
+    for (let c = col + 1; c < 9; c++) {
+      if (this.board[row][c] !== '') {
+        if (this.canMove(row, col, row, c) && !this.isInCheck(color))
+          moveCount++;
+        break;
+      }
+      if (this.canMove(row, col, row, c) && !this.isInCheck(color)) moveCount++;
+    }
 
+    // Duyệt theo cột (dọc)
+    for (let r = row - 1; r >= 0; r--) {
+      if (this.board[r][col] !== '') {
+        if (this.canMove(row, col, r, col) && !this.isInCheck(color))
+          moveCount++;
+        break;
+      }
+      if (this.canMove(row, col, r, col) && !this.isInCheck(color)) moveCount++;
+    }
+    for (let r = row + 1; r < 10; r++) {
+      if (this.board[r][col] !== '') {
+        if (this.canMove(row, col, r, col) && !this.isInCheck(color))
+          moveCount++;
+        break;
+      }
+      if (this.canMove(row, col, r, col) && !this.isInCheck(color)) moveCount++;
+    }
+    return moveCount;
+  }
+  private createMoveKnight(
+    col: number,
+    row: number,
+    color: 'w' | 'b' = 'w',
+  ): number {
+    let moveCount = 0;
+    const horseMoves = [
+      { dr: -2, dc: -1, blockR: -1, blockC: 0 }, // Lên 2 trái 1
+      { dr: -2, dc: 1, blockR: -1, blockC: 0 }, // Lên 2 phải 1
+      { dr: -1, dc: -2, blockR: 0, blockC: -1 }, // Lên 1 trái 2
+      { dr: -1, dc: 2, blockR: 0, blockC: 1 }, // Lên 1 phải 2
+      { dr: 1, dc: -2, blockR: 0, blockC: -1 }, // Xuống 1 trái 2
+      { dr: 1, dc: 2, blockR: 0, blockC: 1 }, // Xuống 1 phải 2
+      { dr: 2, dc: -1, blockR: 1, blockC: 0 }, // Xuống 2 trái 1
+      { dr: 2, dc: 1, blockR: 1, blockC: 0 }, // Xuống 2 phải 1
+    ];
+
+    for (const move of horseMoves) {
+      const toR = row + move.dr;
+      const toC = col + move.dc;
+      const blockR = row + move.blockR;
+      const blockC = col + move.blockC;
+
+      // Kiểm tra trong biên
+      if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
+
+      // Kiểm tra bị cản chân mã
+      if (this.board[blockR]?.[blockC] !== '') continue;
+
+      // Nếu đi được và không bị chiếu, tăng moveCount
+      if (this.canMove(row, col, toR, toC) && !this.isInCheck(color)) {
+        moveCount++;
+      }
+    }
+    return moveCount;
+  }
+  private createMoveBishop(
+    col: number,
+    row: number,
+    color: 'w' | 'b' = 'w',
+  ): number {
+    let moveCount = 0;
+    const bishopMoves = [
+      { dr: -2, dc: -2, eyeR: -1, eyeC: -1 },
+      { dr: -2, dc: 2, eyeR: -1, eyeC: 1 },
+      { dr: 2, dc: -2, eyeR: 1, eyeC: -1 },
+      { dr: 2, dc: 2, eyeR: 1, eyeC: 1 },
+    ];
+
+    for (const move of bishopMoves) {
+      const toR = row + move.dr;
+      const toC = col + move.dc;
+      const eyeR = row + move.eyeR;
+      const eyeC = col + move.eyeC;
+
+      // Kiểm tra biên bàn cờ
+      if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
+
+      // Kiểm tra giới hạn sông
+      const isRed = this.board[row][col] === this.board[row][col].toUpperCase();
+      if (isRed && toR > 4) continue;
+      if (!isRed && toR < 5) continue;
+
+      // Kiểm tra mắt tượng bị chặn
+      if (this.board[eyeR]?.[eyeC] !== '') continue;
+
+      if (this.canMove(row, col, toR, toC) && !this.isInCheck(color)) {
+        moveCount++;
+      }
+    }
+    return moveCount;
+  }
+  private createMoveAdvisor(
+    col: number,
+    row: number,
+    color: 'w' | 'b' = 'w',
+  ): number {
+    let moveCount = 0;
+    const advisorMoves = [
+      { dr: -1, dc: -1 },
+      { dr: -1, dc: 1 },
+      { dr: 1, dc: -1 },
+      { dr: 1, dc: 1 },
+    ];
+
+    for (const move of advisorMoves) {
+      const toR = row + move.dr;
+      const toC = col + move.dc;
+
+      // Kiểm tra biên bàn cờ
+      if (toR < 0 || toR >= 10 || toC < 3 || toC > 5) continue;
+
+      // Kiểm tra trong cung
+      const isRed = this.board[row][col] === this.board[row][col].toUpperCase();
+      if (isRed && toR > 2) continue;
+      if (!isRed && toR < 7) continue;
+
+      if (this.canMove(row, col, toR, toC) && !this.isInCheck(color)) {
+        moveCount++;
+      }
+    }
+    return moveCount;
+  }
+  private createMoveKing(
+    col: number,
+    row: number,
+    color: 'w' | 'b' = 'w',
+  ): number {
+    let moveCount = 0;
+    const kingMoves = [
+      { dr: -1, dc: 0 },
+      { dr: 1, dc: 0 },
+      { dr: 0, dc: -1 },
+      { dr: 0, dc: 1 },
+    ];
+
+    const isRed = this.board[row][col] === this.board[row][col].toUpperCase();
+
+    for (const move of kingMoves) {
+      const toR = row + move.dr;
+      const toC = col + move.dc;
+
+      // Kiểm tra trong cung
+      if (toC < 3 || toC > 5) continue;
+      if (isRed && (toR < 0 || toR > 2)) continue;
+      if (!isRed && (toR < 7 || toR > 9)) continue;
+
+      if (this.canMove(row, col, toR, toC) && !this.isInCheck(color)) {
+        moveCount++;
+      }
+    }
+
+    // Kiểm tra tướng đối mặt (cùng cột, không bị cản)
+    let enemyKingRow = -1;
+    for (let r = 0; r < 10; r++) {
+      const piece = this.board[r][col];
+      if (piece === '') continue;
+      if (piece.toLowerCase() === 'k' && r !== row) {
+        enemyKingRow = r;
+        break;
+      } else break; // bị cản
+    }
+
+    if (
+      enemyKingRow !== -1 &&
+      this.canMove(row, col, enemyKingRow, col) &&
+      !this.isInCheck(color)
+    ) {
+      moveCount++;
+    }
+    return moveCount;
+  }
+  private createMovePawn(
+    col: number,
+    row: number,
+    color: 'w' | 'b' = 'w',
+  ): number {
+    let moveCount = 0;
+    const isRed = this.board[row][col] === this.board[row][col].toUpperCase();
+    const forward = isRed ? 1 : -1;
+
+    // Đi thẳng
+    const toR = row + forward;
+    if (toR >= 0 && toR < 10) {
+      if (this.canMove(row, col, toR, col) && !this.isInCheck(color))
+        moveCount++;
+    }
+
+    // Nếu đã qua sông, có thể đi ngang
+    const crossedRiver = isRed ? row >= 5 : row <= 4;
+    if (crossedRiver) {
+      for (const dc of [-1, 1]) {
+        const toC = col + dc;
+        if (toC >= 0 && toC < 9) {
+          if (this.canMove(row, col, row, toC) && !this.isInCheck(color))
+            moveCount++;
+        }
+      }
+    }
+    return moveCount;
+  }
+  private createMoveCannon(
+    col: number,
+    row: number,
+    color: 'w' | 'b' = 'w',
+  ): number {
+    let moveCount = 0;
+    // Di chuyển theo 4 hướng
+    const directions = [
+      { dr: -1, dc: 0 },
+      { dr: 1, dc: 0 },
+      { dr: 0, dc: -1 },
+      { dr: 0, dc: 1 },
+    ];
+
+    for (const { dr, dc } of directions) {
+      let r = row + dr;
+      let c = col + dc;
+      let hasJumped = false;
+
+      while (r >= 0 && r < 10 && c >= 0 && c < 9) {
+        const target = this.board[r][c];
+
+        if (!hasJumped) {
+          if (target === '') {
+            if (this.canMove(row, col, r, c) && !this.isInCheck(color))
+              moveCount++;
+          } else {
+            hasJumped = true;
+          }
+        } else {
+          if (target !== '') {
+            if (this.canMove(row, col, r, c) && !this.isInCheck(color))
+              moveCount++;
+            break;
+          }
+        }
+
+        r += dr;
+        c += dc;
+      }
+    }
+    return moveCount;
+  }
   generateMove(color: 'w' | 'b' = 'w'): number {
     let moveCount = 0;
     for (let row = 0; row < 10; row++) {
@@ -568,266 +829,31 @@ export default class Xiangqi {
         if (isPlayerPiece) {
           switch (piece.toLowerCase()) {
             case 'r': {
-              // Duyệt theo hàng (ngang)
-              for (let c = col - 1; c >= 0; c--) {
-                if (this.board[row][c] !== '') {
-                  if (this.canMove(row, col, row, c) && !this.isInCheck(color))
-                    moveCount++;
-                  break;
-                }
-                if (this.canMove(row, col, row, c) && !this.isInCheck(color))
-                  moveCount++;
-              }
-              for (let c = col + 1; c < 9; c++) {
-                if (this.board[row][c] !== '') {
-                  if (this.canMove(row, col, row, c) && !this.isInCheck(color))
-                    moveCount++;
-                  break;
-                }
-                if (this.canMove(row, col, row, c) && !this.isInCheck(color))
-                  moveCount++;
-              }
-
-              // Duyệt theo cột (dọc)
-              for (let r = row - 1; r >= 0; r--) {
-                if (this.board[r][col] !== '') {
-                  if (this.canMove(row, col, r, col) && !this.isInCheck(color))
-                    moveCount++;
-                  break;
-                }
-                if (this.canMove(row, col, r, col) && !this.isInCheck(color))
-                  moveCount++;
-              }
-              for (let r = row + 1; r < 10; r++) {
-                if (this.board[r][col] !== '') {
-                  if (this.canMove(row, col, r, col) && !this.isInCheck(color))
-                    moveCount++;
-                  break;
-                }
-                if (this.canMove(row, col, r, col) && !this.isInCheck(color))
-                  moveCount++;
-              }
+              moveCount = this.createMoveRook(col, row, color);
               break;
             }
             case 'n': {
-              const horseMoves = [
-                { dr: -2, dc: -1, blockR: -1, blockC: 0 }, // Lên 2 trái 1
-                { dr: -2, dc: 1, blockR: -1, blockC: 0 }, // Lên 2 phải 1
-                { dr: -1, dc: -2, blockR: 0, blockC: -1 }, // Lên 1 trái 2
-                { dr: -1, dc: 2, blockR: 0, blockC: 1 }, // Lên 1 phải 2
-                { dr: 1, dc: -2, blockR: 0, blockC: -1 }, // Xuống 1 trái 2
-                { dr: 1, dc: 2, blockR: 0, blockC: 1 }, // Xuống 1 phải 2
-                { dr: 2, dc: -1, blockR: 1, blockC: 0 }, // Xuống 2 trái 1
-                { dr: 2, dc: 1, blockR: 1, blockC: 0 }, // Xuống 2 phải 1
-              ];
-
-              for (const move of horseMoves) {
-                const toR = row + move.dr;
-                const toC = col + move.dc;
-                const blockR = row + move.blockR;
-                const blockC = col + move.blockC;
-
-                // Kiểm tra trong biên
-                if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
-
-                // Kiểm tra bị cản chân mã
-                if (this.board[blockR]?.[blockC] !== '') continue;
-
-                // Nếu đi được và không bị chiếu, tăng moveCount
-                if (
-                  this.canMove(row, col, toR, toC) &&
-                  !this.isInCheck(color)
-                ) {
-                  moveCount++;
-                }
-              }
+              moveCount = this.createMoveKnight(col, row, color);
               break;
             }
             case 'b': {
-              const bishopMoves = [
-                { dr: -2, dc: -2, eyeR: -1, eyeC: -1 },
-                { dr: -2, dc: 2, eyeR: -1, eyeC: 1 },
-                { dr: 2, dc: -2, eyeR: 1, eyeC: -1 },
-                { dr: 2, dc: 2, eyeR: 1, eyeC: 1 },
-              ];
-
-              for (const move of bishopMoves) {
-                const toR = row + move.dr;
-                const toC = col + move.dc;
-                const eyeR = row + move.eyeR;
-                const eyeC = col + move.eyeC;
-
-                // Kiểm tra biên bàn cờ
-                if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
-
-                // Kiểm tra giới hạn sông
-                const isRed =
-                  this.board[row][col] === this.board[row][col].toUpperCase();
-                if (isRed && toR > 4) continue;
-                if (!isRed && toR < 5) continue;
-
-                // Kiểm tra mắt tượng bị chặn
-                if (this.board[eyeR]?.[eyeC] !== '') continue;
-
-                if (
-                  this.canMove(row, col, toR, toC) &&
-                  !this.isInCheck(color)
-                ) {
-                  moveCount++;
-                }
-              }
+              moveCount = this.createMoveBishop(col, row, color);
               break;
             }
             case 'a': {
-              const advisorMoves = [
-                { dr: -1, dc: -1 },
-                { dr: -1, dc: 1 },
-                { dr: 1, dc: -1 },
-                { dr: 1, dc: 1 },
-              ];
-
-              for (const move of advisorMoves) {
-                const toR = row + move.dr;
-                const toC = col + move.dc;
-
-                // Kiểm tra biên bàn cờ
-                if (toR < 0 || toR >= 10 || toC < 3 || toC > 5) continue;
-
-                // Kiểm tra trong cung
-                const isRed =
-                  this.board[row][col] === this.board[row][col].toUpperCase();
-                if (isRed && toR > 2) continue;
-                if (!isRed && toR < 7) continue;
-
-                if (
-                  this.canMove(row, col, toR, toC) &&
-                  !this.isInCheck(color)
-                ) {
-                  moveCount++;
-                }
-              }
+              moveCount = this.createMoveAdvisor(col, row, color);
               break;
             }
             case 'k': {
-              const kingMoves = [
-                { dr: -1, dc: 0 },
-                { dr: 1, dc: 0 },
-                { dr: 0, dc: -1 },
-                { dr: 0, dc: 1 },
-              ];
-
-              const isRed =
-                this.board[row][col] === this.board[row][col].toUpperCase();
-
-              for (const move of kingMoves) {
-                const toR = row + move.dr;
-                const toC = col + move.dc;
-
-                // Kiểm tra trong cung
-                if (toC < 3 || toC > 5) continue;
-                if (isRed && (toR < 0 || toR > 2)) continue;
-                if (!isRed && (toR < 7 || toR > 9)) continue;
-
-                if (
-                  this.canMove(row, col, toR, toC) &&
-                  !this.isInCheck(color)
-                ) {
-                  moveCount++;
-                }
-              }
-
-              // Kiểm tra tướng đối mặt (cùng cột, không bị cản)
-              let enemyKingRow = -1;
-              for (let r = 0; r < 10; r++) {
-                const piece = this.board[r][col];
-                if (piece === '') continue;
-                if (piece.toLowerCase() === 'k' && r !== row) {
-                  enemyKingRow = r;
-                  break;
-                } else break; // bị cản
-              }
-
-              if (
-                enemyKingRow !== -1 &&
-                this.canMove(row, col, enemyKingRow, col) &&
-                !this.isInCheck(color)
-              ) {
-                moveCount++;
-              }
-
+              moveCount = this.createMoveKing(col, row, color);
               break;
             }
             case 'c': {
-              // Di chuyển theo 4 hướng
-              const directions = [
-                { dr: -1, dc: 0 },
-                { dr: 1, dc: 0 },
-                { dr: 0, dc: -1 },
-                { dr: 0, dc: 1 },
-              ];
-
-              for (const { dr, dc } of directions) {
-                let r = row + dr;
-                let c = col + dc;
-                let hasJumped = false;
-
-                while (r >= 0 && r < 10 && c >= 0 && c < 9) {
-                  const target = this.board[r][c];
-
-                  if (!hasJumped) {
-                    if (target === '') {
-                      if (
-                        this.canMove(row, col, r, c) &&
-                        !this.isInCheck(color)
-                      )
-                        moveCount++;
-                    } else {
-                      hasJumped = true;
-                    }
-                  } else {
-                    if (target !== '') {
-                      if (
-                        this.canMove(row, col, r, c) &&
-                        !this.isInCheck(color)
-                      )
-                        moveCount++;
-                      break;
-                    }
-                  }
-
-                  r += dr;
-                  c += dc;
-                }
-              }
+              moveCount = this.createMoveCannon(col, row, color);
               break;
             }
             case 'p': {
-              const isRed =
-                this.board[row][col] === this.board[row][col].toUpperCase();
-              const forward = isRed ? 1 : -1;
-
-              // Đi thẳng
-              const toR = row + forward;
-              if (toR >= 0 && toR < 10) {
-                if (this.canMove(row, col, toR, col) && !this.isInCheck(color))
-                  moveCount++;
-              }
-
-              // Nếu đã qua sông, có thể đi ngang
-              const crossedRiver = isRed ? row >= 5 : row <= 4;
-              if (crossedRiver) {
-                for (const dc of [-1, 1]) {
-                  const toC = col + dc;
-                  if (toC >= 0 && toC < 9) {
-                    if (
-                      this.canMove(row, col, row, toC) &&
-                      !this.isInCheck(color)
-                    )
-                      moveCount++;
-                  }
-                }
-              }
-
+              moveCount = this.createMovePawn(col, row, color);
               break;
             }
           }
@@ -837,9 +863,9 @@ export default class Xiangqi {
     return moveCount;
   }
 
-  getWinner(): 'black' | 'red' | 'draw' | null {
-    if (this.isCheckmate('w')) return 'black'; // Black wins
-    if (this.isCheckmate('b')) return 'red'; // White/Red wins
+  getWinner(): 'black_win' | 'white_win' | 'draw' | null {
+    if (this.isCheckmate('w')) return 'black_win'; // Black wins
+    if (this.isCheckmate('b')) return 'white_win'; // White/Red wins
     if (this.isStalemate('w') || this.isStalemate('b')) return 'draw'; // Black wins by stalemate
     return null; // No winner yet / draw
   }

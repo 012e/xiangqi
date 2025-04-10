@@ -671,7 +671,6 @@ describe('Xiangqi', () => {
        * King is in check by rook
        * Ensure that king must move to escape check
        */
-      // console.log(xiangqi.move({ from: 'e1', to: 'd1' }));
       expect(() => xiangqi.move({ from: 'e10', to: 'd10' })).not.toThrow();
       // Reset game state
       const newXiangqi = new Xiangqi(fen);
@@ -767,7 +766,7 @@ describe('Xiangqi', () => {
 
       // Game should be over
       expect(xiangqi.isGameOver()).toBe(true);
-      expect(xiangqi.getWinner()).toBe('red');
+      expect(xiangqi.getWinner()).toBe('white_win');
     });
 
     it('should handle stalemate correctly', () => {
