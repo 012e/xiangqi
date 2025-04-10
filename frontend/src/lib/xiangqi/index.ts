@@ -70,10 +70,14 @@ export default class Xiangqi {
     fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0',
   ) {
     this.parseFen(fen);
-    this.kings.b = this.findKing('b', this.board);
-    this.kings.w = this.findKing('w', this.board);
+    const kingPosB = this.findKing('b', this.board);
+    const kingPosW = this.findKing('w', this.board);
+    if (kingPosB && kingPosW) {
+      this.kings.b = kingPosB;
+      this.kings.w = kingPosW;
+    }
   }
-  findKing(Color: 'w' | 'b' = 'w', board: string[][]): number[] {
+  findKing(Color: 'w' | 'b' = 'w', board: string[][]): number[] | null {
     const king = Color === 'w' ? 'K' : 'k';
     for (let row = 0; row < 10; row++) {
       for (let col = 0; col < 9; col++) {
@@ -82,7 +86,7 @@ export default class Xiangqi {
         }
       }
     }
-    throw new Error(`King not found for color ${Color}`);
+    return null;
   }
   boardAsStr(): string {
     let s = '';
@@ -270,6 +274,7 @@ export default class Xiangqi {
         return this.invalidMove(fromCoords, toCoords);
       }
     }
+
     return OK_RESULT;
   }
 
@@ -303,6 +308,7 @@ export default class Xiangqi {
     // Update player and move count
     this.currentPlayer = this.currentPlayer === 'w' ? 'b' : 'w';
     this.moveCount++;
+
     return true;
   }
 
@@ -337,9 +343,13 @@ export default class Xiangqi {
     }
     this.board[toRow][toCol] = moveFrom;
     this.board[fromRow][fromCol] = '';
+
     // Kiểm tra xem nước đi có hợp lệ
     const invalidMove =
-      this.isInCheck(this.currentPlayer) || this.isKingFaceToFace(this.board);
+      this.isInCheck(this.currentPlayer) || this.isKingFaceToFace();
+    console.log(this.isKingFaceToFace());
+    console.log(this.kings.b);
+    console.log(this.kings.w);
     if (invalidMove) {
       // Hoàn tác nước đi
       if (this.board[toRow][toCol] === color) {
@@ -373,14 +383,19 @@ export default class Xiangqi {
     );
   }
 
-  isKingFaceToFace(board: string[][]): boolean {
-    const [wRow, wCol] = this.findKing('w', board);
-    const [bRow, bCol] = this.findKing('b', board);
-    if (wCol === bCol) {
-      for (let i = wRow - 1; i > bRow; i--) {
-        if (this.board[i][wCol]) return false;
+  isKingFaceToFace(): boolean {
+    const kingPosW = this.findKing('w', this.board);
+    const kingPosB = this.findKing('b', this.board);
+    if (kingPosB && kingPosW) {
+      const [wRow, wCol] = kingPosW;
+      const [bRow, bCol] = kingPosB;
+      if (wCol === bCol) {
+        for (let i = wRow - 1; i > bRow; i--) {
+          if (this.board[i][wCol]) return false;
+        }
+        return true;
       }
-      return true;
+      return false;
     }
     return false;
   }
@@ -477,14 +492,18 @@ export default class Xiangqi {
 
       case 'P': // pawn
         if (piece === 'p') {
-          if (crossedRiver([fromRow, fromCol], true)) {
-            if (dr === 1 && Math.abs(dc) <= 1) return true;
+          // Đen
+          if (crossedRiver([fromRow, fromCol], false)) {
+            if ((dr === 1 && dc === 0) || (dr === 0 && Math.abs(dc) === 1))
+              return true;
           } else {
             if (dr === 1 && dc === 0) return true;
           }
         } else {
-          if (crossedRiver([fromRow, fromCol], false)) {
-            if (dr === -1 && Math.abs(dc) <= 1) return true;
+          // Đỏ
+          if (crossedRiver([fromRow, fromCol], true)) {
+            if ((dr === -1 && dc === 0) || (dr === 0 && Math.abs(dc) === 1))
+              return true;
           } else {
             if (dr === -1 && dc === 0) return true;
           }
