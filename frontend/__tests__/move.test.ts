@@ -508,6 +508,29 @@ describe('Xiangqi', () => {
       );
     });
 
+    it('should not move knight king face to face', () => {
+      const fen = boardStrToFen(dedent`
+        rnbakabnr
+        .........
+        .c.....c.
+        p.....p.p
+        ..p......
+        ..P......
+        P...N.P.P
+        .C.....C.
+        .........
+        R.BAKABNR`);
+
+      /*
+       * This would require a more complex setup
+       * Mock test for checkmate detection
+       */
+      const mockXiangqi = new Xiangqi(fen);
+      // Assume we have a method to set custom positions for a checkmate position
+      expect(() => mockXiangqi.move({ from: 'e4', to: 'g5' })).toThrowError(
+        'Invalid move: e4 -> g5',
+      );
+    });
     it('should correctly handle checkmate scenarios', () => {
       const fen = boardStrToFen(
         dedent`
