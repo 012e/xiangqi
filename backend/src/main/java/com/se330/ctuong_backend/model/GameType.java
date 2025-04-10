@@ -7,23 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "game_types")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class GameType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "openid_sub", unique = true, nullable = false)
-    private String sub;
+    @Column(name = "type_name", nullable = false, length = 50)
+    private String typeName;
 
-    @Column(name = "email", nullable = false)
-    private String email;
+    @Column(name = "time_control", nullable = false)
+    private Integer timeControl;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "increment")
+    private Integer increment;
 }
