@@ -108,7 +108,7 @@ Nếu một nước đi không hợp lệ được gửi, máy chủ sẽ trả 
    "type": "State.GameEnd",
    "data": {
      "status": "draw",
-     "reason": "Đen bị cờ bí (stalemate)"
+     "reason": "stalemate"
    }
 }
 ```
