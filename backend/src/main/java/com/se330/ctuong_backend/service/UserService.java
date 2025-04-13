@@ -7,13 +7,10 @@ import com.auth0.json.mgmt.users.User;
 import com.se330.ctuong_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.net.http.HttpRequest;
+import java.security.Principal;
 
 @Service
 @Slf4j
@@ -23,8 +20,18 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void syncAuthUser(Authentication authentication) throws Auth0Exception {
-        var jwt = (JwtAuthenticationToken) authentication;
-        String subject = jwt.getToken().getSubject(); // this is the "sub" claim
+        if (authentication == null) {
+            throw new IllegalArgumentException("Authentication must not be null");
+        }
+        syncAuthUser((Principal) authentication.getPrincipal());
+    }
+
+    public void syncAuthUser(Principal principal) throws Auth0Exception {
+        if (principal == null) {
+            throw new IllegalArgumentException("Principal must not be null");
+        }
+        final var subject = principal.getName();
+
         User user = managementAPI.users().get(subject, new UserFilter()).execute().getBody();
         if (user == null) {
             throw new IllegalStateException("User not found in Auth0");

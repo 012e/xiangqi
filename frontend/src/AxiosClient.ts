@@ -1,37 +1,33 @@
-import axios  from "axios";
-
-
-
-let baseURL = "https://xiangqi-backend-e4f524a5a2ad.herokuapp.com";
-if (process.env.NODE_ENV === "development") {
-  baseURL = "http://localhost:8080";
+let baseURL = 'https://xiangqi-backend-e4f524a5a2ad.herokuapp.com';
+if (process.env.NODE_ENV === 'development') {
+    baseURL = 'http://localhost:8080';
 }
-  
 
-let api = axios.create({
-  baseURL: baseURL, 
-});
+import Axios, {AxiosRequestConfig} from 'axios';
 
-api.interceptors.request.use(
-  async (config) => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
+export const AXIOS_INSTANCE = Axios.create({baseURL: baseURL}); // use your own URL here or environment variable
 
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      // Handle token refresh logic here if needed
-      console.warn("Unauthorized! Redirecting to login...");
-    }
-    return Promise.reject(error);
-  },
-);
+// add a second `options` argument here if you want to pass extra options to each generated query
 
-export default api;
+export const customInstance = <T>(
+    config: AxiosRequestConfig,
+    options?: AxiosRequestConfig,
+): Promise<T> => {
+    const source = Axios.CancelToken.source();
+
+    const promise = AXIOS_INSTANCE({
+        ...config,
+
+        ...options,
+
+        cancelToken: source.token,
+    }).then(({data}) => data);
+
+    // @ts-ignore
+
+    promise.cancel = () => {
+        source.cancel('Query was cancelled');
+    };
+
+    return promise;
+};

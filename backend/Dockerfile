@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
+
 RUN ./mvnw verify --fail-never
 
 COPY src ./src

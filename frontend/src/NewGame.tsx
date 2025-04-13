@@ -1,10 +1,10 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { useStompClient, useSubscription } from "react-stomp-hooks";
-import { Button } from "./components/ui/button";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import {useAuth0} from "@auth0/auth0-react";
+import {useState} from "react";
+import {useNavigate} from "react-router";
+import {useStompClient, useSubscription} from "react-stomp-hooks";
+import {Button} from "./components/ui/button";
+import {Loader2} from "lucide-react";
+import {toast} from "sonner";
 
 type Game = {
   gameId: string;
@@ -24,10 +24,10 @@ export default function NewGame({
   useSubscription(`/user/${user?.sub}/game/join`, (message) => {
     const game = JSON.parse(message.body) as Game;
     let player = "white";
-    if (game.whitePlayerId === user?.sub) {
+    if (game.blackPlayerId === user?.sub) {
       player = "black";
     }
-    navigate(`/game/${game.gameId}?player=${player}`);
+    navigate(`/game/${game.gameId}`);
   });
 
   if (!user) {

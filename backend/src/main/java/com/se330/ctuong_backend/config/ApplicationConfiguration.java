@@ -1,10 +1,10 @@
 package com.se330.ctuong_backend.config;
 
 import com.auth0.client.mgmt.ManagementAPI;
-import dto.response.Game;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +17,6 @@ import java.util.Random;
 @Configuration
 @EnableScheduling
 public class ApplicationConfiguration {
-    public static Game DEFAULT_GAME = Game.builder()
-            .whitePlayerId("google-oauth2|107467322953502622934")
-            .blackPlayerId("auth0|67e67a37850ac85be855463a")
-            .build();
-
     @Value("${springdoc.oAuthFlow.authorizationUrl}")
     private String authorizationUrl;
 
@@ -73,5 +68,10 @@ public class ApplicationConfiguration {
     @Bean
     public ManagementAPI managementAPI() {
         return ManagementAPI.newBuilder(issuerUri, apiToken).build();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

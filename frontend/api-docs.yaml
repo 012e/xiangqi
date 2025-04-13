@@ -1,0 +1,90 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+security:
+  - okta: [ ]
+paths:
+  /health/hello:
+    get:
+      tags:
+        - health-controller
+      operationId: health
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /health/auth:
+    get:
+      tags:
+        - health-controller
+      operationId: healthAuth
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+  /game/{id}:
+    get:
+      tags:
+        - game-controller
+      operationId: getGame
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/GameResponse"
+components:
+  schemas:
+    GameResponse:
+      type: object
+      properties:
+        uciFen:
+          type: string
+        whitePlayer:
+          $ref: "#/components/schemas/User"
+        blackPlayer:
+          $ref: "#/components/schemas/User"
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        sub:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+  securitySchemes:
+    okta:
+      type: oauth2
+      scheme: bearer
+      bearerFormat: JWT
+      flows:
+        authorizationCode:
+          authorizationUrl: https://dev-l5aemj1026u4dqia.us.auth0.com/authorize
+          tokenUrl: https://dev-l5aemj1026u4dqia.us.auth0.com/oauth/token
+          scopes:
+            openid: openid
+            email: email
+            profile: profile

@@ -17,8 +17,9 @@ const BACKEND_URL =
     : "https://xiangqi-backend-e4f524a5a2ad.herokuapp.com";
 
 const queryClient = new QueryClient();
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+
+function Providers({ children }: { children: React.ReactNode }) {
+  return (
     <QueryClientProvider client={queryClient}>
       <Auth0Provider
         domain="dev-l5aemj1026u4dqia.us.auth0.com"
@@ -27,19 +28,28 @@ createRoot(document.getElementById("root")!).render(
           redirect_uri: window.location.origin,
           audience: "xiangqi-backend",
         }}
+        cacheLocation="localstorage"
       >
         <StompSessionProvider url={`${BACKEND_URL}/ws`}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<App />} />
-              <Route path="/token" element={<Token />} />
-              <Route path="/game/new" element={<NewGame />} />
-              <Route path="/game/:id" element={<OnlineGame />} />
-            </Routes>
-          </BrowserRouter>
+          {children}
           <Toaster />
         </StompSessionProvider>
       </Auth0Provider>
     </QueryClientProvider>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <Providers>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/token" element={<Token />} />
+          <Route path="/game/new" element={<NewGame />} />
+          <Route path="/game/:id" element={<OnlineGame />} />
+        </Routes>
+      </BrowserRouter>
+    </Providers>
   </StrictMode>,
 );

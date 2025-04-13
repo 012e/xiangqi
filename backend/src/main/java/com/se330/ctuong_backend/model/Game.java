@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.model;
 
+import com.se330.xiangqi.Xiangqi;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,26 +17,25 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class Game {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "game_type_id")
     private GameType gameType;
 
     @ManyToOne
-    @JoinColumn(name = "white_player_id", nullable = false)
+    @JoinColumn(name = "white_player_id")
     private User whitePlayer;
 
     @ManyToOne
-    @JoinColumn(name = "black_player_id", nullable = false)
+    @JoinColumn(name = "black_player_id")
     private User blackPlayer;
 
-    @Column(name = "white_player_rating", nullable = false)
+    @Column(name = "white_player_rating")
     private Float whitePlayerRating;
 
-    @Column(name = "black_player_rating", nullable = false)
+    @Column(name = "black_player_rating")
     private Float blackPlayerRating;
 
     @Column(name = "white_elo_change")
@@ -47,15 +47,14 @@ public class Game {
     @Column(name = "start_time")
     private Timestamp startTime = new Timestamp(System.currentTimeMillis());
 
+    @Column(name = "uci_fen", columnDefinition = "text")
+    private String uciFen = Xiangqi.INITIAL_UCI_FEN;
+
     @Column(name = "end_time")
     private Timestamp endTime;
 
     @Column(name = "result", length = 20)
     private String result;
-
-    @ManyToOne
-    @JoinColumn(name = "winner_id")
-    private User winner;
 
     @ManyToOne
     @JoinColumn(name = "tournament_id")

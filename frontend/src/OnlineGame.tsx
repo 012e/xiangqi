@@ -1,33 +1,19 @@
-import { useNavigate, useParams, useSearchParams } from "react-router";
-import { Chessboard } from "react-xiangqiboard";
-import {
-  BoardOrientation,
-  Square,
-} from "react-xiangqiboard/dist/chessboard/types";
-import { useOnlineGame } from "./useOnlineGame";
-import { useGameStore } from "@/stores/onlineGame"; // Import the store
+import {useParams} from 'react-router';
+import {Chessboard} from 'react-xiangqiboard';
+import {Square} from 'react-xiangqiboard/dist/chessboard/types';
+import {useOnlineGame} from './useOnlineGame';
+import {useGameStore} from '@/stores/onlineGame'; // Import the store
+import {Loader2} from 'lucide-react';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { game, onMove } = useOnlineGame(id);
-  
-  // Get the time from the store
-  const blackTime = useGameStore(state => state.blackTime);
-  const whiteTime = useGameStore(state => state.whiteTime);
-  const playingColor = useGameStore(state => state.playingColor);
+    const {game, onMove, isLoading} = useOnlineGame(id);
 
-  // Validate player and game ID
-  const player = searchParams.get("player") as BoardOrientation;
-  if (!player || (player !== "white" && player !== "black")) {
-    navigate("/");
-    return null;
-  }
-  if (!id) {
-    navigate("/");
-    return null;
-  }
+  // Get the time from the store
+    const blackTime = useGameStore((state) => state.blackTime);
+    const whiteTime = useGameStore((state) => state.whiteTime);
+    const playingColor = useGameStore((state) => state.playingColor);
+    const playerColor = useGameStore((state) => state.playerColor);
 
   // Format time from milliseconds to MM:SS
   const formatTime = (timeMs: number) => {
@@ -36,40 +22,53 @@ export default function OnlineGame() {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  function getPieceColor(piece: string): "white" | "black" {
-    return piece[0] === "b" ? "black" : "white";
+    function getPieceColor(piece: string): 'white' | 'black' {
+        return piece[0] === 'b' ? 'black' : 'white';
   }
-  
-  function isPlayerTurn({ piece, }: {
+
+    function isPlayerTurn({
+                              piece,
+                          }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
-    return getPieceColor(piece) === player;
+        return getPieceColor(piece) === playerColor;
   }
-  
+
   return (
     <div className="flex flex-col gap-10 justify-center items-center p-20">
       {/* Timer display */}
       <div className="flex justify-between w-full max-w-md">
-        <div className={`text-xl font-bold ${playingColor === 'black' ? 'text-red-600' : ''}`}>
+          <div
+              className={`text-xl font-bold ${playingColor === 'black' ? 'text-red-600' : ''}`}
+          >
           Black: {formatTime(blackTime)}
         </div>
-        <div className={`text-xl font-bold ${playingColor === 'white' ? 'text-red-600' : ''}`}>
+          <div
+              className={`text-xl font-bold ${playingColor === 'white' ? 'text-red-600' : ''}`}
+          >
           White: {formatTime(whiteTime)}
         </div>
       </div>
-      
-      <h1>{game.exportFen()}</h1>
-      <div className="w-1/2 h-1/2">
-        <Chessboard
-          boardWidth={400}
-          id="online-xiangqi-board"
-          onPieceDrop={onMove}
-          isDraggablePiece={isPlayerTurn}
-          boardOrientation={player}
-          position={game.exportFen()}
-        />
-      </div>
+
+        <h1>{game.exportFen()}</h1>
+        {isLoading ? (
+            <div className="flex justify-center items-enter w-full h-full animate-spin">
+                <Loader2/>{' '}
+            </div>
+        ) : (
+            <div className="w-1/2 h-1/2">
+                <Chessboard
+                    boardWidth={400}
+                    id="online-xiangqi-board"
+                    onPieceDrop={onMove}
+                    isDraggablePiece={isPlayerTurn}
+                    boardOrientation={playerColor}
+                    position={game.exportFen()}
+                    animationDuration={200}
+                />
+            </div>
+        )}
     </div>
   );
 }
