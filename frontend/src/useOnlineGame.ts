@@ -1,60 +1,65 @@
-import { useEffect } from 'react';
-import { useStompClient, useSubscription } from 'react-stomp-hooks';
-import { useAuth0 } from '@auth0/auth0-react';
-import { useGameStore } from '@/stores/onlineGame'; // Import your store
+import {useStompClient, useSubscription} from 'react-stomp-hooks';
+import {useGameActions, useGameStore} from '@/stores/onlineGame'; // Import your store
+import {deserializeState} from './lib/online/state';
+import {useGetGame} from './lib/api/game-controller/game-controller';
+import {useAuth0} from '@auth0/auth0-react';
+import {useEffect, useMemo, useState} from 'react';
 
 export function useOnlineGame(gameId: string | undefined) {
   if (!gameId) {
     throw new Error('Game ID is required');
   }
-  
-  const { user } = useAuth0();
   const stompClient = useStompClient();
-  
+    const {user} = useAuth0();
+    const [isFirstRun, setIsFirstRun] = useState(true);
+
+    const {init} = useGameActions();
+
   // Access store actions and state
-  const gameState = useGameStore(state => state.gameState);
-  const playerColor = useGameStore(state => state.playerColor);
-  const playingColor = useGameStore(state => state.playingColor);
-  const { move, init } = useGameStore(state => state.actions);
-  
-  // Initialize the game when hook is first used
+    const gameState = useGameStore((state) => state.gameState);
+    const playerColor = useGameStore((state) => state.playerColor);
+    const playingColor = useGameStore((state) => state.playingColor);
+    const {move, handleTopicMessage} = useGameStore((state) => state.actions);
+
+    const {data, isLoading: gameStateLoading} = useGetGame(gameId, {
+        query: {
+            gcTime: 0, // Replaces `cacheTime` in v5
+            staleTime: 0, // Always treat data as stale
+        },
+    });
+
+    const isLoading = useMemo(() => {
+        return gameStateLoading || !stompClient;
+    }, [gameStateLoading, stompClient]);
+
   useEffect(() => {
-    // Check if we need to initialize (only if not already initialized with this game ID)
-    if (useGameStore.getState().id !== gameId) {
-      init({
-        gameId,
-        player: user?.sub || 'anonymous',
-        playerColor: 'white', // Default to white, might be updated from server
-        playingColor: 'white', // Default starting color
-        timeBlack: 60 * 3 * 1000, // 3 minutes
-        timeWhite: 60 * 3 * 1000,
-        isStarted: false,
-        // initialFen would come from the server
-      });
-    }
-    
-    // Cleanup function
-    return () => {
-      const interval = useGameStore.getState().interval;
-      if (interval) {
-        clearInterval(interval);
+      if (!data) return;
+      if (!isFirstRun) {
+          return;
       }
-    };
-  }, [gameId, user?.sub]);
-  
+
+      const fen = data.uciFen?.substring(0, data.uciFen?.indexOf('|')).trim();
+
+      init({
+          gameId: gameId,
+          isStarted: false,
+          playerColor: user!.sub! === data.whitePlayer?.sub! ? 'white' : 'black',
+          playingColor: 'white',
+          player: user!.sub!,
+          initialFen: fen,
+          timeBlack: 60 * 3 * 1000,
+          timeWhite: 60 * 3 * 1000,
+      });
+      setIsFirstRun(false);
+  }, [data, isFirstRun]);
+
   function onMove(from: string, to: string, _piece: string): boolean {
     if (!stompClient) {
       console.log('No stomp client');
       return false;
     }
-    
-    // Check if move is valid
-    const isValid = gameState.isLegalMove({ from, to }).ok;
-    
-    if (isValid) {
-      // Update local store first
-      move({ from, to });
-      
+
+      if (move({from, to})) {
       // Send move to server
       stompClient.publish({
         headers: {
@@ -63,53 +68,29 @@ export function useOnlineGame(gameId: string | undefined) {
         destination: `/app/game/${gameId}`,
         body: JSON.stringify({ from, to }),
       });
+      }
+
       return true;
-    }
-    
-    return false;
   }
-  
-  // Subscribe to opponent moves
-  useSubscription(
-    `/user/${user?.sub}/game/${gameId}`,
-    (message) => {
-      const { from, to } = JSON.parse(message.body);
-      
-      // Update our store with the opponent's move
-      move({ from, to });
-    },
-    {
-      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-    },
-  );
-  
+
   // Subscribe to game state updates
   useSubscription(
-    `/topic/game/${gameId}/state`,
+      `/topic/game/${gameId}`,
     (message) => {
-      const gameData = JSON.parse(message.body);
-      
-      // Update game state from server
-      init({
-        gameId,
-        player: user?.sub || 'anonymous',
-        playerColor: gameData.playerColor,
-        playingColor: gameData.playingColor,
-        timeBlack: gameData.blackTime,
-        timeWhite: gameData.whiteTime,
-        isStarted: gameData.isStarted,
-        initialFen: gameData.fen,
-      });
+        const gameData = deserializeState(JSON.parse(message.body));
+        handleTopicMessage(gameData);
     },
     {
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
     },
   );
-  
-  return { 
-    game: gameState, 
+
+    return {
+        game: gameState,
+        fen: useGameStore((state) => state.fen),
     onMove,
     playerColor,
-    playingColor
+        playingColor,
+        isLoading,
   };
 }

@@ -61,6 +61,8 @@ export default class Xiangqi {
   private currentPlayer: 'w' | 'b' = 'w'; // 'w' for red, 'b' for black
   private moveCount = 0;
   private kings = { b: [0, 4], w: [9, 4] }; // Initial positions of kings
+  static readonly DEFAULT_FEN =
+      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0';
 
   /**
    * Initialize a Xiangqi game from FEN notation
@@ -84,6 +86,7 @@ export default class Xiangqi {
     }
     throw new Error(`King not found for color ${Color}`);
   }
+
   boardAsStr(): string {
     let s = '';
     for (let i = 0; i < 10; i++) {
@@ -329,8 +332,29 @@ export default class Xiangqi {
     };
   }
 
+  getWinner(): 'black' | 'white' | 'draw' | null {
+    if (this.isCheckmate('w')) return 'black'; // Black wins
+    if (this.isCheckmate('b')) return 'white'; // White/Red wins
+    if (this.isStalemate('w') || this.isStalemate('b')) return 'draw'; // Black wins by stalemate
+    return null; // No winner yet / draw
+  }
+
+  isCheckmate(color: 'w' | 'b' = 'w'): boolean {
+    return this.isInCheck(color) && this.generateMove(color) === 0;
+  }
+
+  isGameOver(): boolean {
+    return (
+        this.moveCount >= 120 ||
+        this.isCheckmate('w') ||
+        this.isCheckmate('b') ||
+        this.isStalemate() ||
+        this.isDraw()
+    );
+  }
+
   // king in check when move
-  moveInCheckValidator(
+  private moveInCheckValidator(
     [fromRow, fromCol]: [number, number],
     [toRow, toCol]: [number, number],
   ): Result {
@@ -366,31 +390,6 @@ export default class Xiangqi {
     return OK_RESULT;
   }
 
-  isCheckmate(color: 'w' | 'b' = 'w'): boolean {
-    return this.isInCheck(color) && this.generateMove(color) === 0;
-  }
-
-  isGameOver(): boolean {
-    return (
-      this.moveCount >= 120 ||
-      this.isCheckmate('w') ||
-      this.isCheckmate('b') ||
-      this.isStalemate() ||
-      this.isDraw()
-    );
-  }
-
-  isKingFaceToFace(board: string[][]): boolean {
-    const [wRow, wCol] = this.findKing('w', board);
-    const [bRow, bCol] = this.findKing('b', board);
-    if (wCol === bCol) {
-      for (let i = wRow - 1; i > bRow; i--) {
-        if (this.board[i][wCol]) return false;
-      }
-      return true;
-    }
-    return false;
-  }
   isInCheck(Color: 'w' | 'b' = 'w'): boolean {
     const enemy = Color === 'w' ? 'b' : 'w';
     // current w - enemy b
@@ -415,92 +414,17 @@ export default class Xiangqi {
 
     return false; // King is not in check
   }
-  canMove(
-    fromRow: number,
-    fromCol: number,
-    toRow: number,
-    toCol: number,
-  ): boolean {
-    const piece = this.board[fromRow][fromCol];
-    const target = this.board[toRow][toCol];
-    if (!piece || !target) return false;
 
-    const dr = toRow - fromRow; // move row
-    const dc = toCol - fromCol; // move col
-
-    switch (piece.toUpperCase()) {
-      case 'R': // Xe
-        if (dr !== 0 && dc !== 0) return false;
-        if (dr === 0) {
-          const step = dc > 0 ? 1 : -1;
-          for (let c = fromCol + step; c !== toCol; c += step) {
-            if (this.board[fromRow][c]) return false;
-          }
-        } else {
-          const step = dr > 0 ? 1 : -1;
-          for (let r = fromRow + step; r !== toRow; r += step) {
-            if (this.board[r][fromCol]) return false;
-          }
-        }
-        return true;
-
-      case 'C': {
-        // Pháo
-        if (dr !== 0 && dc !== 0) return false;
-        let count = 0;
-        if (dr === 0) {
-          const step = dc > 0 ? 1 : -1;
-          for (let c = fromCol + step; c !== toCol; c += step) {
-            if (this.board[fromRow][c]) count++;
-          }
-        } else {
-          const step = dr > 0 ? 1 : -1;
-          for (let r = fromRow + step; r !== toRow; r += step) {
-            if (this.board[r][fromCol]) count++;
-          }
-        }
-        if (count === 0 && !target) return true;
-        if (count === 1 && target) return true;
-        return false;
+  private isKingFaceToFace(board: string[][]): boolean {
+    const [wRow, wCol] = this.findKing('w', board);
+    const [bRow, bCol] = this.findKing('b', board);
+    if (wCol === bCol) {
+      for (let i = wRow - 1; i > bRow; i--) {
+        if (this.board[i][wCol]) return false;
       }
-
-      case 'N': // Mã
-        if (
-          !(
-            (Math.abs(dr) === 2 && Math.abs(dc) === 1) ||
-            (Math.abs(dr) === 1 && Math.abs(dc) === 2)
-          )
-        )
-          return false;
-
-        if (Math.abs(dr) === 2) {
-          const blockRow = fromRow + (dr > 0 ? 1 : -1);
-          if (this.board[blockRow][fromCol]) return false;
-        } else {
-          const blockCol = fromCol + (dc > 0 ? 1 : -1);
-          if (this.board[fromRow][blockCol]) return false;
-        }
-        return true;
-
-      case 'P': // pawn
-        if (piece === 'p') {
-          if (crossedRiver([fromRow, fromCol], true)) {
-            if (dr === 1 && Math.abs(dc) <= 1) return true;
-          } else {
-            if (dr === 1 && dc === 0) return true;
-          }
-        } else {
-          if (crossedRiver([fromRow, fromCol], false)) {
-            if (dr === -1 && Math.abs(dc) <= 1) return true;
-          } else {
-            if (dr === -1 && dc === 0) return true;
-          }
+      return true;
         }
         return false;
-
-      default:
-        return false;
-    }
   }
   // in draw
   isDraw(): boolean {
@@ -825,10 +749,91 @@ export default class Xiangqi {
     return moveCount;
   }
 
-  getWinner(): 'black' | 'red' | 'draw' | null {
-    if (this.isCheckmate('w')) return 'black'; // Black wins
-    if (this.isCheckmate('b')) return 'red'; // White/Red wins
-    if (this.isStalemate('w') || this.isStalemate('b')) return 'draw'; // Black wins by stalemate
-    return null; // No winner yet / draw
+  private canMove(
+      fromRow: number,
+      fromCol: number,
+      toRow: number,
+      toCol: number,
+  ): boolean {
+    const piece = this.board[fromRow][fromCol];
+    const target = this.board[toRow][toCol];
+    if (!piece || !target) return false;
+
+    const dr = toRow - fromRow; // move row
+    const dc = toCol - fromCol; // move col
+
+    switch (piece.toUpperCase()) {
+      case 'R': // Xe
+        if (dr !== 0 && dc !== 0) return false;
+        if (dr === 0) {
+          const step = dc > 0 ? 1 : -1;
+          for (let c = fromCol + step; c !== toCol; c += step) {
+            if (this.board[fromRow][c]) return false;
+          }
+        } else {
+          const step = dr > 0 ? 1 : -1;
+          for (let r = fromRow + step; r !== toRow; r += step) {
+            if (this.board[r][fromCol]) return false;
+          }
+        }
+        return true;
+
+      case 'C': {
+        // Pháo
+        if (dr !== 0 && dc !== 0) return false;
+        let count = 0;
+        if (dr === 0) {
+          const step = dc > 0 ? 1 : -1;
+          for (let c = fromCol + step; c !== toCol; c += step) {
+            if (this.board[fromRow][c]) count++;
+          }
+        } else {
+          const step = dr > 0 ? 1 : -1;
+          for (let r = fromRow + step; r !== toRow; r += step) {
+            if (this.board[r][fromCol]) count++;
+          }
+        }
+        if (count === 0 && !target) return true;
+        if (count === 1 && target) return true;
+        return false;
+      }
+
+      case 'N': // Mã
+        if (
+            !(
+                (Math.abs(dr) === 2 && Math.abs(dc) === 1) ||
+                (Math.abs(dr) === 1 && Math.abs(dc) === 2)
+            )
+        )
+          return false;
+
+        if (Math.abs(dr) === 2) {
+          const blockRow = fromRow + (dr > 0 ? 1 : -1);
+          if (this.board[blockRow][fromCol]) return false;
+        } else {
+          const blockCol = fromCol + (dc > 0 ? 1 : -1);
+          if (this.board[fromRow][blockCol]) return false;
+        }
+        return true;
+
+      case 'P': // pawn
+        if (piece === 'p') {
+          if (crossedRiver([fromRow, fromCol], true)) {
+            if (dr === 1 && Math.abs(dc) <= 1) return true;
+          } else {
+            if (dr === 1 && dc === 0) return true;
+          }
+        } else {
+          if (crossedRiver([fromRow, fromCol], false)) {
+            if (dr === -1 && Math.abs(dc) <= 1) return true;
+          } else {
+            if (dr === -1 && dc === 0) return true;
+          }
+        }
+        return false;
+
+      default:
+        return false;
+    }
   }
 }

@@ -1,6 +1,7 @@
 package com.se330.ctuong_backend.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +12,10 @@ import java.sql.Timestamp;
 public class UserAchievement {
     @Embeddable
     @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Id implements java.io.Serializable {
+    public static class Id implements java.io.Serializable {
         private Integer userId;
         private Integer achievementId;
     }

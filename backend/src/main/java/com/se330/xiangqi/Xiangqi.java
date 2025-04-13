@@ -80,7 +80,7 @@ public class Xiangqi {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 9; j++) {
-                s.append(board[i][j] != null ? board[i][j] : ".");
+                s.append(!board[i][j].isBlank() ? board[i][j] : ".");
             }
             s.append("\n");
         }
@@ -119,7 +119,7 @@ public class Xiangqi {
     }
 
     private void toggleCurrentPlayer() {
-        currentPlayer = (currentPlayer == 'w' ? 'w' : 'r');
+        currentPlayer = (currentPlayer == 'w' ? 'b' : 'w');
     }
 
 

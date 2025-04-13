@@ -1,21 +1,28 @@
-import { bench, describe } from 'vitest';
+import {bench, describe} from 'vitest';
 import Xiangqi from '../src/lib/xiangqi';
-import { Chess } from 'chess.js';
+import {Chess} from 'chess.js';
 
-describe('simple move', () => {
-  bench('our library', () => {
-    const board = new Xiangqi();
-    board.move({ from: 'a4', to: 'a5' });
-    board.move({ from: 'a7', to: 'a6' });
-    board.move({ from: 'a5', to: 'a6' });
-    board.move({ from: 'a10', to: 'a9' });
-  });
+describe('logic benchmarks', () => {
+    describe('board creation', () => {
+        bench('board creation', () => {
+            new Xiangqi();
+        });
 
-  bench('chess.js', () => {
-    const board = new Chess();
-    board.move({ from: 'a2', to: 'a3' });
-    board.move({ from: 'a7', to: 'a6' });
-    board.move({ from: 'a3', to: 'a4' });
-    board.move({ from: 'e7', to: 'e5' });
-  });
+        bench('chess.js', () => {
+            new Chess();
+        });
+    });
+
+    describe("move", () => {
+        bench("ours", () => {
+            const board = new Xiangqi();
+            board.move({from: "a4", to: "a5"});
+        });
+
+        bench("chess.js", () => {
+            const board = new Chess();
+            board.move({from: "a2", to: "a4"});
+        })
+
+    })
 });
