@@ -1,113 +1,136 @@
-import {
-  Calendar,
-  ChevronUp,
-  Home,
-  Play,
-  Search,
-  Settings,
-  User2,
-} from 'lucide-react';
+'use client';
+
+import type * as React from 'react';
+import { Bomb, BookOpen, Globe, Settings2, SquareTerminal } from 'lucide-react';
+
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from './ui/sidebar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+  SidebarHeader,
+  SidebarRail,
+} from '@/components/ui/sidebar';
 import { useAuth0 } from '@auth0/auth0-react';
+import { NavHeader } from './nav-header';
+import { NavContent } from './nav-content';
+import { NavUser } from './nav-user';
 
-export function AppSidebar() {
-  // Menu items.
-  const items = [
+// This is sample data.
+const data = {
+  user: {
+    name: 'User',
+    avatar: '/avatars/shadcn.jpg',
+  },
+  teams: {
+    name: 'Chess',
+    logo: Bomb,
+    plan: 'Xiangqi',
+  },
+
+  navMain: [
     {
-      title: 'Home',
+      title: 'Playground',
       url: '#',
-      icon: Home,
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: 'Play Online',
+          url: '#',
+        },
+        {
+          title: 'Play with friends',
+          url: '#',
+        },
+        {
+          title: 'Play with bot',
+          url: '#',
+        },
+      ],
     },
     {
-      title: 'Play',
-      url: '/play',
-      icon: Play,
+      title: 'Document',
+      url: '#',
+      icon: BookOpen,
+      items: [
+        {
+          title: 'Guide',
+          url: '#',
+        },
+        {
+          title: 'Rule',
+          url: '#',
+        },
+        {
+          title: 'Tip and trick',
+          url: '#',
+        },
+      ],
     },
     {
-      title: 'Learn',
+      title: 'Social',
       url: '#',
-      icon: Calendar,
-    },
-    {
-      title: 'Friends',
-      url: '#',
-      icon: Search,
+      icon: Globe,
+      items: [
+        {
+          title: 'Friend Link',
+          url: '#',
+        },
+        {
+          title: 'Send Email Invite',
+          url: '#',
+        },
+        {
+          title: 'Create challenge Link',
+          url: '#',
+        },
+      ],
     },
     {
       title: 'Settings',
       url: '#',
-      icon: Settings,
+      icon: Settings2,
+      items: [
+        {
+          title: 'Theme',
+          url: '#',
+        },
+        {
+          title: 'Account',
+          url: '#',
+        },
+        {
+          title: 'Profile',
+          url: '#',
+        },
+      ],
     },
-  ];
-  const { user, isAuthenticated, logout, loginWithRedirect } = useAuth0();
-  const login = async () => {
-    await loginWithRedirect();
+  ],
+};
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user, isAuthenticated } = useAuth0();
+  const usr: { name: string; email?: string; avatar?: string } = {
+    name: user?.name ?? 'Name error',
+    email: user?.email,
+    avatar: '/avatars/shadcn.jpg',
   };
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <NavHeader teams={data.teams} />
+      </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavContent items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> {!isAuthenticated ? 'Username' : user?.name}
-                  <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              {!isAuthenticated ? (
-                <DropdownMenuContent side="top" className="w-60">
-                  <DropdownMenuItem onClick={login}>Login</DropdownMenuItem>
-                </DropdownMenuContent>
-              ) : (
-                <DropdownMenuContent side="top" className="w-60">
-                  <DropdownMenuItem>
-                    <span>Account</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => logout()}>
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              )}
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        {!isAuthenticated ? (
+          <NavUser user={data.user} />
+        ) : (
+          <NavUser user={usr} />
+        )}
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

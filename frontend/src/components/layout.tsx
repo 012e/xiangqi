@@ -5,10 +5,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
-        <SidebarTrigger />
-        {children}
-      </main>
+      <SidebarTrigger className="-ml-1 gap-2 p-4" />
+      <main>{children}</main>
     </SidebarProvider>
   );
 }

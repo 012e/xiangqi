@@ -9,7 +9,7 @@ import {
   Signal,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import SelfPlayBoard from './SelfPlayBoard';
+import SelfPlayBoard from './self-playboard';
 import Layout from '@/components/layout';
 const menuItems = [
   {
