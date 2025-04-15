@@ -17,13 +17,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from './components/ui/sidebar';
+} from './ui/sidebar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './components/ui/dropdown-menu';
+} from './ui/dropdown-menu';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export function AppSidebar() {
   // Menu items.
@@ -35,7 +36,7 @@ export function AppSidebar() {
     },
     {
       title: 'Play',
-      url: '#',
+      url: '/play',
       icon: Play,
     },
     {
@@ -54,6 +55,10 @@ export function AppSidebar() {
       icon: Settings,
     },
   ];
+  const { user, isAuthenticated, logout, loginWithRedirect } = useAuth0();
+  const login = async () => {
+    await loginWithRedirect();
+  };
   return (
     <Sidebar>
       <SidebarContent>
@@ -81,21 +86,24 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 /> {!isAuthenticated ? 'Username' : user?.name}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuItem>
-                  <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+              {!isAuthenticated ? (
+                <DropdownMenuContent side="top" className="w-60">
+                  <DropdownMenuItem onClick={login}>Login</DropdownMenuItem>
+                </DropdownMenuContent>
+              ) : (
+                <DropdownMenuContent side="top" className="w-60">
+                  <DropdownMenuItem>
+                    <span>Account</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => logout()}>
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              )}
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>

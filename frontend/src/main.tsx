@@ -1,17 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Auth0Provider } from '@auth0/auth0-react';
-import './index.css';
+import '@/styles/index.css';
 import App from './App.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import Token from './Token.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import OnlineGame from './OnlineGame.tsx';
 import { StompSessionProvider } from 'react-stomp-hooks';
-import NewGame from './NewGame.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
-import { Play } from 'lucide-react';
-import PlayGame from './playGame.tsx';
+import NewGame from './play/NewGame.tsx';
+import OnlineGame from './play/OnlineGame.tsx';
+import PlayGame from './play/PlayGame.tsx';
 
 const BACKEND_URL =
   process.env.NODE_ENV === 'development'
@@ -47,8 +45,8 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
-          <Route path="/token" element={<Token />} />
           <Route path="/play" element={<PlayGame />} />
+          <Route path="/play/online" element={<PlayGame />} />
           <Route path="/game/new" element={<NewGame />} />
           <Route path="/game/:id" element={<OnlineGame />} />
         </Routes>

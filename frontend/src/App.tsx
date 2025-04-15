@@ -1,9 +1,9 @@
 import { Button } from './components/ui/button';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import NewGame from './NewGame';
-import SelfPlayBoard from './SelfPlayBoard';
-import Layout from './layout';
+import SelfPlayBoard from './play/SelfPlayBoard';
+import Layout from './components/layout';
+import NewGame from './play/NewGame';
 
 function App() {
   const {
@@ -33,7 +33,7 @@ function App() {
   }, [isAuthenticated, getAccessTokenSilently]);
 
   if (isLoading) {
-    return <h1>Loading</h1>;
+    return <h1>Loading...</h1>;
   }
 
   return (
