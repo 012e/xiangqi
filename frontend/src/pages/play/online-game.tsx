@@ -1,9 +1,9 @@
 import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
-import { useOnlineGame } from '../lib/online/useOnlineGame';
 import { useGameStore } from '@/stores/onlineGame'; // Import the store
 import { Loader2 } from 'lucide-react';
+import { useOnlineGame } from '@/lib/online/useOnlineGame';
 
 export default function OnlineGame() {
   const { id } = useParams();

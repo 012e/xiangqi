@@ -1,7 +1,7 @@
 import { Chessboard } from 'react-xiangqiboard';
 import { ChessboardProps } from 'react-xiangqiboard/dist/chessboard/types';
-import Xiangqi from '../lib/xiangqi';
 import { useState } from 'react';
+import Xiangqi from '@/lib/xiangqi';
 
 export default function SelfPlayBoard(props: ChessboardProps) {
   const [game, setGame] = useState(new Xiangqi());
