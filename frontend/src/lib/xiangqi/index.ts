@@ -41,6 +41,7 @@ function cloneStringMatrix(matrix: string[][]): string[][] {
 }
 
 export function crossedRiver(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [row, _col]: [number, number],
   isWhite = true,
 ): boolean {
@@ -62,7 +63,7 @@ export default class Xiangqi {
   private moveCount = 0;
   private kings = { b: [0, 4], w: [9, 4] }; // Initial positions of kings
   static readonly DEFAULT_FEN =
-      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0';
+    'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0';
 
   /**
    * Initialize a Xiangqi game from FEN notation
@@ -345,11 +346,11 @@ export default class Xiangqi {
 
   isGameOver(): boolean {
     return (
-        this.moveCount >= 120 ||
-        this.isCheckmate('w') ||
-        this.isCheckmate('b') ||
-        this.isStalemate() ||
-        this.isDraw()
+      this.moveCount >= 120 ||
+      this.isCheckmate('w') ||
+      this.isCheckmate('b') ||
+      this.isStalemate() ||
+      this.isDraw()
     );
   }
 
@@ -423,8 +424,8 @@ export default class Xiangqi {
         if (this.board[i][wCol]) return false;
       }
       return true;
-        }
-        return false;
+    }
+    return false;
   }
   // in draw
   isDraw(): boolean {
@@ -750,10 +751,10 @@ export default class Xiangqi {
   }
 
   private canMove(
-      fromRow: number,
-      fromCol: number,
-      toRow: number,
-      toCol: number,
+    fromRow: number,
+    fromCol: number,
+    toRow: number,
+    toCol: number,
   ): boolean {
     const piece = this.board[fromRow][fromCol];
     const target = this.board[toRow][toCol];
@@ -800,10 +801,10 @@ export default class Xiangqi {
 
       case 'N': // Mã
         if (
-            !(
-                (Math.abs(dr) === 2 && Math.abs(dc) === 1) ||
-                (Math.abs(dr) === 1 && Math.abs(dc) === 2)
-            )
+          !(
+            (Math.abs(dr) === 2 && Math.abs(dc) === 1) ||
+            (Math.abs(dr) === 1 && Math.abs(dc) === 2)
+          )
         )
           return false;
 

@@ -1,9 +1,9 @@
 import { Button } from './components/ui/button';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import SelfPlayBoard from './play/self-playboard';
 import Layout from './components/layout';
-import NewGame from './play/new-game';
+import NewGame from './pages/play/new-game';
+import SelfPlayBoard from './pages/play/self-playboard';
 
 function App() {
   const {

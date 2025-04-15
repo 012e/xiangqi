@@ -7,9 +7,9 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StompSessionProvider } from 'react-stomp-hooks';
 import { Toaster } from './components/ui/sonner.tsx';
-import NewGame from './play/new-game.tsx';
-import OnlineGame from './play/online-game.tsx';
-import PlayGame from './play/play-game.tsx';
+import PlayGame from './pages/play/play-game.tsx';
+import NewGame from './pages/play/new-game.tsx';
+import OnlineGame from './pages/play/online-game.tsx';
 
 const BACKEND_URL =
   process.env.NODE_ENV === 'development'
