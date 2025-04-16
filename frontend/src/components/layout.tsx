@@ -1,12 +1,16 @@
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './app-sidebar';
+import { Outlet } from 'react-router';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarTrigger className="-ml-1 gap-2 p-4" />
-      <main>{children}</main>
-    </SidebarProvider>
+    <div style={{ display: 'flex' }}>
+      <SidebarProvider>
+        <AppSidebar />
+      </SidebarProvider>
+      <div>
+        <Outlet />
+      </div>
+    </div>
   );
 }

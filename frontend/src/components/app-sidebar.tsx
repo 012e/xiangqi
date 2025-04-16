@@ -25,6 +25,7 @@ const data = {
     name: 'Chess',
     logo: Bomb,
     plan: 'Xiangqi',
+    url: '/play',
   },
 
   navMain: [
@@ -36,15 +37,15 @@ const data = {
       items: [
         {
           title: 'Play Online',
-          url: '#',
+          url: '/play/online',
         },
         {
           title: 'Play with friends',
-          url: '#',
+          url: '/play/friend',
         },
         {
           title: 'Play with bot',
-          url: '#',
+          url: '/play/bot',
         },
       ],
     },
