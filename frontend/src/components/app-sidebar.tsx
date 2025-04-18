@@ -12,23 +12,17 @@ import {
 } from '@/components/ui/sidebar';
 import { useAuth0 } from '@auth0/auth0-react';
 import { NavHeader } from './nav-header';
-import { NavContent } from './nav-content';
+import { NavContent, NavItem } from './nav-content';
 import { NavUser } from './nav-user';
+import { Button } from './ui/button';
 
-// This is sample data.
-const data = {
-  user: {
-    name: 'User',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  teams: {
-    name: 'Chess',
-    logo: Bomb,
-    plan: 'Xiangqi',
-    url: '/play',
-  },
-
-  navMain: [
+const teams = {
+  name: 'Chess',
+  logo: Bomb,
+  plan: 'Xiangqi',
+  url: '/play',
+};
+const navItems: NavItem[] = [
     {
       title: 'Playground',
       url: '#',
@@ -89,25 +83,25 @@ const data = {
     },
     {
       title: 'Settings',
-      url: '#',
+      url: 'settings',
       icon: Settings2,
-      items: [
-        {
-          title: 'Theme',
-          url: '#',
-        },
-        {
-          title: 'Account',
-          url: '#',
-        },
-        {
-          title: 'Profile',
-          url: '#',
-        },
-      ],
     },
-  ],
-};
+];
+
+function LoginRegister() {
+  const { loginWithRedirect } = useAuth0();
+  return (
+    <div className="flex flex-col gap-3">
+      <Button onClick={async () => await loginWithRedirect()}>Register</Button>
+      <Button
+        onClick={async () => await loginWithRedirect()}
+        variant={'outline'}
+      >
+        Login
+      </Button>
+    </div>
+  );
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user, isAuthenticated } = useAuth0();
@@ -119,17 +113,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavHeader teams={data.teams} />
+        <NavHeader teams={teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavContent items={data.navMain} />
+        <NavContent items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        {!isAuthenticated ? (
-          <NavUser user={data.user} />
-        ) : (
-          <NavUser user={usr} />
-        )}
+        {!isAuthenticated ? <LoginRegister /> : <NavUser user={usr} />}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
