@@ -15,15 +15,13 @@ import Layout from './components/layout.tsx';
 import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 import SettingPage from './pages/setting/setting-page.tsx';
-
-const BACKEND_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8080'
-    : 'https://xiangqi-backend-e4f524a5a2ad.herokuapp.com';
+import { useBackendUrl } from './stores/setting-store.ts';
 
 const queryClient = new QueryClient();
 
 function Providers({ children }: { children: React.ReactNode }) {
+  const backendUrl = useBackendUrl();
+
   return (
     <QueryClientProvider client={queryClient}>
       <Auth0Provider
@@ -35,7 +33,7 @@ function Providers({ children }: { children: React.ReactNode }) {
         }}
         cacheLocation="localstorage"
       >
-        <StompSessionProvider url={`${BACKEND_URL}/ws`}>
+        <StompSessionProvider url={`${backendUrl}/ws`}>
           {children}
           <Toaster />
         </StompSessionProvider>

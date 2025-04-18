@@ -8,51 +8,63 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useBackendUrl, useSettingActions } from '@/stores/setting-store';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
-  }),
+  backendUrl: z
+    .string()
+    .url('Invalid URL')
+    .refine(
+      async (val) => {
+        try {
+          const request = await fetch(val + "/health/hello", {
+            method: 'GET',
+          });
+          return request.ok;
+        } catch (error) {
+          return false;
+        }
+      },
+      { message: 'URL not reachable' },
+    ),
 });
 
-export function ProfileForm() {
+export function SettingForm() {
+  const { setBackendUrl } = useSettingActions();
+  const backendUrl = useBackendUrl();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: async function () {
-      return {
-        username: 'adsfa',
-      }
+    defaultValues: {
+      backendUrl: backendUrl,
     },
+    mode: 'onChange',
   });
 
-  // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    setBackendUrl(values.backendUrl);
+    toast.success('Updated settings successfully');
   }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="username"
+          name="backendUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Backend URL</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Website URL" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -66,7 +78,7 @@ export function ProfileForm() {
 export default function SettingPage() {
   return (
     <div className="flex h-screen p-30">
-      <ProfileForm />
+      <SettingForm />
     </div>
   );
 }
