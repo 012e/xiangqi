@@ -14,7 +14,6 @@ import PlayOnline from './pages/play/play-online.tsx';
 import Layout from './components/layout.tsx';
 import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
-import { Settings } from 'lucide-react';
 import SettingPage from './pages/setting/setting-page.tsx';
 
 const BACKEND_URL =
@@ -57,7 +56,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/play/friend" element={<PlayFriend />} />
             <Route path="/game/new" element={<NewGame />} />
             <Route path="/game/:id" element={<OnlineGame />} />
-            <Route path="/settings" element={<SettingPage />} />
+            <Route path="/setting" element={<SettingPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

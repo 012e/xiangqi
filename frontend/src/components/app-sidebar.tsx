@@ -23,80 +23,84 @@ const teams = {
   url: '/play',
 };
 const navItems: NavItem[] = [
-    {
-      title: 'Playground',
-      url: '#',
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: 'Play Online',
-          url: '/play/online',
-        },
-        {
-          title: 'Play with friends',
-          url: '/play/friend',
-        },
-        {
-          title: 'Play with bot',
-          url: '/play/bot',
-        },
-      ],
-    },
-    {
-      title: 'Document',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Guide',
-          url: '#',
-        },
-        {
-          title: 'Rule',
-          url: '#',
-        },
-        {
-          title: 'Tip and trick',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Social',
-      url: '#',
-      icon: Globe,
-      items: [
-        {
-          title: 'Friend Link',
-          url: '#',
-        },
-        {
-          title: 'Send Email Invite',
-          url: '#',
-        },
-        {
-          title: 'Create challenge Link',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: 'settings',
-      icon: Settings2,
-    },
+  {
+    title: 'Playground',
+    url: '#',
+    icon: SquareTerminal,
+    isActive: true,
+    items: [
+      {
+        title: 'Play Online',
+        url: '/play/online',
+      },
+      {
+        title: 'Play with friends',
+        url: '/play/friend',
+      },
+      {
+        title: 'Play with bot',
+        url: '/play/bot',
+      },
+    ],
+  },
+  {
+    title: 'Document',
+    url: '#',
+    icon: BookOpen,
+    items: [
+      {
+        title: 'Guide',
+        url: '#',
+      },
+      {
+        title: 'Rule',
+        url: '#',
+      },
+      {
+        title: 'Tip and trick',
+        url: '#',
+      },
+    ],
+  },
+  {
+    title: 'Social',
+    url: '#',
+    icon: Globe,
+    items: [
+      {
+        title: 'Friend Link',
+        url: '#',
+      },
+      {
+        title: 'Send Email Invite',
+        url: '#',
+      },
+      {
+        title: 'Create challenge Link',
+        url: '#',
+      },
+    ],
+  },
+  {
+    title: 'Settings',
+    url: 'setting',
+    icon: Settings2,
+  },
 ];
 
 function LoginRegister() {
   const { loginWithRedirect } = useAuth0();
+  async function login() {
+    await loginWithRedirect();
+  }
+  async function register() {
+    await loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } });
+  }
+
   return (
     <div className="flex flex-col gap-3">
-      <Button onClick={async () => await loginWithRedirect()}>Register</Button>
-      <Button
-        onClick={async () => await loginWithRedirect()}
-        variant={'outline'}
-      >
+      <Button onClick={register}>Register</Button>
+      <Button onClick={login} variant={'outline'}>
         Login
       </Button>
     </div>
