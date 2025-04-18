@@ -1,20 +1,24 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { Auth0Provider } from "@auth0/auth0-react";
-import "./index.css";
-import App from "./App.tsx";
-import { BrowserRouter, Route, Routes } from "react-router";
-import Token from "./Token.tsx";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import OnlineGame from "./OnlineGame.tsx";
-import { StompSessionProvider } from "react-stomp-hooks";
-import NewGame from "./NewGame.tsx";
-import { Toaster } from "./components/ui/sonner.tsx";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Auth0Provider } from '@auth0/auth0-react';
+import '@/styles/index.css';
+import App from './App.tsx';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { StompSessionProvider } from 'react-stomp-hooks';
+import { Toaster } from './components/ui/sonner.tsx';
+import PlayGame from './pages/play/play-game.tsx';
+import NewGame from './pages/play/new-game.tsx';
+import OnlineGame from './pages/play/online-game.tsx';
+import PlayOnline from './pages/play/play-online.tsx';
+import Layout from './components/layout.tsx';
+import PlayBot from './pages/play/play-bot.tsx';
+import PlayFriend from './pages/play/play-friend.tsx';
 
 const BACKEND_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:8080"
-    : "https://xiangqi-backend-e4f524a5a2ad.herokuapp.com";
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8080'
+    : 'https://xiangqi-backend-e4f524a5a2ad.herokuapp.com';
 
 const queryClient = new QueryClient();
 
@@ -26,7 +30,7 @@ function Providers({ children }: { children: React.ReactNode }) {
         clientId="3WDtuCDz2foYFJAHjKc2FxTTJmplDfL6"
         authorizationParams={{
           redirect_uri: window.location.origin,
-          audience: "xiangqi-backend",
+          audience: 'xiangqi-backend',
         }}
         cacheLocation="localstorage"
       >
@@ -38,16 +42,20 @@ function Providers({ children }: { children: React.ReactNode }) {
     </QueryClientProvider>
   );
 }
-
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Providers>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/token" element={<Token />} />
-          <Route path="/game/new" element={<NewGame />} />
-          <Route path="/game/:id" element={<OnlineGame />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path="/play" element={<PlayGame />} />
+            <Route path="/play/online" element={<PlayOnline />} />
+            <Route path="/play/bot" element={<PlayBot />} />
+            <Route path="/play/friend" element={<PlayFriend />} />
+            <Route path="/game/new" element={<NewGame />} />
+            <Route path="/game/:id" element={<OnlineGame />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </Providers>

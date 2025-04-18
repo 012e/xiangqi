@@ -1,10 +1,10 @@
-import {useAuth0} from "@auth0/auth0-react";
-import {useState} from "react";
-import {useNavigate} from "react-router";
-import {useStompClient, useSubscription} from "react-stomp-hooks";
-import {Button} from "./components/ui/button";
-import {Loader2} from "lucide-react";
-import {toast} from "sonner";
+import { useAuth0 } from '@auth0/auth0-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useStompClient, useSubscription } from 'react-stomp-hooks';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 type Game = {
   gameId: string;
@@ -12,20 +12,17 @@ type Game = {
   blackPlayerId: string;
 };
 
-export default function NewGame({
-  className,
-}: {
-  className?: string;
-}) {
+export default function NewGame({ className }: { className?: string }) {
   const { user } = useAuth0();
   const stompClient = useStompClient();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   useSubscription(`/user/${user?.sub}/game/join`, (message) => {
     const game = JSON.parse(message.body) as Game;
-    let player = "white";
+    let player = 'white';
     if (game.blackPlayerId === user?.sub) {
-      player = "black";
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      player = 'black';
     }
     navigate(`/game/${game.gameId}`);
   });
@@ -36,14 +33,14 @@ export default function NewGame({
 
   function createGame() {
     if (!stompClient) {
-      toast.error("Backend not connected");
+      toast.error('Backend not connected');
       return;
     }
     stompClient.publish({
       headers: {
-        Authorization: "Bearer " + localStorage.getItem("access_token"),
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
       },
-      destination: "/app/game/join",
+      destination: '/app/game/join',
       body: JSON.stringify({}),
     });
     setLoading(true);
@@ -59,5 +56,9 @@ export default function NewGame({
     );
   }
 
-  return <Button onClick={createGame} className={className}>Create game</Button>;
+  return (
+    <Button onClick={createGame} className={className}>
+      Create game
+    </Button>
+  );
 }
