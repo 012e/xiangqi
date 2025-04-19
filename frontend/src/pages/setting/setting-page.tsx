@@ -25,7 +25,7 @@ const formSchema = z.object({
     .refine(
       async (val) => {
         try {
-          const request = await fetch(val + '/health/hello', {
+          const request = await fetch(new URL('/health/hello', val), {
             method: 'GET',
           });
           return request.ok;
