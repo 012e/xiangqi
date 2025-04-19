@@ -4,13 +4,11 @@ import { Outlet } from 'react-router';
 
 export default function Layout() {
   return (
-    <div className="flex">
-      <SidebarProvider>
-        <AppSidebar />
-      </SidebarProvider>
-      <div>
+    <SidebarProvider>
+      <AppSidebar />
+      <div className="flex flex-col w-full h-full">
         <Outlet />
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
