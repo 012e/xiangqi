@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useBackendUrl, useSettingActions } from '@/stores/setting-store';
 import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
 
 const formSchema = z.object({
   backendUrl: z
@@ -24,7 +25,7 @@ const formSchema = z.object({
     .refine(
       async (val) => {
         try {
-          const request = await fetch(val + "/health/hello", {
+          const request = await fetch(val + '/health/hello', {
             method: 'GET',
           });
           return request.ok;
@@ -77,8 +78,12 @@ export function SettingForm() {
 
 export default function SettingPage() {
   return (
-    <div className="flex h-screen p-30">
-      <SettingForm />
+    <div className="flex flex-col gap-5 py-10 w-full px-30">
+      <h1 className="text-4xl font-bold tracking-tight">Settings</h1>
+      <Separator />
+      <div className="flex py-5">
+        <SettingForm />
+      </div>
     </div>
   );
 }
