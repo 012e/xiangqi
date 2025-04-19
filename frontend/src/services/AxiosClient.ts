@@ -10,20 +10,6 @@ export const AXIOS_INSTANCE = Axios.create({ baseURL: baseURL }); // use your ow
 
 AXIOS_INSTANCE.interceptors.request.use(
   (config) => {
-    // Add authorization token to headers if available
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-
-AXIOS_INSTANCE.interceptors.request.use(
-  (config) => {
     const backendUrl = useSettingStore.getState().backendUrl;
     if (backendUrl) {
       config.baseURL = backendUrl;
