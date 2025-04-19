@@ -1,21 +1,17 @@
 package com.se330.ctuong_backend.config;
 
-import com.se330.ctuong_backend.util.LoggingInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfiguration implements WebMvcConfigurer {
-    private final LoggingInterceptor loggingInterceptor;
-
-    public CorsConfiguration(LoggingInterceptor loggingInterceptor) {
-        this.loggingInterceptor = loggingInterceptor;
-    }
-
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loggingInterceptor);
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("https://xiangqii.netlify.app") // Allow requests from this origin
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow these HTTP methods
+                .allowedHeaders("*") // Allow all headers
+                .allowCredentials(true); // Allow credentials (cookies, authorization headers, etc.)
     }
 }

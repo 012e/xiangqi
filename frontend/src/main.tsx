@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Auth0Provider } from '@auth0/auth0-react';
 import '@/styles/index.css';
@@ -21,7 +21,7 @@ const queryClient = new QueryClient();
 
 function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
-  const stompUrl = new URL("ws", backendUrl).toString();
+  const stompUrl = useMemo(() => new URL("ws", backendUrl).toString(), [backendUrl]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -34,7 +34,7 @@ function Providers({ children }: { children: React.ReactNode }) {
         }}
         cacheLocation="localstorage"
       >
-        <StompSessionProvider url={stompUrl}>
+        <StompSessionProvider url={stompUrl} key={stompUrl}>
           {children}
           <Toaster />
         </StompSessionProvider>
