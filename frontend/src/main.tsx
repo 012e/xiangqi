@@ -21,6 +21,7 @@ const queryClient = new QueryClient();
 
 function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
+  const stompUrl = `${backendUrl}/ws`;
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -33,7 +34,7 @@ function Providers({ children }: { children: React.ReactNode }) {
         }}
         cacheLocation="localstorage"
       >
-        <StompSessionProvider url={`${backendUrl}/ws`}>
+        <StompSessionProvider url={stompUrl}>
           {children}
           <Toaster />
         </StompSessionProvider>
