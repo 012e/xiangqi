@@ -21,7 +21,7 @@ const queryClient = new QueryClient();
 
 function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
-  const stompUrl = `${backendUrl}/ws`;
+  const stompUrl = new URL("ws", backendUrl).toString();
 
   return (
     <QueryClientProvider client={queryClient}>
