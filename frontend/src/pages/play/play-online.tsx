@@ -1,8 +1,17 @@
-import { CircleUser, Play } from 'lucide-react';
+import {
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleUser,
+  Flag,
+  Handshake,
+  Play,
+} from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
 import { Button } from '@/components/ui/button';
 import React from 'react';
+import MovePosition from '@/components/move-position';
 const frameworks = [
   {
     value: '10',
@@ -45,16 +54,12 @@ const frameworks = [
     label: 'None have time',
   },
 ];
-// type move = {
-//   id: number;
-//   w: string;
-//   b: string;
-// };
+
 export default function PlayOnline() {
   const [oponent, setOponent] = React.useState('Oponent');
   // const [listMove, setListMove] = React.useState([]);
   return (
-    <div className="w-screen">
+    <div className="w-full">
       <div className="bg-stone-800 grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
         <div className="bg-stone-800 min-h-screen text-white p-4 lg:block hidden mt-10">
@@ -94,6 +99,26 @@ export default function PlayOnline() {
                   <Play className="!w-7 !h-auto mr-1"></Play>
                   START
                 </div>
+              </Button>
+            </div>
+            <div>
+              <MovePosition></MovePosition>
+            </div>
+            <div className="flex space-x-3">
+              <Button className="group">
+                <Handshake className="transition-transform group-hover:scale-150" />
+              </Button>
+              <Button className="group">
+                <Flag className="transition-transform group-hover:scale-150"></Flag>
+              </Button>
+              <Button className="group">
+                <ChevronLeft className="transition-transform group-hover:scale-150" />
+              </Button>
+              <Button className="group">
+                <ChevronRight className="transition-transform group-hover:scale-150" />
+              </Button>
+              <Button className="group">
+                <ArrowUpDown className="transition-transform group-hover:scale-150" />
               </Button>
             </div>
           </div>

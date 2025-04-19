@@ -7,10 +7,10 @@ export default function Layout() {
     <div className="flex">
       <SidebarProvider>
         <AppSidebar />
+        <div className="w-full">
+          <Outlet />
+        </div>
       </SidebarProvider>
-      <div>
-        <Outlet />
-      </div>
     </div>
   );
 }

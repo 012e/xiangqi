@@ -39,7 +39,7 @@ const menuItems = [
 ];
 export default function PlayGame() {
   return (
-    <div className="bg-stone-100 w-screen">
+    <div className="bg-stone-100 w-full">
       <div className="bg-stone-800 grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
         <div className="bg-stone-800 min-h-screen text-white p-4 lg:block hidden mt-10">
