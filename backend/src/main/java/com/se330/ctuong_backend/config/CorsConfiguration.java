@@ -8,8 +8,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfiguration implements WebMvcConfigurer {
-    @Autowired
-    private LoggingInterceptor loggingInterceptor;
+    private final LoggingInterceptor loggingInterceptor;
+
+    public CorsConfiguration(LoggingInterceptor loggingInterceptor) {
+        this.loggingInterceptor = loggingInterceptor;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
