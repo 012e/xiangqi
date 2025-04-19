@@ -1,0 +1,85 @@
+- name: Deploy application with nginx
+  become: true
+  hosts: myhosts
+
+  vars:
+    domain_name: poaijdfoiwef.duckdns.org
+    email: huyphmnhat@gmail.com
+    backend_docker_image: ghcr.io/012e/xiangqi-backend:latest
+    internal_port: 6969
+
+    packages:
+      - nginx
+      - certbot
+      - python3-certbot-nginx
+
+  vars_files:
+    - secrets.yml
+
+  tasks:
+    - name: Install packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      loop: "{{ packages }}"
+
+    - name: Ensure NGINX is running
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Upload NGINX redirect config
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ domain_name }}
+      notify: Reload nginx
+
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/{{ domain_name }}
+        dest: /etc/nginx/sites-enabled/{{ domain_name }}
+        state: link
+        force: true
+      notify: Reload nginx
+
+    - name: Pull Docker Image
+      community.docker.docker_image_pull:
+        name: "{{ backend_docker_image }}"
+        tag: latest
+
+    - name: Start Docker container
+      docker_container:
+        name: xiangqi-backend
+        image: "{{ backend_docker_image }}"
+        state: started
+        recreate: yes
+        env:
+          AUTH0_API_TOKEN: "{{ vault_auth0_api_token }}"
+          DATABASE_URL: "{{ vault_database_url }}"
+          DATABASE_USERNAME: "{{ vault_database_username }}"
+          DATABASE_PASSWORD: "{{ vault_database_password }}"
+
+
+        ports:
+          - "{{ internal_port }}:8080"
+
+    - name: Obtain and configure HTTPS cert with Certbot
+      command: >
+        certbot --nginx
+        --non-interactive
+        --agree-tos
+        --redirect
+        --email {{ email }}
+        -d {{ domain_name }}
+      register: certbot_result
+      changed_when: "'Certificate not yet due for renewal' not in certbot_result.stdout"
+
+
+  handlers:
+    - name: Reload nginx
+      service:
+        name: nginx
+        state: reloaded
+
