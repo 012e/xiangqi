@@ -14,7 +14,7 @@ import PlayOnline from './pages/play/play-online.tsx';
 import Layout from './components/layout.tsx';
 import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
-import { CommandDemo } from './pages/play/test.tsx';
+import Demo from './pages/play/test.tsx';
 
 const BACKEND_URL =
   process.env.NODE_ENV === 'development'
@@ -53,7 +53,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/play" element={<PlayGame />} />
             <Route path="/play/online" element={<PlayOnline />} />
             <Route path="/play/bot" element={<PlayBot />} />
-            <Route path="/play/demo" element={<CommandDemo />} />
+            <Route path="/play/demo" element={<Demo />} />
             <Route path="/play/friend" element={<PlayFriend />} />
             <Route path="/game/new" element={<NewGame />} />
             <Route path="/game/:id" element={<OnlineGame />} />

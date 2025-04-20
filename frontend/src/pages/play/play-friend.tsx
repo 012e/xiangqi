@@ -67,10 +67,10 @@ export default function PlayFriend() {
   const [oponent] = React.useState('Oponent');
   // const [listMove, setListMove] = React.useState([]);
   return (
-    <div className="w-full">
-      <div className="bg-stone-800 grid grid-cols-1 lg:grid-cols-[550px_400px]">
+    <div className="w-full text-foreground">
+      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
         {/* Left */}
-        <div className="bg-stone-800 min-h-screen text-white p-4 lg:block hidden mt-10">
+        <div className="min-h-screen p-4 lg:block hidden mt-10">
           <div className="flex flex-wrap space-x-2 justify-center">
             <span>
               <CircleUser size={30} />
@@ -90,17 +90,17 @@ export default function PlayFriend() {
           </div>
         </div>
         {/* Right */}
-        <div className="bg-stone-900 rounded-4xl my-5 h-180  ">
-          <div className=" text-white min-h-screen flex flex-col items-center p-6 space-y-6">
+        <div className="rounded-4xl my-5 bg-secondary ">
+          <div className="min-h-screen flex flex-col h-auto items-center p-6 space-y-6">
             <div className="flex space-x-3">
               <Button className="group mt-1">
-                <ArrowLeft className="scale-200 group-hover:text-gray-300" />
+                <ArrowLeft className="scale-200 " />
               </Button>
               <h1 className="text-4xl font-bold justify-center">
                 Play a Friend
               </h1>
             </div>
-            <div className="w-full shadow-2xl px-5">
+            <div className="w-full shadow-2xl">
               <Command className="border shadow">
                 <div className="flex group p-2 space-x-2">
                   <Search className="pt-1 " size={20}></Search>
@@ -118,7 +118,7 @@ export default function PlayFriend() {
                     {listFriend.map((fr, index) => {
                       return (
                         <CommandItem
-                          className="hover:bg-gray-100 !text-2 !pl-2 font-normal hover:cursor-pointer"
+                          className="!text-2 !pl-2 font-normal hover:bg-muted hover:cursor-pointer"
                           key={index}
                         >
                           {fr.name}

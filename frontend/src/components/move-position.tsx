@@ -27,7 +27,7 @@ export default function MovePosition() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [listMoves, setListMoves] = React.useState<move[]>(init);
   return (
-    <div className="border-2 border-b-slate-50 w-80 h-auto rounded-2xl">
+    <div className="border-2  w-80 h-auto rounded-2xl">
       <div className="p-3 font-bold text-2xl flex justify-center">
         Positions Board
       </div>
@@ -39,11 +39,10 @@ export default function MovePosition() {
               <div
                 key={index}
                 className={clsx(
-                  'grid grid-cols-3 hover:bg-gray-400 hover:cursor-pointer pl-3',
-                  move.id % 2 === 0 && 'bg-stone-600',
+                  'grid grid-cols-3 hover:cursor-pointer hover:pl-3 hover:bg-secondary',
                 )}
               >
-                <div className="ml-10">
+                <div className="ml-10 ">
                   {move.id}
                   <span>.</span>
                 </div>

@@ -7,49 +7,47 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { Link } from 'react-router';
+import { Button } from './ui/button';
 
 const ChallengeOptions = () => {
   return (
-    <div className="bg-[#1e1e1e] text-white p-6 rounded-lg w-full max-w-sm mx-auto space-y-4">
-      <button className="w-full flex items-center justify-between bg-[#2c2c2c] hover:bg-[#3a3a3a] px-4 py-3 rounded-md transition">
+    <div className="rounded-lg w-full max-w-sm mx-auto space-y-4">
+      <Button className="w-full flex items-center justify-between px-4 py-3 rounded-md transition">
         <span className="flex items-center space-x-3">
           <LinkIcon size={18} />
           <span className="font-semibold">Create Challenge Link</span>
         </span>
         <ChevronRight size={20} />
-      </button>
+      </Button>
 
-      <button className="w-full flex items-center justify-between bg-[#2c2c2c] hover:bg-[#3a3a3a] px-4 py-3 rounded-md transition">
+      <Button className="w-full flex items-center justify-between px-4 py-3 rounded-md transition">
         <span className="flex items-center space-x-3">
           <Mail size={18} />
           <span className="font-semibold">Send Email Invite</span>
         </span>
         <ChevronRight size={20} />
-      </button>
+      </Button>
 
-      <button className="w-full flex items-center justify-between bg-[#2c2c2c] hover:bg-[#3a3a3a] px-4 py-3 rounded-md transition">
+      <Button className="w-full flex items-center justify-between px-4 py-3 rounded-md transition">
         <span className="flex items-center space-x-3">
           <Facebook size={18} />
           <span className="font-semibold">Find Facebook Friends</span>
         </span>
         <ChevronRight size={20} />
-      </button>
+      </Button>
 
-      <div className="text-center text-sm text-gray-300 mt-6">
+      <div className="text-center text-sm mt-6">
         Friends can directly challenge you anytime at:
         <div className="flex items-center justify-center mt-2 space-x-2">
           <Link
             to="https://chess.com/play/xiaobiao"
-            className="underline text-blue-400 hover:text-blue-500"
+            className="underline "
             target="_blank"
             rel="noopener noreferrer"
           >
             https://chess.com/play/xiaobiao
           </Link>
-          <Copy
-            className="text-gray-400 hover:text-white cursor-pointer"
-            size={16}
-          />
+          <Copy className="cursor-pointer" size={16} />
         </div>
       </div>
     </div>

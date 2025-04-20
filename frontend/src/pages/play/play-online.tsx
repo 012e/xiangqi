@@ -59,10 +59,10 @@ export default function PlayOnline() {
   const [oponent, setOponent] = React.useState('Oponent');
   // const [listMove, setListMove] = React.useState([]);
   return (
-    <div className="w-full">
-      <div className="bg-stone-800 grid grid-cols-1 lg:grid-cols-[550px_400px]">
+    <div className="w-full text-foreground">
+      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
-        <div className="bg-stone-800 min-h-screen text-white p-4 lg:block hidden mt-10">
+        <div className="min-h-screen p-4 lg:block hidden mt-10 bg-background">
           <div className="flex flex-wrap space-x-2 justify-center">
             <span>
               <CircleUser size={30} />
@@ -82,17 +82,17 @@ export default function PlayOnline() {
           </div>
         </div>
         {/* Right */}
-        <div className="bg-stone-900 rounded-4xl my-5 h-165 ">
-          <div className=" text-white min-h-screen flex flex-col items-center p-6 space-y-6">
+        <div className="rounded-4xl my-5 h-165 bg-muted">
+          <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
             <div>
               <h1 className="text-4xl font-bold justify-center">Play Online</h1>
             </div>
-            <div className="flex items-center text-black">
+            <div className="flex items-center text-black hover:cursor-pointer">
               <Combobox frameworks={frameworks} />
             </div>
-            <div className="text-white">
+            <div className="">
               <Button
-                className="hover:bg-green-400 hover:text-4xl text-3xl h-auto font-bold bg-green-500 w-2xs"
+                className="hover:text-4xl text-3xl h-auto font-bold w-2xs"
                 onClick={() => setOponent('Search ...')}
               >
                 <div className="flex items-center">
@@ -101,7 +101,7 @@ export default function PlayOnline() {
                 </div>
               </Button>
             </div>
-            <div>
+            <div className="bg-background rounded-2xl">
               <MovePosition></MovePosition>
             </div>
             <div className="flex space-x-3">
