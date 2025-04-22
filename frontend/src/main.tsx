@@ -17,6 +17,7 @@ import PlayFriend from './pages/play/play-friend.tsx';
 
 import { ThemeProvider } from '@/themes/ThemeContext';
 import SettingProfile from './pages/settings/profile.tsx';
+import Friends from './pages/social/friends.tsx';
 
 const BACKEND_URL =
   process.env.NODE_ENV === 'development'
@@ -60,7 +61,10 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
 
+              <Route path="/settings" element={<SettingProfile />} />
               <Route path="/settings/profile" element={<SettingProfile />} />
+              <Route path="/social" element={<Friends />} />
+              <Route path="/social/friend" element={<Friends />} />
             </Route>
           </Routes>
         </BrowserRouter>

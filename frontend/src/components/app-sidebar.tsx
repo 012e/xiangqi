@@ -70,20 +70,12 @@ const data = {
     },
     {
       title: 'Social',
-      url: '#',
+      url: '/social',
       icon: Globe,
       items: [
         {
-          title: 'Friend Link',
-          url: '#',
-        },
-        {
-          title: 'Send Email Invite',
-          url: '#',
-        },
-        {
-          title: 'Create challenge Link',
-          url: '#',
+          title: 'Friends',
+          url: '/social/friend',
         },
       ],
     },
