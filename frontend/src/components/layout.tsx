@@ -6,11 +6,9 @@ export default function Layout() {
   return (
     <div className="flex">
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar/>
       </SidebarProvider>
-      <div>
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   );
 }

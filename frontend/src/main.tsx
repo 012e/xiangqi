@@ -15,6 +15,9 @@ import Layout from './components/layout.tsx';
 import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
+import { ThemeProvider } from '@/themes/ThemeContext';
+import SettingProfile from './pages/settings/profile.tsx';
+
 const BACKEND_URL =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:8080'
@@ -45,19 +48,23 @@ function Providers({ children }: { children: React.ReactNode }) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Providers>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path="/play" element={<PlayGame />} />
-            <Route path="/play/online" element={<PlayOnline />} />
-            <Route path="/play/bot" element={<PlayBot />} />
-            <Route path="/play/friend" element={<PlayFriend />} />
-            <Route path="/game/new" element={<NewGame />} />
-            <Route path="/game/:id" element={<OnlineGame />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<App />} />
+              <Route path="/play" element={<PlayGame />} />
+              <Route path="/play/online" element={<PlayOnline />} />
+              <Route path="/play/bot" element={<PlayBot />} />
+              <Route path="/play/friend" element={<PlayFriend />} />
+              <Route path="/game/new" element={<NewGame />} />
+              <Route path="/game/:id" element={<OnlineGame />} />
+
+              <Route path="/settings/profile" element={<SettingProfile />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
     </Providers>
   </StrictMode>,
 );
