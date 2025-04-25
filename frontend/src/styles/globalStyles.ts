@@ -5,9 +5,9 @@ const createGlobalStyles = (theme: Theme): Record<string, CSSProperties> => {
   return {
     pageContainer: {
       padding: '0rem 2rem 1rem',
-      margin: '1rem auto',
+      margin: '1rem',
       minWidth: '600px',
-      maxWidth: '1100px',
+      //maxWidth: '1100px',
       fontFamily: 'Arial, sans-serif',
       lineHeight: 1.6,
       color: theme.colors.text,

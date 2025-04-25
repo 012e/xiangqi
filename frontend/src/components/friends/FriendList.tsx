@@ -29,7 +29,7 @@ const FriendList: React.FC<FriendListProps> = ({ friends, onSelectFriend }) => {
         placeholder="Search Messenger"
         style={friendsStyles.searchFriendInputField}
       />
-      <div style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', ...globalStyles.friendListDisplay }}>
+      <div style={friendsStyles.friendListDisplay}>
         <ul>
           {friends.map((friend) => (
             <li

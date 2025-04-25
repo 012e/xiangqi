@@ -106,12 +106,14 @@ const createFriendsStyles = (theme: any): Record<string, CSSProperties> => {
 
     //friend message styles:
     friendMessageContainer: {
-      flex: 2,
-      border: '1px solid #ccc',
+      flex: 3,
       padding: '10px',
+      backgroundColor: theme.colors.container,
+      border: '1px solid #ccc',
+      borderRadius: '8px',
     },
     messageList: {
-      height: '200px',
+      maxHeight: 'calc(100vh - 200px - 80px)',
       overflowY: 'auto',
       border: '1px solid #eee',
       marginBottom: '10px',
@@ -124,6 +126,29 @@ const createFriendsStyles = (theme: any): Record<string, CSSProperties> => {
     },
     sendButton: {
       padding: '8px',
+    },
+    chatHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '10px',
+      borderBottom: '1px solid #ccc',
+    },
+    chatHeaderImage: {
+      width: '40px',
+      height: '40px',
+      borderRadius: '50%',
+      marginRight: '10px',
+    },
+    chatHeaderName: {
+      fontWeight: 'bold',
+      fontSize: '16px',
+    },
+    messageInputContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '10px',
+      gap: '10px',
+      borderTop: '1px solid #ccc',
     },
   };
 };

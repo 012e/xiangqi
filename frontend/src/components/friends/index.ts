@@ -1,5 +1,5 @@
 import AddFriendForm from './addFriendForm';
 import FriendList from './friendList';
-import FriendMessage from './friendMessage';
+import FriendChatHistory from './friendChatHistory';
 
-export { AddFriendForm, FriendList, FriendMessage };
+export { AddFriendForm, FriendList, FriendChatHistory };
