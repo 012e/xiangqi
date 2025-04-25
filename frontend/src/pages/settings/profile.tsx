@@ -49,11 +49,11 @@ const SettingProfile: React.FC = () => {
 
   return (
     <div className="settings-profile w-screen">
-      <main style={globalStyles.container}>
+      <main style={globalStyles.pageContainer}>
         {/* Header */}
         <header>
           <div>
-            <h1 style={globalStyles.titleContainer}>Chỉnh sửa hồ sơ</h1>
+            <h1 style={globalStyles.titlePage}>Chỉnh sửa hồ sơ</h1>
             <p style={{ fontSize: '1rem', color: theme.colors.text }}>
               Thay đổi ảnh đại diện và chọn chủ đề giao diện của bạn. Mọi thứ ở
               đây sẽ hiển thị trên hồ sơ công khai của bạn.

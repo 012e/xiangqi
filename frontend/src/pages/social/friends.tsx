@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { createGlobalStyles } from '../../styles';
+import { createGlobalStyles, createFriendsStyles } from '@/styles';
 import { useTheme } from '@/themes/ThemeContext';
 import { AddFriendForm, FriendList, FriendMessage } from '@/components/friends';
 import friendsData from '@/data/friends.json';
 
 const Friends: React.FC = () => {
   const { theme } = useTheme();
+  const friendsStyles = createFriendsStyles(theme);
   const globalStyles = createGlobalStyles(theme);
 
   const [messages, setMessages] = useState<string[]>([]);
@@ -19,21 +20,21 @@ const Friends: React.FC = () => {
 
   return (
     <div className="social-friend w-screen">
-    <main style={globalStyles.container}>
-      <h1 style={globalStyles.titleContainer}>Bạn bè</h1>
-      <AddFriendForm />
-      <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
-        <FriendList
-          friends={friendsData}
-          onSelectFriend={(friend) => setSelectedFriend(friend)}
-        />
-        <FriendMessage
-          selectedFriend={selectedFriend}
-          messages={messages}
-          onSendMessage={handleSendMessage}
-        />
-      </div>
-    </main></div>
+      <main style={globalStyles.pageContainer}>
+        <h1 style={globalStyles.titlePage}>Bạn bè</h1>
+        <div style={friendsStyles.friendsPageContainer}>
+          <FriendList
+            friends={friendsData.users}
+            onSelectFriend={(friend) => setSelectedFriend(friend)}
+          />
+          <FriendMessage
+            selectedFriend={selectedFriend}
+            messages={messages}
+            onSendMessage={handleSendMessage}
+          />
+        </div>
+      </main>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
-import AddFriendForm from './AddFriendForm';
-import FriendList from './FriendList';
-import FriendMessage from './FriendMessage';
+import AddFriendForm from './addFriendForm';
+import FriendList from './friendList';
+import FriendMessage from './friendMessage';
 
 export { AddFriendForm, FriendList, FriendMessage };

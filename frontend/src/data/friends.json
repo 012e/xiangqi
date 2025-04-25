@@ -1,5 +1,454 @@
-[
-  { "id": 1, "name": "Alice", "status": "online" },
-  { "id": 2, "name": "Bob", "status": "offline" },
-  { "id": 3, "name": "Charlie", "status": "online" }
-]
+{
+  "users": [
+    {
+      "id": 1,
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "Hey, how are you?",
+      "lastMessageTime": "10:30 AM"
+    },
+    {
+      "id": 2,
+      "firstName": "Bob",
+      "lastName": "Johnson",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "See you tomorrow!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 3,
+      "firstName": "Charlie",
+      "lastName": "Brown",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "Let's catch up later.",
+      "lastMessageTime": "2:15 PM"
+    },
+    {
+      "id": 4,
+      "firstName": "David",
+      "lastName": "Taylor",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Good night!",
+      "lastMessageTime": "10:00 PM"
+    },
+    {
+      "id": 5,
+      "firstName": "Eve",
+      "lastName": "Williams",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "Can you send me the file?",
+      "lastMessageTime": "3:45 PM"
+    },
+    {
+      "id": 6,
+      "firstName": "Frank",
+      "lastName": "Miller",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "See you soon!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 7,
+      "firstName": "Grace",
+      "lastName": "Davis",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How's it going?",
+      "lastMessageTime": "1:00 PM"
+    },
+    {
+      "id": 8,
+      "firstName": "Hank",
+      "lastName": "Wilson",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Catch you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 9,
+      "firstName": "Ivy",
+      "lastName": "Moore",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's up?",
+      "lastMessageTime": "11:30 AM"
+    },
+    {
+      "id": 10,
+      "firstName": "Jack",
+      "lastName": "Taylor",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Goodbye!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 11,
+      "firstName": "Karen",
+      "lastName": "Anderson",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "2:00 PM"
+    },
+    {
+      "id": 12,
+      "firstName": "Leo",
+      "lastName": "Thomas",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Take care!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 13,
+      "firstName": "Mia",
+      "lastName": "Jackson",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How are you?",
+      "lastMessageTime": "10:00 AM"
+    },
+    {
+      "id": 14,
+      "firstName": "Nina",
+      "lastName": "White",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Talk to you soon!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 15,
+      "firstName": "Oscar",
+      "lastName": "Harris",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's new?",
+      "lastMessageTime": "3:00 PM"
+    },
+    {
+      "id": 16,
+      "firstName": "Paul",
+      "lastName": "Martin",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 17,
+      "firstName": "Quinn",
+      "lastName": "Lee",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How's it going?",
+      "lastMessageTime": "12:00 PM"
+    },
+    {
+      "id": 18,
+      "firstName": "Rachel",
+      "lastName": "Walker",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Catch you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 19,
+      "firstName": "Sam",
+      "lastName": "Hall",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's up?",
+      "lastMessageTime": "11:00 AM"
+    },
+    {
+      "id": 20,
+      "firstName": "Tina",
+      "lastName": "Allen",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Goodbye!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 21,
+      "firstName": "Uma",
+      "lastName": "Young",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "2:30 PM"
+    },
+    {
+      "id": 22,
+      "firstName": "Victor",
+      "lastName": "King",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Take care!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 23,
+      "firstName": "Wendy",
+      "lastName": "Scott",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How are you?",
+      "lastMessageTime": "10:30 AM"
+    },
+    {
+      "id": 24,
+      "firstName": "Xander",
+      "lastName": "Green",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Talk to you soon!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 25,
+      "firstName": "Yara",
+      "lastName": "Baker",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's new?",
+      "lastMessageTime": "3:30 PM"
+    },
+    {
+      "id": 26,
+      "firstName": "Zane",
+      "lastName": "Adams",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 27,
+      "firstName": "Amy",
+      "lastName": "Nelson",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How's it going?",
+      "lastMessageTime": "1:30 PM"
+    },
+    {
+      "id": 28,
+      "firstName": "Brian",
+      "lastName": "Carter",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Catch you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 29,
+      "firstName": "Cathy",
+      "lastName": "Mitchell",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's up?",
+      "lastMessageTime": "11:30 AM"
+    },
+    {
+      "id": 30,
+      "firstName": "Dan",
+      "lastName": "Perez",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Goodbye!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 31,
+      "firstName": "Ella",
+      "lastName": "Roberts",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "2:00 PM"
+    },
+    {
+      "id": 32,
+      "firstName": "Finn",
+      "lastName": "Turner",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Take care!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 33,
+      "firstName": "Gina",
+      "lastName": "Phillips",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How are you?",
+      "lastMessageTime": "10:00 AM"
+    },
+    {
+      "id": 34,
+      "firstName": "Harry",
+      "lastName": "Campbell",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Talk to you soon!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 35,
+      "firstName": "Iris",
+      "lastName": "Parker",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's new?",
+      "lastMessageTime": "3:00 PM"
+    },
+    {
+      "id": 36,
+      "firstName": "Jake",
+      "lastName": "Evans",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 37,
+      "firstName": "Kara",
+      "lastName": "Edwards",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How's it going?",
+      "lastMessageTime": "12:00 PM"
+    },
+    {
+      "id": 38,
+      "firstName": "Liam",
+      "lastName": "Collins",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Catch you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 39,
+      "firstName": "Maya",
+      "lastName": "Stewart",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's up?",
+      "lastMessageTime": "11:00 AM"
+    },
+    {
+      "id": 40,
+      "firstName": "Nate",
+      "lastName": "Sanchez",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Goodbye!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 41,
+      "firstName": "Olivia",
+      "lastName": "Morris",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "2:30 PM"
+    },
+    {
+      "id": 42,
+      "firstName": "Peter",
+      "lastName": "Rogers",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Take care!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 43,
+      "firstName": "Quincy",
+      "lastName": "Reed",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How are you?",
+      "lastMessageTime": "10:30 AM"
+    },
+    {
+      "id": 44,
+      "firstName": "Rita",
+      "lastName": "Cook",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Talk to you soon!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 45,
+      "firstName": "Steve",
+      "lastName": "Morgan",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's new?",
+      "lastMessageTime": "3:30 PM"
+    },
+    {
+      "id": 46,
+      "firstName": "Tara",
+      "lastName": "Bell",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "See you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 47,
+      "firstName": "Ulysses",
+      "lastName": "Murphy",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "How's it going?",
+      "lastMessageTime": "1:00 PM"
+    },
+    {
+      "id": 48,
+      "firstName": "Vera",
+      "lastName": "Bailey",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Catch you later!",
+      "lastMessageTime": "Yesterday"
+    },
+    {
+      "id": 49,
+      "firstName": "Will",
+      "lastName": "Rivera",
+      "image": "https://placehold.co/50",
+      "status": "online",
+      "lastMessage": "What's up?",
+      "lastMessageTime": "11:30 AM"
+    },
+    {
+      "id": 50,
+      "firstName": "Zachary",
+      "lastName": "Young",
+      "image": "https://placehold.co/50",
+      "status": "offline",
+      "lastMessage": "Talk to you later!",
+      "lastMessageTime": "Yesterday"
+    }
+  ]
+}

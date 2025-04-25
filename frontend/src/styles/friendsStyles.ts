@@ -2,19 +2,65 @@ import { CSSProperties } from 'react';
 
 const createFriendsStyles = (theme: any): Record<string, CSSProperties> => {
   return {
+    friendsPageContainer: {
+      display: 'flex',
+      gap: '10px',
+    },
+
+    //Friend list styles:
     friendListContainer: {
-      padding: '20px',
+      flex: 1,
+      padding: '10px',
       backgroundColor: theme.colors.container,
+      border: '1px solid #ccc',
       borderRadius: '8px',
-      boxShadow: theme.colors.background === '#ffffff' ? '0 2px 4px rgba(0, 0, 0, 0.1)' : '0 2px 4px rgba(255, 255, 255, 0.1)',
+    },
+    searchFriendInputField: {
+      width: '100%',
+      padding: '8px',
+      marginBottom: '10px',
+      borderRadius: '20px',
+      border: '1px solid #ccc',
+      outline: 'none',
+    },
+    friendListDisplay: {
+      maxHeight: 'calc(100vh - 200px)',
+      overflowY: 'auto',
     },
     friendItem: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: '10px',
+      marginBottom: '10px',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      transition: 'background-color 0.2s',
       borderBottom: `1px solid ${theme.colors.item}`,
     },
+    friendImage: {
+      width: '50px',
+      height: '50px',
+      borderRadius: '50%',
+      marginRight: '10px',
+    },
+    friendDetails: {
+      flex: 1,
+    },
+    friendName: {
+      fontWeight: 'bold',
+      fontSize: '14px',
+    },
+    friendLastMessage: {
+      fontSize: '12px',
+      color: '#555',
+    },
+    friendLastMessageTime: {
+      fontSize: '12px',
+      color: '#999',
+    },
+
+    //add friend styles:
     addFriendForm: {
       display: 'flex',
       flexDirection: 'column',
@@ -43,7 +89,6 @@ const createFriendsStyles = (theme: any): Record<string, CSSProperties> => {
       borderRadius: '4px',
       cursor: 'pointer',
     },
-    //
     addFriendFormContainer: {
       justifyContent: 'space-between',
       display: 'flex',
@@ -57,6 +102,28 @@ const createFriendsStyles = (theme: any): Record<string, CSSProperties> => {
       borderRadius: '4px',
       transition: 'border 0.2s ease-in-out',
       outline: 'none',
+    },
+
+    //friend message styles:
+    friendMessageContainer: {
+      flex: 2,
+      border: '1px solid #ccc',
+      padding: '10px',
+    },
+    messageList: {
+      height: '200px',
+      overflowY: 'auto',
+      border: '1px solid #eee',
+      marginBottom: '10px',
+      padding: '10px',
+    },
+    messageInput: {
+      padding: '8px',
+      marginRight: '10px',
+      width: '70%',
+    },
+    sendButton: {
+      padding: '8px',
     },
   };
 };

@@ -1,2 +1,2 @@
-export { default as SuccessPopup } from './SuccessPopup';
-export { default as ErrorPopup } from './ErrorPopup';
+export { default as SuccessPopup } from './successPopup';
+export { default as ErrorPopup } from './errorPopup';

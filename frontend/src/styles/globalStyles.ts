@@ -3,11 +3,26 @@ import { fontSizes, Theme } from '../themes/themes';
 
 const createGlobalStyles = (theme: Theme): Record<string, CSSProperties> => {
   return {
-    container: {
+    pageContainer: {
+      padding: '0rem 2rem 1rem',
+      margin: '1rem auto',
+      minWidth: '600px',
+      maxWidth: '1100px',
+      fontFamily: 'Arial, sans-serif',
+      lineHeight: 1.6,
+      color: theme.colors.text,
+      backgroundColor: theme.colors.container,
+      borderRadius: '8px',
+      border: `1px solid ${theme.colors.item}`,
+      alignSelf: 'center',
+    },
+
+    fixedPageContainer: {
       padding: '0rem 2rem 4rem',
       margin: '1rem auto',
       minWidth: '600px',
-      maxWidth: '900px',
+      maxWidth: '1100px',
+      maxHeight: '100vh',
       fontFamily: 'Arial, sans-serif',
       lineHeight: 1.6,
       color: theme.colors.text,
@@ -27,7 +42,7 @@ const createGlobalStyles = (theme: Theme): Record<string, CSSProperties> => {
     },
 
     // Text styles
-    titleContainer: {      
+    titlePage: {
       fontSize: fontSizes.titlePage,
       fontWeight: 700,
       marginBottom: '5px',
