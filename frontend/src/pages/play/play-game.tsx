@@ -39,7 +39,7 @@ const menuItems = [
 ];
 export default function PlayGame() {
   return (
-    <div className="w-full text-foreground">
+    <div className="w-full text-foreground ">
       <div className="bg-background grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
         <div className="min-h-screen p-4 lg:block hidden mt-10">
@@ -47,7 +47,7 @@ export default function PlayGame() {
             <span>
               <CircleUser size={30} />
             </span>
-            <span>Oponent</span>
+            <span>Opponent</span>
           </div>
           <div className="flex justify-center p-3">
             <div className="border-2">
@@ -62,10 +62,10 @@ export default function PlayGame() {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 h-auto bg-muted">
+        <div className="rounded-4xl my-5 h-auto bg-muted shadow-lg shadow-ring">
           <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
             <div>
-              <h1 className="text-4xl font-bold justify-center text-foreground">
+              <h1 className="text-4xl font-bold justify-center text-foreground tracking-tight">
                 Play Chess
               </h1>
             </div>

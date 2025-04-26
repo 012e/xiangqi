@@ -56,7 +56,7 @@ const frameworks = [
 ];
 
 export default function PlayBot() {
-  const [oponent, setOponent] = React.useState('Oponent');
+  const [opponent, setOpponent] = React.useState('Opponent');
   // const [listMove, setListMove] = React.useState([]);
   return (
     <div className="w-full text-foreground">
@@ -67,7 +67,7 @@ export default function PlayBot() {
             <span>
               <CircleUser size={30} />
             </span>
-            <span>{oponent}</span>
+            <span>{opponent}</span>
           </div>
           <div className="flex justify-center p-3">
             <div className="border-2">
@@ -82,10 +82,10 @@ export default function PlayBot() {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 h-165 bg-muted">
+        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring">
           <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
             <div>
-              <h1 className="text-4xl font-bold justify-center">
+              <h1 className="text-4xl font-bold justify-center tracking-tight">
                 Play With Bot
               </h1>
             </div>
@@ -94,8 +94,8 @@ export default function PlayBot() {
             </div>
             <div className="">
               <Button
-                className="hover:text-4xl text-3xl h-auto font-bold w-2xs"
-                onClick={() => setOponent('Search ...')}
+                className="hover:text-4xl text-3xl h-13 font-bold w-2xs"
+                onClick={() => setOpponent('Search ...')}
               >
                 <div className="flex items-center">
                   <Play className="!w-7 !h-auto mr-1"></Play>
