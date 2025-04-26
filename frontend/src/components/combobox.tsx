@@ -51,6 +51,7 @@ export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
+                  className="hover:cursor-pointer"
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {

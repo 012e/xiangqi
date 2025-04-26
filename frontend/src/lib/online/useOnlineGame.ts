@@ -21,7 +21,12 @@ export function useOnlineGame(gameId: string | undefined) {
   const playingColor = useGameStore((state) => state.playingColor);
   const { move, handleTopicMessage } = useGameStore((state) => state.actions);
 
-  const { data, isLoading: gameStateLoading, error, isError } = useGetGame(gameId, {
+  const {
+    data,
+    isLoading: gameStateLoading,
+    error,
+    isError,
+  } = useGetGame(gameId, {
     query: {
       gcTime: 0, // Replaces `cacheTime` in v5
       staleTime: 0, // Always treat data as stale
@@ -32,7 +37,7 @@ export function useOnlineGame(gameId: string | undefined) {
     return gameStateLoading || !stompClient;
   }, [gameStateLoading, stompClient]);
 
-  if (isError)  console.log(error);
+  if (isError) console.log(error);
 
   useEffect(() => {
     if (!data) return;

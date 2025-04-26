@@ -1,6 +1,12 @@
 'use client';
 
-import { BadgeCheck, ChevronsUpDown, KeyRound, LogOut } from 'lucide-react';
+import {
+  BadgeCheck,
+  ChevronsUpDown,
+  KeyRound,
+  LogOut,
+  ScanFace,
+} from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -33,6 +39,12 @@ export function NavUser({
   const login = async () => {
     await loginWithRedirect();
   };
+  const signUp = async () =>
+    await loginWithRedirect({
+      authorizationParams: {
+        screen_hint: 'signup',
+      },
+    });
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -76,6 +88,10 @@ export function NavUser({
                 <DropdownMenuItem onClick={login}>
                   <KeyRound />
                   Log in
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={signUp}>
+                  <ScanFace />
+                  Sign Up
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             ) : (

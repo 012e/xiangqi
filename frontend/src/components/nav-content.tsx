@@ -81,7 +81,7 @@ function ThemeButton() {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton tooltip="Theme">
-          <ModeToggle />
+        <ModeToggle />
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
@@ -98,7 +98,7 @@ export function NavContent({ items }: { items: NavItem[] }) {
             <NavItemWithoutSubItems key={item.title} item={item} />
           ),
         )}
-        <ThemeButton/>
+        <ThemeButton />
       </SidebarMenu>
     </SidebarGroup>
   );
