@@ -54,7 +54,6 @@ const frameworks = [
     label: 'None have time',
   },
 ];
-
 export default function PlayOnline() {
   const [oponent, setOponent] = React.useState('Oponent');
   // const [listMove, setListMove] = React.useState([]);
@@ -87,7 +86,7 @@ export default function PlayOnline() {
             <div>
               <h1 className="text-4xl font-bold justify-center">Play Online</h1>
             </div>
-            <div className="flex items-center text-black hover:cursor-pointer">
+            <div className="flex items-center hover:cursor-pointer">
               <Combobox frameworks={frameworks} />
             </div>
             <div className="">

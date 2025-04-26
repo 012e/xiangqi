@@ -52,7 +52,7 @@ public class GameMovesController {
 
     @MessageMapping("/game/{gameId}")
     @SendTo("/topic/game/{gameId}")
-    public BoardStateMessage move(@DestinationVariable String gameId, @Payload Move move, Principal principal) {
+    public BoardStateMessage<?> move(@DestinationVariable String gameId, @Payload Move move, Principal principal) {
         if (principal == null) {
             return null;
         }
