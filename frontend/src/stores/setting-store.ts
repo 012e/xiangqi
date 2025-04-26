@@ -1,13 +1,22 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type Theme = 'dark' | 'light';
+
+const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+  ? 'dark'
+  : 'light';
+
 type SettingState = {
   backendUrl: string;
+  theme: Theme;
 };
 
 type SettingActions = {
   actions: {
     setBackendUrl: (url: string) => void;
+    setTheme: (theme: Theme) => void;
+    toggleTheme: () => void;
   };
 };
 
@@ -35,7 +44,6 @@ function merge(target: any, source: any): any {
   return source;
 }
 
-
 export type SettingStore = SettingState & SettingActions;
 
 const BACKEND_URL =
@@ -45,9 +53,18 @@ const BACKEND_URL =
 
 const useSettingStore = create<SettingStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       backendUrl: BACKEND_URL,
+      theme: systemTheme,
       actions: {
+        setTheme(theme: Theme): void {
+          set({ theme });
+        },
+        toggleTheme(): void {
+          const currentTheme = get().theme;
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          set({ theme: newTheme });
+        },
         setBackendUrl(url): void {
           set({ backendUrl: url });
         },
@@ -57,15 +74,14 @@ const useSettingStore = create<SettingStore>()(
       name: 'setting-storage',
       version: 1,
       merge: (persistedState, currentState) => {
-        // add this part
         return merge(currentState, persistedState);
       },
     },
   ),
 );
 
-// Exported getter and setter
 export const useBackendUrl = () => useSettingStore((state) => state.backendUrl);
+export const useTheme = () => useSettingStore((state) => state.theme);
 
 export const useSettingActions = () =>
   useSettingStore((state) => state.actions);

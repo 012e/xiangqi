@@ -1,4 +1,4 @@
-import { StrictMode, useMemo } from 'react';
+import { StrictMode, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Auth0Provider } from '@auth0/auth0-react';
 import '@/styles/index.css';
@@ -15,13 +15,21 @@ import Layout from './components/layout.tsx';
 import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 import SettingPage from './pages/setting/setting-page.tsx';
-import { useBackendUrl } from './stores/setting-store.ts';
+import { useBackendUrl, useTheme } from './stores/setting-store.ts';
 
 const queryClient = new QueryClient();
 
 function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
   const stompUrl = useMemo(() => new URL("ws", backendUrl).toString(), [backendUrl]);
+  const theme = useTheme();
+
+  // set theme
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+  }, [theme]);
 
   return (
     <QueryClientProvider client={queryClient}>

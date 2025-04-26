@@ -16,6 +16,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { NavLink } from 'react-router';
+import { ModeToggle } from './mode-toggle';
 
 export type NavSubItem = {
   title: string;
@@ -76,6 +77,16 @@ function NavItemWithoutSubItems({ item }: { item: NavItem }) {
   );
 }
 
+function ThemeButton() {
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton tooltip="Theme">
+          <ModeToggle />
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
 export function NavContent({ items }: { items: NavItem[] }) {
   return (
     <SidebarGroup>
@@ -87,6 +98,7 @@ export function NavContent({ items }: { items: NavItem[] }) {
             <NavItemWithoutSubItems key={item.title} item={item} />
           ),
         )}
+        <ThemeButton/>
       </SidebarMenu>
     </SidebarGroup>
   );
