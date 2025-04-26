@@ -3,11 +3,23 @@ if (process.env.NODE_ENV === 'development') {
   baseURL = 'http://localhost:8080';
 }
 
+import useSettingStore from '@/stores/setting-store';
 import Axios, { AxiosRequestConfig } from 'axios';
 
 export const AXIOS_INSTANCE = Axios.create({ baseURL: baseURL }); // use your own URL here or environment variable
 
-// add a second `options` argument here if you want to pass extra options to each generated query
+AXIOS_INSTANCE.interceptors.request.use(
+  (config) => {
+    const backendUrl = useSettingStore.getState().backendUrl;
+    if (backendUrl) {
+      config.baseURL = backendUrl;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 export const customInstance = <T>(
   config: AxiosRequestConfig,

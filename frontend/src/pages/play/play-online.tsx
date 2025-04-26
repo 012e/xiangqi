@@ -54,7 +54,6 @@ const frameworks = [
     label: 'None have time',
   },
 ];
-
 export default function PlayOnline() {
   const [oponent, setOponent] = React.useState('Oponent');
   // const [listMove, setListMove] = React.useState([]);
