@@ -74,7 +74,7 @@ export default function PlayGame() {
                 {menuItems.map((item, index) => (
                   <div
                     key={index}
-                    className="hover:bg-muted bg-background flex items-center p-4 rounded-lg shadow transition cursor-pointer"
+                    className="hover:bg-ring bg-background flex items-center p-4 rounded-lg shadow transition cursor-pointer"
                   >
                     <div className="text-3xl mr-4">{item.icon}</div>
                     <div>
@@ -89,13 +89,13 @@ export default function PlayGame() {
             <div className="flex gap-10 text-sm items-center">
               <div className="flex items-center gap-2">
                 <Button className="hover:font-bold">
-                  <Clock className="w-4 h-4 text-yellow-300" />
+                  <Clock className="w-4 h-4 text-yellow-600" />
                   Game History
                 </Button>
               </div>
               <div className="flex items-center gap-2">
                 <Button className=" hover:font-bold">
-                  <Trophy className="w-4 h-4 text-yellow-300" />
+                  <Trophy className="w-4 h-4 text-yellow-600" />
                   <div>
                     <p className="">Leaderboard</p>
                   </div>

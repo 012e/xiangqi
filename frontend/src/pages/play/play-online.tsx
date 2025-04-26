@@ -107,19 +107,19 @@ export default function PlayOnline() {
             </div>
             <div className="flex space-x-3">
               <Button className="group">
-                <Handshake className="transition-transform group-hover:scale-150 " />
+                <Handshake className="transition-transform group-hover:scale-150 text-green-500" />
               </Button>
               <Button className="group">
-                <Flag className="transition-transform group-hover:scale-150"></Flag>
+                <Flag className="transition-transform group-hover:scale-150 "></Flag>
               </Button>
               <Button className="group">
-                <ChevronLeft className="transition-transform group-hover:scale-150" />
+                <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400" />
               </Button>
               <Button className="group">
-                <ChevronRight className="transition-transform group-hover:scale-150" />
+                <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
               </Button>
               <Button className="group">
-                <ArrowUpDown className="transition-transform group-hover:scale-150" />
+                <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
               </Button>
             </div>
           </div>
