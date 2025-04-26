@@ -22,6 +22,7 @@ const teams = {
   plan: 'Xiangqi',
   url: '/play',
 };
+
 const navItems: NavItem[] = [
   {
     title: 'Playground',

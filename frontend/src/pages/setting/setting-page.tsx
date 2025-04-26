@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { useBackendUrl, useSettingActions } from '@/stores/setting-store';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
+import { ModeToggle } from '@/components/mode-toggle';
 
 const formSchema = z.object({
   backendUrl: z
