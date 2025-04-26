@@ -64,18 +64,18 @@ const listFriend = [
   },
 ];
 export default function PlayFriend() {
-  const [oponent] = React.useState('Oponent');
+  const [opponent] = React.useState('Opponent');
   // const [listMove, setListMove] = React.useState([]);
   return (
     <div className="w-full text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
         {/* Left */}
-        <div className="min-h-screen p-4 lg:block hidden mt-10">
+        <div className="p-4 lg:block hidden mt-10">
           <div className="flex flex-wrap space-x-2 justify-center">
             <span>
               <CircleUser size={30} />
             </span>
-            <span>{oponent}</span>
+            <span>{opponent}</span>
           </div>
           <div className="flex justify-center p-3">
             <div className="border-2">
@@ -90,13 +90,13 @@ export default function PlayFriend() {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 bg-secondary ">
-          <div className="min-h-screen flex flex-col h-auto items-center p-6 space-y-6">
+        <div className="rounded-4xl my-5 bg-secondary shadow-lg shadow-ring">
+          <div className="flex flex-col items-center p-6 space-y-6 ">
             <div className="flex space-x-3">
               <Button className="group mt-1">
                 <ArrowLeft className="scale-200 " />
               </Button>
-              <h1 className="text-4xl font-bold justify-center">
+              <h1 className="text-4xl font-bold justify-center tracking-tight">
                 Play a Friend
               </h1>
             </div>
