@@ -6,7 +6,7 @@ import java.util.List;
 public class Xiangqi {
     public static String INITIAL_UCI_FEN = "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0";
     private String[][] board;
-    private char currentPlayer = 'w';
+    private String currentPlayer = "white";
     private int moveCount = 0;
     private List<Move> moveHistory;
 
@@ -40,7 +40,7 @@ public class Xiangqi {
 
         // Parse board layout
         String boardPart = parts[0];
-        currentPlayer = parts.length > 1 ? parts[1].charAt(0) : 'w';
+        currentPlayer = parts.length > 1 ? "black" : "white";
         moveCount = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
 
         // Initialize empty 10x9 board
@@ -120,7 +120,11 @@ public class Xiangqi {
     }
 
     private void toggleCurrentPlayer() {
-        currentPlayer = (currentPlayer == 'w' ? 'b' : 'w');
+        if (currentPlayer.equals("white")) {
+            currentPlayer = "black";
+        } else {
+            currentPlayer = "white";
+        }
     }
 
 
@@ -197,8 +201,14 @@ public class Xiangqi {
         return String.format("%s %s %d", String.join("/", rows), currentPlayer, moveCount);
     }
 
-
     public GameResult getResult() {
         return GameResult.ONGOING;
+    }
+
+    /**
+     * @return a string that is either "white" or "black"
+     */
+    public String getCurrentPlayerColor() {
+        return String.valueOf(currentPlayer);
     }
 }

@@ -1,6 +1,12 @@
-import { ChessState as GameState, StatePlay } from '@/lib/online/state';
+import {
+  GameResult,
+  GameResultDetail,
+  ChessState as GameState,
+  StateGameEnd,
+  StatePlay,
+} from '@/lib/online/state';
 import Xiangqi from '@/lib/xiangqi';
-import { create } from 'zustand';
+import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type Move = {
@@ -9,22 +15,26 @@ type Move = {
 };
 
 type Actions = {
-  move(move: Move): boolean;
-  init(config: {
-    gameId: string;
-    player: string;
-    playerColor: Color;
-    playingColor: Color;
-    timeBlack: number;
-    timeWhite: number;
-    isStarted: boolean;
-    initialFen?: string;
-  }): void;
-  handleTopicMessage(message: GameState): void;
+  actions: {
+    move(move: Move): boolean;
+    init(config: {
+      gameId: string;
+      player: string;
+      playerColor: Color;
+      playingColor: Color;
+      timeBlack: number;
+      timeWhite: number;
+      isStarted: boolean;
+      initialFen?: string;
+    }): void;
+    handleTopicMessage(message: GameState): void;
+    setGameEndedDialog(showGameEndedDialog: boolean): void;
+  };
 };
 
 type Color = 'white' | 'black';
-type Game = {
+
+type Data = {
   id: string;
 
   player: string;
@@ -37,35 +47,70 @@ type Game = {
   isStarted: boolean;
   fen: string;
 
+  showGameEndedDialog: boolean;
+  gameEnded: boolean;
+
+  gameResult: GameResult | null;
+  gameResultDetail: GameResultDetail | null;
+
   interval: NodeJS.Timeout | null;
-  actions: Actions;
 };
+
+type GameStore = Data & Actions;
+
+const DEFAULT_STATE: Partial<Data> = {
+  id: '',
+  player: '',
+  playerColor: 'white',
+  playingColor: 'white',
+  blackTime: 60 * 3 * 1000,
+  whiteTime: 60 * 3 * 1000,
+  interval: null,
+  gameState: new Xiangqi(),
+  isStarted: false,
+  fen: Xiangqi.DEFAULT_FEN,
+
+  showGameEndedDialog: false,
+  gameEnded: false,
+};
+
+// type helpers
+type MyStateCreator = StateCreator<GameStore>;
+type SetType = Parameters<MyStateCreator>[0]; // typeof set
+type GetType = Parameters<MyStateCreator>[1]; // typeof get
 
 function invertColor(color: Color): Color {
   return color === 'white' ? 'black' : 'white';
 }
 
-export const useGameStore = create<Game>()(
+function isEqualColor(
+  color1: Color | 'w' | 'b',
+  color2: Color | 'w' | 'b',
+): boolean {
+  if (color1 === 'w') {
+    color1 = 'white';
+  }
+  if (color2 === 'w') {
+    color2 = 'white';
+  }
+  if (color1 === 'b') {
+    color1 = 'black';
+  }
+  if (color2 === 'b') {
+    color2 = 'black';
+  }
+
+  return color1 === color2;
+}
+
+export const useGameStore = create<GameStore>()(
   devtools((set, get) => ({
-    id: '',
-    player: '',
-    playerColor: 'white',
-    playingColor: 'white',
-    blackTime: 60 * 3 * 1000,
-    whiteTime: 60 * 3 * 1000,
-    interval: null,
-    gameState: new Xiangqi(),
-    playing: false,
-    isStarted: false,
-    fen: Xiangqi.DEFAULT_FEN,
+    ...DEFAULT_STATE,
 
     actions: {
       move(move): boolean {
         // remove old interval
         const interval = get().interval;
-        if (interval) {
-          clearInterval(get().interval as NodeJS.Timeout);
-        }
 
         // handle game state
         const gameState = get().gameState;
@@ -77,12 +122,15 @@ export const useGameStore = create<Game>()(
 
         // begin new interval for the other player
         const playingColor = invertColor(get().playingColor);
+
         let newInterval: NodeJS.Timeout | null = null;
-        if (playingColor === 'black') {
+        if (interval) {
+          clearInterval(interval);
+        }
+        if (isEqualColor(playingColor, 'black')) {
           newInterval = setInterval(() => {
             set(
               (state) => ({
-                ...state,
                 blackTime: state.blackTime - 1000,
               }),
               false,
@@ -95,7 +143,6 @@ export const useGameStore = create<Game>()(
           newInterval = setInterval(() => {
             set(
               (state) => ({
-                ...state,
                 whiteTime: state.whiteTime - 1000,
               }),
               false,
@@ -108,7 +155,6 @@ export const useGameStore = create<Game>()(
 
         set(
           (state) => ({
-            ...state,
             move,
             gameState: newGameState,
             isStarted: true,
@@ -132,22 +178,67 @@ export const useGameStore = create<Game>()(
             const moveHandler = get().actions.move;
             const play = message as StatePlay;
 
-            if (playerColor !== play.data.player) {
+            if (isEqualColor(playerColor, play.data.player)) {
               const move = {
                 from: play.data.from,
                 to: play.data.to,
               };
               moveHandler(move);
             }
+
+            // Update the board (mostly to handle spectator mode)
+            set(() => ({
+              fen: message.data.fen,
+            }));
+
             break;
           }
           case 'State.Error':
             console.error('Error from server:', message.data.message);
             break;
           case 'State.GameEnd':
-            console.log('Game ended:', message.data.reason);
+            const gameResult = (message as StateGameEnd).data;
+
+            set(() => ({
+              gameResult: gameResult.result,
+              gameResultDetail: gameResult.detail,
+
+              showGameEndedDialog: true,
+            }));
+
+            // clear timer interval
+            const interval = get().interval;
+            if (interval) {
+              clearInterval(interval);
+            }
+
+            switch (gameResult.result) {
+              case 'white_win':
+                console.log('White wins');
+                break;
+              case 'black_win':
+                console.log('Black wins');
+                break;
+              case 'draw':
+                console.log('Draw');
+                break;
+              default:
+                console.error('Unknown game result:', gameResult.result);
+            }
             break;
         }
+      },
+
+      setGameEndedDialog(showGameEndedDialog?: boolean): void {
+        set(
+          () => ({
+            showGameEndedDialog: showGameEndedDialog,
+          }),
+          false,
+          {
+            type: 'board.setGameEndedDialog',
+          },
+        );
       },
 
       init({

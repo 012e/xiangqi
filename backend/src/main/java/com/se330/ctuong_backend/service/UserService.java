@@ -7,7 +7,6 @@ import com.auth0.json.mgmt.users.User;
 import com.se330.ctuong_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -18,13 +17,6 @@ import java.security.Principal;
 public class UserService {
     private final ManagementAPI managementAPI;
     private final UserRepository userRepository;
-
-    public void syncAuthUser(Authentication authentication) throws Auth0Exception {
-        if (authentication == null) {
-            throw new IllegalArgumentException("Authentication must not be null");
-        }
-        syncAuthUser((Principal) authentication.getPrincipal());
-    }
 
     public void syncAuthUser(Principal principal) throws Auth0Exception {
         if (principal == null) {

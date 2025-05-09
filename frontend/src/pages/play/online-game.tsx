@@ -4,6 +4,7 @@ import { Square } from 'react-xiangqiboard/dist/chessboard/types';
 import { useGameStore } from '@/stores/onlineGame'; // Import the store
 import { Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
+import GameEndedDialog from '@/components/game-ended-dialog';
 
 export default function OnlineGame() {
   const { id } = useParams();
@@ -14,6 +15,7 @@ export default function OnlineGame() {
   const whiteTime = useGameStore((state) => state.whiteTime);
   const playingColor = useGameStore((state) => state.playingColor);
   const playerColor = useGameStore((state) => state.playerColor);
+  const fen = useGameStore((state) => state.fen);
 
   // Format time from milliseconds to MM:SS
   const formatTime = (timeMs: number) => {
@@ -57,7 +59,7 @@ export default function OnlineGame() {
 
       <h1>{game.exportFen()}</h1>
       {isLoading ? (
-        <div className="flex justify-center items-enter w-full h-full animate-spin">
+        <div className="flex justify-center w-full h-full animate-spin items-enter">
           <Loader2 />{' '}
         </div>
       ) : (
@@ -68,11 +70,12 @@ export default function OnlineGame() {
             onPieceDrop={onMove}
             isDraggablePiece={isPlayerTurn}
             boardOrientation={playerColor}
-            position={game.exportFen()}
+            position={fen}
             animationDuration={200}
           />
         </div>
       )}
+      <GameEndedDialog />
     </div>
   );
 }

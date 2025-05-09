@@ -1,6 +1,6 @@
-type PlayerColor = 'white' | 'black';
-type GameEndStatus = 'white_win' | 'black_win' | 'draw';
-type GameEndReason =
+export type PlayerColor = 'white' | 'black';
+export type GameResult = 'white_win' | 'black_win' | 'draw';
+export type GameResultDetail =
   | 'black_resign'
   | 'black_timeout'
   | 'black_checkmate'
@@ -25,6 +25,8 @@ export class StatePlay
         from: string;
         to: string;
         player: PlayerColor;
+        fen: string;
+        uciFen: string;
       }
     >
 {
@@ -35,6 +37,8 @@ export class StatePlay
       from: string;
       to: string;
       player: PlayerColor;
+      fen: string;
+      uciFen: string;
     },
   ) {}
 
@@ -44,6 +48,8 @@ export class StatePlay
       from: json.data.from,
       to: json.data.to,
       player: json.data.player,
+      fen: json.data.fen,
+      uciFen: json.data.uciFen,
     });
   }
 }
@@ -66,8 +72,8 @@ export class StateGameEnd
     BaseState<
       'State.GameEnd',
       {
-        status: GameEndStatus;
-        reason: GameEndReason;
+        result: GameResult;
+        detail: GameResultDetail;
       }
     >
 {
@@ -75,16 +81,24 @@ export class StateGameEnd
 
   constructor(
     public data: {
-      status: GameEndStatus;
-      reason: GameEndReason;
+      result: GameResult;
+      detail: GameResultDetail;
     },
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJSON(json: any): StateGameEnd {
+    const result = json.data.result;
+    const detail = json.data.detail;
+    if (!result) {
+      throw new Error('Missing result in GameEnd state');
+    }
+    if (!detail) {
+      throw new Error('Missing detail in GameEnd state');
+    }
     return new StateGameEnd({
-      status: json.data.status,
-      reason: json.data.reason,
+      result: result,
+      detail: detail,
     });
   }
 }

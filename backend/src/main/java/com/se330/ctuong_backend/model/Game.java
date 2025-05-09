@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
 
 @Entity
 @Table(name = "games")
@@ -18,6 +20,7 @@ import java.sql.Timestamp;
 public class Game {
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.UUID)
     private String id;
 
     @ManyToOne
@@ -51,10 +54,22 @@ public class Game {
     private String uciFen = Xiangqi.INITIAL_UCI_FEN;
 
     @Column(name = "end_time")
-    private Timestamp endTime;
+    private Instant endTime;
+
+    @Column(name = "last_move_time")
+    private Instant lastMoveTime;
+
+    @Column(name = "black_time_left")
+    private Long blackTimeLeft;
+
+    @Column(name = "white_time_left")
+    private Long whiteTimeLeft;
 
     @Column(name = "result", length = 20)
     private String result;
+
+    @Column(name = "result_detail")
+    private String resultDetail;
 
     @ManyToOne
     @JoinColumn(name = "tournament_id")
@@ -62,4 +77,7 @@ public class Game {
 
     @Column(name = "is_rated")
     private Boolean isRated = true;
+
+    @Column(name = "is_started")
+    private Boolean isStarted = false;
 }

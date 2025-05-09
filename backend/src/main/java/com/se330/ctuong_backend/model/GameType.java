@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
+
 @Entity
 @Table(name = "game_types")
 @Data
@@ -22,8 +24,5 @@ public class GameType {
     private String typeName;
 
     @Column(name = "time_control", nullable = false)
-    private Integer timeControl;
-
-    @Column(name = "increment")
-    private Integer increment;
+    private Duration timeControl;
 }
