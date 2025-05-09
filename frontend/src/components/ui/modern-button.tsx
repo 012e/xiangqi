@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '@/themes/ThemeContext';
 
 interface ModernButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'success' | 'danger' | 'ghost' | 'CTA';
@@ -10,51 +9,26 @@ const ModernButton: React.FC<ModernButtonProps> = ({
   children,
   variant = 'primary',
   size = 'md',
-  style,
+  className,
   ...props
 }) => {
-  const { theme } = useTheme();
-
-  const baseStyle = {
-    padding: size === 'sm' ? '8px 12px' : size === 'lg' ? '12px 20px' : '10px 16px',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    fontWeight: 'bold',
+  const sizeClasses = {
+    sm: 'px-2 py-1 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-3 text-lg',
   };
 
-  const variantStyles = {
-    primary: {
-      backgroundColor: theme.colors.main,
-      color: theme.colors.text,
-      border: `1px solid ${theme.colors.text}`,
-    },
-    success: {
-      backgroundColor: '#4CAF50',
-      color: '#fff',
-      border: `1px solid ${theme.colors.text}`,
-    },
-    danger: {
-      backgroundColor: '#f44336',
-      color: '#fff',
-      border: `1px solid ${theme.colors.text}`,
-    },
-    ghost: {
-      backgroundColor: theme.colors.buttonGhost.bg,
-      color: theme.colors.buttonGhost.text,
-      border: `1px solid ${theme.colors.buttonGhost.text}`,
-    },
-    CTA: {
-      backgroundColor: theme.colors.buttonCTA.bg,
-      color: theme.colors.buttonCTA.text,
-      border: `1px solid ${theme.colors.buttonCTA.bg}`,
-    },
+  const variantClasses = {
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    success: 'bg-green-500 text-white hover:bg-green-600',
+    danger: 'bg-red-500 text-white hover:bg-red-600',
+    ghost: 'bg-transparent text-foreground border border-border hover:bg-muted',
+    CTA: 'bg-accent text-accent-foreground hover:bg-accent/90',
   };
 
   return (
     <button
-      style={{ ...baseStyle, ...variantStyles[variant], ...style }}
+      className={`rounded-lg font-bold transition-all ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {children}

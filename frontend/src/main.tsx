@@ -15,7 +15,7 @@ import Layout from './components/layout.tsx';
 import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
-import { ThemeProvider } from '@/themes/ThemeContext';
+import { ThemeProvider } from '@/styles/ThemeContext.tsx';
 import SettingProfile from './pages/settings/profile.tsx';
 import Friends from './pages/social/friends.tsx';
 

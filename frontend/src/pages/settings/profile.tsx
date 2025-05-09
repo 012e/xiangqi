@@ -1,30 +1,21 @@
 import React, { useState } from 'react';
-import { createSettingsStyles, createGlobalStyles } from '../../styles';
-import { useTheme } from '@/themes/ThemeContext';
-import { ThemeName, themes } from '@/themes/themes';
+import { useTheme } from '@/styles/ThemeContext';
+
 import { SuccessPopup, ErrorPopup } from '@/components/popups';
 import ModernButton from '@/components/ui/modern-button';
 
 const SettingProfile: React.FC = () => {
-  const { theme, setThemeByName } = useTheme();
-  const globalStyles = createGlobalStyles(theme);
-  const settingsStyles = createSettingsStyles(theme);
-
+  const { setThemeByName } = useTheme();
   const [showPopupSaveSuccess, setShowPopupSaveSuccess] = useState(false);
   const [showPopupCancelSuccess, setShowPopupCancelSuccess] = useState(false);
   const [shortBio, setShortBio] = useState('');
-  const [selectedTheme, setSelectedTheme] = useState<string>('light');
+
   const maxBioLength = 50;
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= maxBioLength) {
       setShortBio(e.target.value);
     }
-  };
-
-  const handleChange = (theme: string) => {
-    setSelectedTheme(theme);
-    setThemeByName(theme as ThemeName);
   };
 
   const handleSave = () => {
@@ -49,12 +40,12 @@ const SettingProfile: React.FC = () => {
 
   return (
     <div className="settings-profile w-screen">
-      <main style={globalStyles.pageContainer}>
+      <main className="p-8 m-4 min-w-[600px] bg-card text-card-foreground rounded-lg border border-border">
         {/* Header */}
         <header>
           <div>
-            <h1 style={globalStyles.titlePage}>Chỉnh sửa hồ sơ</h1>
-            <p style={{ fontSize: '1rem', color: theme.colors.text }}>
+            <h1 className="text-2xl font-bold mb-2">Chỉnh sửa hồ sơ</h1>
+            <p className="text-gray-600">
               Thay đổi ảnh đại diện và chọn chủ đề giao diện của bạn. Mọi thứ ở
               đây sẽ hiển thị trên hồ sơ công khai của bạn.
             </p>
@@ -62,66 +53,32 @@ const SettingProfile: React.FC = () => {
         </header>
 
         {/* Avatar & Bio */}
-        <section style={globalStyles.section}>
-          <div style={settingsStyles.profileEditContainer}>
-            <div style={settingsStyles.avatar}>
+        <section className="mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-5">
+            <div className="flex-1 max-w-[150px] text-center p-4 border border-gray-300 rounded-lg">
               <div
-                style={{
-                  position: 'relative',
-                  cursor: 'pointer',
-                  display: 'inline-block',
-                }}
+                className="relative cursor-pointer inline-block"
                 onClick={() => document.getElementById('avatarInput')?.click()}
               >
                 <img
                   src="https://placehold.co/150x150"
                   alt="Ảnh đại diện"
-                  style={{
-                    ...settingsStyles.avatarImage,
-                    transition: 'opacity 0.3s',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.opacity = '0.7')}
-                  onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
+                  className="w-full h-auto rounded-full shadow-md transition-opacity hover:opacity-70"
                 />
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    opacity: 0,
-                    transition: 'opacity 0.3s',
-                    pointerEvents: 'none',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.opacity = '1')}
-                  onMouseOut={(e) => (e.currentTarget.style.opacity = '0')}
-                >
-                  <i
-                    className="fa fa-camera-retro fa-5x"
-                    style={{
-                      fontSize: '2rem',
-                      color: '#000',
-                    }}
-                  ></i>
-                </div>
               </div>
               <input
                 id="avatarInput"
                 type="file"
                 accept="image/*"
-                style={{ display: 'none' }}
+                className="hidden"
                 onChange={handleAvatarChange}
               />
             </div>
 
-            <div style={settingsStyles.bio}>
+            <div className="flex-1 p-4 border border-gray-300 rounded-lg">
               <label
                 htmlFor="shortBio"
-                style={{
-                  display: 'block',
-                  marginBottom: '5px',
-                  fontWeight: 'bold',
-                }}
+                className="block mb-2 font-bold text-gray-700"
               >
                 Giới thiệu ngắn ({shortBio.length}/{maxBioLength})
               </label>
@@ -130,16 +87,16 @@ const SettingProfile: React.FC = () => {
                 value={shortBio}
                 onChange={handleBioChange}
                 placeholder="Giới thiệu ngắn sẽ hiển thị bên cạnh ảnh đại diện"
-                style={globalStyles.textArea}
+                className="w-full h-20 p-2 border border-gray-300 rounded resize-none"
               />
             </div>
           </div>
         </section>
 
         {/* Detail info */}
-        <section style={globalStyles.section}>
-          <h3 style={globalStyles.titleSection}>Thông tin chi tiết</h3>
-          <div style={globalStyles.grid}>
+        <section className="mb-8">
+          <h3 className="text-lg font-bold mb-4">Thông tin chi tiết</h3>
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <strong>Ngày tham gia:</strong>
             </div>
@@ -153,81 +110,33 @@ const SettingProfile: React.FC = () => {
         </section>
 
         {/* Theme */}
-        <section style={globalStyles.section}>
-          <h3 style={globalStyles.titleSection}>Chủ đề giao diện</h3>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '15px',
-            }}
-          >
-            {Object.keys(themes).map((themeKey) => (
-              <div
-                key={themeKey}
-                onClick={() => handleChange(themeKey)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '10px 15px',
-                  border: '2px solid',
-                  borderColor:
-                    selectedTheme === themeKey
-                      ? theme.colors.background
-                      : '#ddd',
-                  borderRadius: '8px',
-                  backgroundColor: themes[themeKey as ThemeName].colors.main,
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  boxShadow:
-                    selectedTheme === themeKey
-                      ? '0 4px 8px rgba(0, 0, 0, 0.2)'
-                      : 'none',
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.transform = 'scale(1.02)')
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.transform = 'scale(1)')
-                }
-              >
-                <span
-                  style={{
-                    fontWeight: 'bold',
-                    color: themes[themeKey as ThemeName].colors.text,
-                  }}
-                >
-                  {themeKey}
-                </span>
-                {selectedTheme === themeKey && (
-                  <span
-                    style={{
-                      color: theme.colors.text,
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    ✔
-                  </span>
-                )}
-              </div>
-            ))}
+        <section className="mb-8">
+          <h3 className="text-lg font-bold mb-4">Chủ đề giao diện</h3>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setThemeByName('light')}
+              className="px-4 py-2 bg-white text-black rounded-lg hover:bg-primary/90"
+            >
+              Light Theme
+            </button>
+            <button
+              onClick={() => setThemeByName('dark')}
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-secondary/90"
+            >
+              Dark Theme
+            </button>
+            <button
+              onClick={() => setThemeByName('blueChill')}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-secondary/90"
+            >
+              Blue Theme
+            </button>
           </div>
         </section>
 
         {/* Button Save & Cancel */}
-        <div
-          style={{
-            ...globalStyles.listButtonsContainer,
-            marginTop: '20px',
-          }}
-        >
-          <ModernButton
-            onClick={handleCancel}
-            variant="ghost"
-            style={{ marginRight: '10px' }}
-          >
+        <div className="flex justify-end gap-4">
+          <ModernButton onClick={handleCancel} variant="ghost">
             Hủy bỏ
           </ModernButton>
           <ModernButton onClick={handleSave} variant="CTA">

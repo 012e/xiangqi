@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { createGlobalStyles, createFriendsStyles } from '@/styles';
-import { useTheme } from '@/themes/ThemeContext';
 import {
   AddFriendForm,
   FriendList,
@@ -9,10 +7,6 @@ import {
 import friendsData from '@/dummyData/friends.json';
 
 const Friends: React.FC = () => {
-  const { theme } = useTheme();
-  const friendsStyles = createFriendsStyles(theme);
-  const globalStyles = createGlobalStyles(theme);
-
   const [messages, setMessages] = useState<string[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
 
@@ -23,10 +17,10 @@ const Friends: React.FC = () => {
   };
 
   return (
-    <div className="social-friend w-screen">
-      <main style={{...globalStyles.pageContainer}}>
-        <h1 style={globalStyles.titlePage}>Bạn bè</h1>
-        <div style={friendsStyles.friendsPageContainer}>
+    <div className="w-screen">
+      <main className="p-4">
+        <h1 className="text-2xl font-bold mb-4">Bạn bè</h1>
+        <div className="flex gap-4">
           <FriendList
             friends={friendsData.users}
             onSelectFriend={(friend) => setSelectedFriend(friend)}

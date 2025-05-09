@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import ModernButton from '@/components/ui/modern-button';
-import { createFriendsStyles } from '@/styles';
-import { useTheme } from '@/themes/ThemeContext';
 
 const AddFriendForm: React.FC = () => {
   const [friendName, setFriendName] = useState('');
-  const { theme } = useTheme();
-  const friendsStyles = createFriendsStyles(theme);
 
   const handleAddFriend = () => {
     alert(`Friend "${friendName}" added!`);
@@ -14,17 +10,13 @@ const AddFriendForm: React.FC = () => {
   };
 
   return (
-    <div style={friendsStyles.addFriendFormContainer}>
+    <div className="flex justify-between mb-4 bg-card text-card-foreground">
       <input
         type="text"
         placeholder="Nhập tên bạn bè"
         value={friendName}
         onChange={(e) => setFriendName(e.target.value)}
-        style={{
-          ...friendsStyles.addFriendInput,
-          backgroundColor: theme.colors.item,
-          borderColor: theme.colors.text,
-        }}
+        className="flex-1 p-2 mr-4 border border-gray-300 rounded-lg"
       />
       <ModernButton variant="ghost" onClick={handleAddFriend}>
         Thêm bạn bè

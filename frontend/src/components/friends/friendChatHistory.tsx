@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { createFriendsStyles } from '@/styles';
-import { useTheme } from '@/themes/ThemeContext';
 import chatHistory from '@/dummyData/chatHistory.json';
 import { FaPlus, FaImage, FaFile, FaSmile, FaThumbsUp } from 'react-icons/fa';
 import MessageBubble from './messageBubble';
 
 const FriendChatHistory: React.FC = () => {
   const [message, setMessage] = useState('');
-  const { theme } = useTheme();
-  const friendsStyles = createFriendsStyles(theme);
 
   // Temporarily use the first chat history for display
   const chatData = chatHistory[0];
@@ -25,17 +21,17 @@ const FriendChatHistory: React.FC = () => {
   };
 
   return (
-    <div style={friendsStyles.friendMessageContainer}>
-      <div style={friendsStyles.chatHeader}>
+    <div className="flex-3 p-4 bg-card text-card-foreground border border-border rounded-lg">
+      <div className="flex items-center p-4 border-b border-gray-300">
         <img
           src="https://placehold.co/50"
           alt="User Avatar"
-          style={friendsStyles.chatHeaderImage}
+          className="w-10 h-10 rounded-full mr-4"
         />
-        <span style={friendsStyles.chatHeaderName}>{chatData.sender}</span>
+        <span className="font-bold text-lg">{chatData.sender}</span>
       </div>
 
-      <div style={friendsStyles.messageList}>
+      <div className="max-h-[calc(100vh-280px)] overflow-y-auto border border-gray-200 mb-4 p-4">
         {chatData.messages.map((msg, index) => (
           <MessageBubble
             key={index}
@@ -46,18 +42,17 @@ const FriendChatHistory: React.FC = () => {
         ))}
       </div>
 
-      {/* Placeholder for the message input */}
-      <div style={friendsStyles.messageInputContainer}>
-        <button onClick={handleIconClick} style={friendsStyles.iconButton}>
+      <div className="flex items-center p-4 gap-4 border-t border-gray-300">
+        <button onClick={handleIconClick} className="text-gray-500">
           <FaPlus />
         </button>
-        <button onClick={handleIconClick} style={friendsStyles.iconButton}>
+        <button onClick={handleIconClick} className="text-gray-500">
           <FaImage />
         </button>
-        <button onClick={handleIconClick} style={friendsStyles.iconButton}>
+        <button onClick={handleIconClick} className="text-gray-500">
           <FaFile />
         </button>
-        <button onClick={handleIconClick} style={friendsStyles.iconButton}>
+        <button onClick={handleIconClick} className="text-gray-500">
           <FaSmile />
         </button>
         <input
@@ -65,12 +60,12 @@ const FriendChatHistory: React.FC = () => {
           placeholder="Aa"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          style={friendsStyles.messageInput}
+          className="flex-1 p-2 border border-gray-300 rounded-lg"
         />
-        <button onClick={handleIconClick} style={friendsStyles.iconButton}>
+        <button onClick={handleIconClick} className="text-gray-500">
           <FaSmile />
         </button>
-        <button onClick={handleIconClick} style={friendsStyles.iconButton}>
+        <button onClick={handleIconClick} className="text-gray-500">
           <FaThumbsUp />
         </button>
       </div>

@@ -1,6 +1,4 @@
 import React from 'react';
-import { createGlobalStyles, createFriendsStyles } from '@/styles';
-import { useTheme } from '@/themes/ThemeContext';
 
 interface Friend {
   id: number;
@@ -18,49 +16,33 @@ interface FriendListProps {
 }
 
 const FriendList: React.FC<FriendListProps> = ({ friends, onSelectFriend }) => {
-  const { theme } = useTheme();
-  const friendsStyles = createFriendsStyles(theme);
-  const globalStyles = createGlobalStyles(theme);
-
   return (
-    <div style={friendsStyles.friendListContainer}>
+    <div className="flex-1 p-4 bg-card text-card-foreground border border-border rounded-lg">
       <input
         type="text"
         placeholder="Search Messenger"
-        style={friendsStyles.searchFriendInputField}
+        className="w-full p-2 mb-4 rounded-full border border-gray-300 outline-none"
       />
-      <div style={friendsStyles.friendListDisplay}>
+      <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
         <ul>
           {friends.map((friend) => (
             <li
               key={friend.id}
-              style={friendsStyles.friendItem}
+              className="flex justify-between items-center p-4 mb-4 rounded-lg cursor-pointer transition-colors hover:bg-gray-200 border-b border-gray-300"
               onClick={() =>
                 onSelectFriend(`${friend.firstName} ${friend.lastName}`)
-              }
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = theme.colors.item)
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = 'transparent')
               }
             >
               <img
                 src={friend.image || 'https://placehold.co/50'}
                 alt={`${friend.firstName} ${friend.lastName}`}
-                style={friendsStyles.friendImage}
+                className="w-12 h-12 rounded-full mr-4"
               />
-              <div style={friendsStyles.friendDetails}>
-                <div
-                  style={friendsStyles.friendName}
-                >{`${friend.firstName} ${friend.lastName}`}</div>
-                <div style={friendsStyles.friendLastMessage}>
-                  {friend.lastMessage}
-                </div>
+              <div className="flex-1">
+                <div className="font-bold text-sm">{`${friend.firstName} ${friend.lastName}`}</div>
+                <div className="text-xs text-gray-600">{friend.lastMessage}</div>
               </div>
-              <div style={friendsStyles.friendLastMessageTime}>
-                {friend.lastMessageTime}
-              </div>
+              <div className="text-xs text-gray-500">{friend.lastMessageTime}</div>
             </li>
           ))}
         </ul>
