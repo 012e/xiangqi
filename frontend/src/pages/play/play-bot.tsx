@@ -12,6 +12,7 @@ import Combobox from '@/components/combobox';
 import { Button } from '@/components/ui/button';
 import React from 'react';
 import MovePosition from '@/components/move-position';
+import { useCreateGame } from '@/stores/useCreateGame';
 const frameworks = [
   {
     value: '10',
@@ -56,7 +57,8 @@ const frameworks = [
 ];
 
 export default function PlayBot() {
-  const [opponent, setOpponent] = React.useState('Opponent');
+  const { createGame } = useCreateGame();
+  const [opponent] = React.useState('Opponent');
   // const [listMove, setListMove] = React.useState([]);
   return (
     <div className="w-full text-foreground">
@@ -95,7 +97,7 @@ export default function PlayBot() {
             <div className="">
               <Button
                 className="hover:text-4xl text-3xl h-13 font-bold w-2xs"
-                onClick={() => setOpponent('Search ...')}
+                onClick={createGame}
               >
                 <div className="flex items-center">
                   <Play className="!w-7 !h-auto mr-1"></Play>
