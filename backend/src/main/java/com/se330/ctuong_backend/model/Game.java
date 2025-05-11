@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.model;
 
+import com.se330.ctuong_backend.config.Jpa;
 import com.se330.xiangqi.Xiangqi;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -56,14 +57,19 @@ public class Game {
     @Column(name = "end_time")
     private Instant endTime;
 
-    @Column(name = "last_move_time")
-    private Instant lastMoveTime;
+    @Column(name = "white_counter_start")
+    private Instant whiteCounterStart;
 
-    @Column(name = "black_time_left")
-    private Long blackTimeLeft;
+    @Column(name = "black_counter_start")
+    private Instant blackCounterStart;
 
-    @Column(name = "white_time_left")
-    private Long whiteTimeLeft;
+    @Column(name = "black_time_left", nullable = false, columnDefinition = "bigint")
+    @Convert(converter = Jpa.DurationToLongConverter.class)
+    private Duration blackTimeLeft;
+
+    @Column(name = "white_time_left", nullable = false, columnDefinition = "bigint")
+    @Convert(converter = Jpa.DurationToLongConverter.class)
+    private Duration whiteTimeLeft;
 
     @Column(name = "result", length = 20)
     private String result;
@@ -80,4 +86,52 @@ public class Game {
 
     @Column(name = "is_started")
     private Boolean isStarted = false;
+
+    @Transient
+    public Boolean getGameEnded() {
+        return getEndTime() != null;
+    }
+
+    @Transient
+    public void updateWhiteTime() {
+        final var whiteTime = getWhiteTimeLeft();
+        final var now = Instant.now();
+
+        final var whiteCounterStart = getWhiteCounterStart();
+        if (whiteCounterStart == null) {
+            return;
+        }
+
+        final var moveTime = Duration.between(whiteCounterStart, now);
+        if (whiteTime != null) {
+            setWhiteTimeLeft(whiteTime.minus(moveTime));
+        }
+    }
+
+    @Transient
+    public void updateBlackTime() {
+        final var blackTime = getBlackTimeLeft();
+        final var now = Instant.now();
+
+        final var blackCounterStart = getBlackCounterStart();
+        if (blackCounterStart == null) {
+            return;
+        }
+
+        final var moveTime = Duration.between(blackCounterStart, now);
+
+        if (blackTime != null) {
+            setBlackTimeLeft(blackTime.minus(moveTime));
+        }
+    }
+
+    @Transient
+    public void beginBlackCounter() {
+        setBlackCounterStart(Instant.now());
+    }
+
+    @Transient
+    public void beginWhiteCounter() {
+        setWhiteCounterStart(Instant.now());
+    }
 }

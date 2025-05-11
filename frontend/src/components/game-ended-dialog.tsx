@@ -1,4 +1,4 @@
-import { useGameStore } from "@/stores/onlineGame";
+import { useGameStore } from "@/stores/online-game-store";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 export default function GameEndedDialog() {

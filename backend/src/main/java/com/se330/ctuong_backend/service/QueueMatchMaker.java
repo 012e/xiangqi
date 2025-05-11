@@ -30,7 +30,6 @@ public class QueueMatchMaker implements MatchMaker {
 
     @Scheduled(fixedDelay = 1000)
     protected void scheduleFixedDelayTask() throws NotAuthorizedException {
-        log.trace("Ticking queues");
         for (int i = 0; i < queues.size(); ++i) {
             final var queue = queues.get(i);
             tick(queue, (long) i+1);

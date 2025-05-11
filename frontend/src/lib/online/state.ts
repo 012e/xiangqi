@@ -27,6 +27,8 @@ export class StatePlay
         player: PlayerColor;
         fen: string;
         uciFen: string;
+        blackTime: number;
+        whiteTime: number;
       }
     >
 {
@@ -39,6 +41,8 @@ export class StatePlay
       player: PlayerColor;
       fen: string;
       uciFen: string;
+      blackTime: number;
+      whiteTime: number;
     },
   ) {}
 
@@ -50,6 +54,8 @@ export class StatePlay
       player: json.data.player,
       fen: json.data.fen,
       uciFen: json.data.uciFen,
+      blackTime: json.data.blackTime,
+      whiteTime: json.data.whiteTime,
     });
   }
 }

@@ -5,9 +5,4 @@
  * OpenAPI spec version: v0
  */
 
-export interface User {
-  id?: number;
-  sub?: string;
-  email?: string;
-  name?: string;
-}
+export interface GameTypeResponse { [key: string]: unknown }

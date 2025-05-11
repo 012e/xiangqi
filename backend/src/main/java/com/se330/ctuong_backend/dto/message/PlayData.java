@@ -15,6 +15,6 @@ public class PlayData {
     private String player;
     private String fen;
     private String uciFen;
-    private Duration blackTime;
-    private Duration whiteTime;
+    private Long blackTime;
+    private Long whiteTime;
 }

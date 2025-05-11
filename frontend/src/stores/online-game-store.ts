@@ -26,6 +26,7 @@ type Actions = {
       timeWhite: number;
       isStarted: boolean;
       initialFen?: string;
+      isEnded: boolean;
     }): void;
     handleTopicMessage(message: GameState): void;
     setGameEndedDialog(showGameEndedDialog: boolean): void;
@@ -48,7 +49,7 @@ type Data = {
   fen: string;
 
   showGameEndedDialog: boolean;
-  gameEnded: boolean;
+  isEnded: boolean;
 
   gameResult: GameResult | null;
   gameResultDetail: GameResultDetail | null;
@@ -71,7 +72,7 @@ const DEFAULT_STATE: Partial<Data> = {
   fen: Xiangqi.DEFAULT_FEN,
 
   showGameEndedDialog: false,
-  gameEnded: false,
+  isEnded: false,
 };
 
 // type helpers
@@ -109,6 +110,11 @@ export const useGameStore = create<GameStore>()(
 
     actions: {
       move(move): boolean {
+
+        if (get().isEnded) {
+          return false;
+        }
+
         // remove old interval
         const interval = get().interval;
 
@@ -186,9 +192,11 @@ export const useGameStore = create<GameStore>()(
               moveHandler(move);
             }
 
-            // Update the board (mostly to handle spectator mode)
+            // Sync the board (mostly for spectator mode)
             set(() => ({
               fen: message.data.fen,
+              blackTime: message.data.blackTime,
+              whiteTime: message.data.whiteTime,
             }));
 
             break;
@@ -204,6 +212,7 @@ export const useGameStore = create<GameStore>()(
               gameResultDetail: gameResult.detail,
 
               showGameEndedDialog: true,
+              isEnded: true,
             }));
 
             // clear timer interval
@@ -215,8 +224,18 @@ export const useGameStore = create<GameStore>()(
             switch (gameResult.result) {
               case 'white_win':
                 console.log('White wins');
+                if (gameResult.detail === "black_timeout") {
+                  set(() => ({
+                    blackTime: 0,
+                  }))
+                }
                 break;
               case 'black_win':
+                if (gameResult.detail === "white_timeout") {
+                  set(() => ({
+                    whiteTime: 0,
+                  }))
+                }
                 console.log('Black wins');
                 break;
               case 'draw':
@@ -250,6 +269,7 @@ export const useGameStore = create<GameStore>()(
         timeWhite,
         initialFen,
         isStarted = false,
+        isEnded = false,
       }) {
         let gameState;
 
@@ -276,6 +296,7 @@ export const useGameStore = create<GameStore>()(
             isStarted,
 
             interval,
+            isEnded
           }),
           false,
           {

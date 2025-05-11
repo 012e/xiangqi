@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     petstore: {
         output: {
             mode: 'tags-split',
@@ -8,14 +8,14 @@ module.exports = {
             mock: true,
             override: {
                 mutator: {
-                    path: './src/AxiosClient.ts',
+                    path: './src/services/AxiosClient.ts',
                     name: 'customInstance',
                 },
             },
         },
-
         input: {
             target: './api-docs.yaml',
         },
     },
 };
+
