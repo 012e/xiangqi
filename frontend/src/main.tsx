@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Auth0Provider } from '@auth0/auth0-react';
 import '@/styles/index.css';
@@ -18,15 +18,28 @@ import PlayFriend from './pages/play/play-friend.tsx';
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
 import SettingProfile from './pages/settings/profile.tsx';
 import Friends from './pages/social/friends.tsx';
+import Demo from './pages/play/test.tsx';
 
-const BACKEND_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8080'
-    : 'https://xiangqi-backend-e4f524a5a2ad.herokuapp.com';
+import SettingPage from './pages/setting/setting-page.tsx';
+import { useBackendUrl, useTheme } from './stores/setting-store.ts';
 
 const queryClient = new QueryClient();
 
 function Providers({ children }: { children: React.ReactNode }) {
+  const backendUrl = useBackendUrl();
+  const stompUrl = useMemo(
+    () => new URL('ws', backendUrl).toString(),
+    [backendUrl],
+  );
+  const theme = useTheme();
+
+  // set theme
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+  }, [theme]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Auth0Provider
@@ -38,7 +51,7 @@ function Providers({ children }: { children: React.ReactNode }) {
         }}
         cacheLocation="localstorage"
       >
-        <StompSessionProvider url={`${BACKEND_URL}/ws`}>
+        <StompSessionProvider url={stompUrl} key={stompUrl}>
           {children}
           <Toaster />
         </StompSessionProvider>
@@ -65,6 +78,9 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/settings/profile" element={<SettingProfile />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
+
+              <Route path="/play/demo" element={<Demo />} />
+              <Route path="/setting" element={<SettingPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

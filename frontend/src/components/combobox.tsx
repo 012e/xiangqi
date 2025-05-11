@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, Clock } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -51,6 +51,7 @@ export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
+                  className="hover:cursor-pointer"
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
@@ -64,6 +65,9 @@ export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
                       value === framework.value ? 'opacity-100' : 'opacity-0',
                     )}
                   />
+                  <span>
+                    <Clock></Clock>
+                  </span>
                   {framework.label}
                 </CommandItem>
               ))}

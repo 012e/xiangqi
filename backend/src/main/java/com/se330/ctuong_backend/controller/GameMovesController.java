@@ -46,19 +46,21 @@ public class GameMovesController {
 
         // auth user is not synced
         userService.syncAuthUser(principal);
-        final var syncedUser = userRepository.getUserBySub(sub).orElseThrow(() -> new IllegalStateException("user must be synced"));
+        final var syncedUser = userRepository.getUserBySub(sub)
+                .orElseThrow(() -> new IllegalStateException("user must be synced"));
         matchMaker.addToPlayerPool(syncedUser.getId());
     }
 
     @MessageMapping("/game/{gameId}")
     @SendTo("/topic/game/{gameId}")
-    public BoardStateMessage move(@DestinationVariable String gameId, @Payload Move move, Principal principal) {
+    public BoardStateMessage<?> move(@DestinationVariable String gameId, @Payload Move move, Principal principal) {
         if (principal == null) {
             return null;
         }
 
         final var sub = principal.getName();
-        final var user = userRepository.getUserBySub(sub).orElseThrow(() -> new IllegalStateException("User must exists"));
+        final var user = userRepository.getUserBySub(sub)
+                .orElseThrow(() -> new IllegalStateException("User must exists"));
         final Game game = gameRepository.getGameById(gameId);
         if (game == null) {
             return null;

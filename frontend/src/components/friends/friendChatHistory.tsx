@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import chatHistory from '@/dummyData/chatHistory.json';
-import { FaPlus, FaImage, FaFile, FaSmile, FaThumbsUp } from 'react-icons/fa';
 import MessageBubble from './messageBubble';
+import { File, Image, Plus, Smile, ThumbsUp } from 'lucide-react';
 
 const FriendChatHistory: React.FC = () => {
   const [message, setMessage] = useState('');
@@ -44,16 +44,16 @@ const FriendChatHistory: React.FC = () => {
 
       <div className="flex items-center p-4 gap-4 border-t border-gray-300">
         <button onClick={handleIconClick} className="text-gray-500">
-          <FaPlus />
+          <Plus />
         </button>
         <button onClick={handleIconClick} className="text-gray-500">
-          <FaImage />
+          <Image />
         </button>
         <button onClick={handleIconClick} className="text-gray-500">
-          <FaFile />
+          <File />
         </button>
         <button onClick={handleIconClick} className="text-gray-500">
-          <FaSmile />
+          <Smile />
         </button>
         <input
           type="text"
@@ -63,10 +63,10 @@ const FriendChatHistory: React.FC = () => {
           className="flex-1 p-2 border border-gray-300 rounded-lg"
         />
         <button onClick={handleIconClick} className="text-gray-500">
-          <FaSmile />
+          <Smile />
         </button>
         <button onClick={handleIconClick} className="text-gray-500">
-          <FaThumbsUp />
+          <ThumbsUp />
         </button>
       </div>
     </div>

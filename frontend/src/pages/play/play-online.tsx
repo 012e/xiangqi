@@ -1,8 +1,18 @@
-import { CircleUser, Play } from 'lucide-react';
+import {
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleUser,
+  Flag,
+  Handshake,
+  Play,
+} from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
 import { Button } from '@/components/ui/button';
 import React from 'react';
+import MovePosition from '@/components/move-position';
+import { useCreateGame } from '../../stores/useCreateGame';
 const frameworks = [
   {
     value: '10',
@@ -45,24 +55,20 @@ const frameworks = [
     label: 'None have time',
   },
 ];
-// type move = {
-//   id: number;
-//   w: string;
-//   b: string;
-// };
 export default function PlayOnline() {
-  const [oponent, setOponent] = React.useState('Oponent');
+  const { createGame } = useCreateGame();
+  const [opponent] = React.useState('Opponent');
   // const [listMove, setListMove] = React.useState([]);
   return (
-    <div className="w-screen">
-      <div className="bg-stone-800 grid grid-cols-1 lg:grid-cols-[550px_400px]">
+    <div className="w-full text-foreground">
+      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
-        <div className="bg-stone-800 min-h-screen text-white p-4 lg:block hidden mt-10">
+        <div className="min-h-screen p-4 lg:block hidden mt-10 bg-background">
           <div className="flex flex-wrap space-x-2 justify-center">
             <span>
               <CircleUser size={30} />
             </span>
-            <span>{oponent}</span>
+            <span>{opponent}</span>
           </div>
           <div className="flex justify-center p-3">
             <div className="border-2">
@@ -77,23 +83,45 @@ export default function PlayOnline() {
           </div>
         </div>
         {/* Right */}
-        <div className="bg-stone-900 rounded-4xl my-5 h-165 ">
-          <div className=" text-white min-h-screen flex flex-col items-center p-6 space-y-6">
+        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring">
+          <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
             <div>
-              <h1 className="text-4xl font-bold justify-center">Play Online</h1>
+              <h1 className="text-4xl font-bold justify-center tracking-tight">
+                Play Online
+              </h1>
             </div>
-            <div className="flex items-center text-black">
+            <div className="flex items-center hover:cursor-pointer">
               <Combobox frameworks={frameworks} />
             </div>
-            <div className="text-white">
+            <div className="">
               <Button
-                className="hover:bg-green-400 hover:text-4xl text-3xl h-auto font-bold bg-green-500 w-2xs"
-                onClick={() => setOponent('Search ...')}
+                className="hover:text-4xl text-3xl h-13 font-bold w-2xs"
+                onClick={createGame}
               >
                 <div className="flex items-center">
                   <Play className="!w-7 !h-auto mr-1"></Play>
                   START
                 </div>
+              </Button>
+            </div>
+            <div className="bg-background rounded-2xl">
+              <MovePosition></MovePosition>
+            </div>
+            <div className="flex space-x-3">
+              <Button className="group">
+                <Handshake className="transition-transform group-hover:scale-150 text-green-500" />
+              </Button>
+              <Button className="group">
+                <Flag className="transition-transform group-hover:scale-150 "></Flag>
+              </Button>
+              <Button className="group">
+                <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400" />
+              </Button>
+              <Button className="group">
+                <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
+              </Button>
+              <Button className="group">
+                <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
               </Button>
             </div>
           </div>
