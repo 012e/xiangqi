@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "sender": "Alex",
+    "receiver": "Steve",
+    "messages": [
+      {
+        "type": "text",
+        "content": "Hey Steve, how are you?",
+        "timestamp": "2025-04-25T10:00:00Z"
+      },
+      {
+        "type": "long_text",
+        "content": "I was thinking about our project and had some ideas. Let me know when you have time to discuss them in detail.",
+        "timestamp": "2025-04-25T10:01:00Z"
+      },
+      {
+        "type": "image",
+        "content": "https://placehold.co/3000x4000",
+        "timestamp": "2025-04-25T10:02:00Z"
+      },
+      {
+        "type": "images",
+        "content": [
+          "https://placehold.co/300x300",
+          "https://placehold.co/300x300",
+          "https://placehold.co/300x300",
+          "https://placehold.co/300x300",
+          "https://placehold.co/300x300",
+          "https://placehold.co/230x320"
+        ],
+        "timestamp": "2025-04-25T10:03:00Z"
+      },
+      {
+        "type": "video",
+        "content": "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "timestamp": "2025-04-25T10:04:00Z"
+      },
+      {
+        "type": "audio",
+        "content": "https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/soundtrack.mp3",
+        "timestamp": "2025-04-25T10:05:00Z"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "sender": "Steve",
+    "receiver": "Alex",
+    "messages": [
+      {
+        "type": "text",
+        "content": "Hi Alex, I'm good. How about you?",
+        "timestamp": "2025-04-25T10:06:00Z"
+      },
+      {
+        "type": "long_text",
+        "content": "Sure, I have some time this afternoon. Let's go over your ideas then. By the way, I checked the files you sent earlier, and they look great!",
+        "timestamp": "2025-04-25T10:07:00Z"
+      },
+      {
+        "type": "image",
+        "content": "https://placehold.co/66",
+        "timestamp": "2025-04-25T10:08:00Z"
+      },
+      {
+        "type": "images",
+        "content": [
+          "https://placehold.co/77",
+          "https://placehold.co/88"
+        ],
+        "timestamp": "2025-04-25T10:09:00Z"
+      },
+      {
+        "type": "video",
+        "content": "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "timestamp": "2025-04-25T10:10:00Z"
+      },
+      {
+        "type": "audio",
+        "content": "https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/soundtrack.mp3",
+        "timestamp": "2025-04-25T10:11:00Z"
+      }
+    ]
+  }
+]

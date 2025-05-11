@@ -14,12 +14,12 @@ import PlayOnline from './pages/play/play-online.tsx';
 import Layout from './components/layout.tsx';
 import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
+
+import { ThemeProvider } from '@/styles/ThemeContext.tsx';
+import SettingProfile from './pages/settings/profile.tsx';
+import Friends from './pages/social/friends.tsx';
 import Demo from './pages/play/test.tsx';
 
-const BACKEND_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8080'
-    : 'https://xiangqi-backend-e4f524a5a2ad.herokuapp.com';
 import SettingPage from './pages/setting/setting-page.tsx';
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
 
@@ -62,21 +62,29 @@ function Providers({ children }: { children: React.ReactNode }) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Providers>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path="/play" element={<PlayGame />} />
-            <Route path="/play/online" element={<PlayOnline />} />
-            <Route path="/play/bot" element={<PlayBot />} />
-            <Route path="/play/demo" element={<Demo />} />
-            <Route path="/play/friend" element={<PlayFriend />} />
-            <Route path="/game/new" element={<NewGame />} />
-            <Route path="/game/:id" element={<OnlineGame />} />
-            <Route path="/setting" element={<SettingPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<App />} />
+              <Route path="/play" element={<PlayGame />} />
+              <Route path="/play/online" element={<PlayOnline />} />
+              <Route path="/play/bot" element={<PlayBot />} />
+              <Route path="/play/friend" element={<PlayFriend />} />
+              <Route path="/game/new" element={<NewGame />} />
+              <Route path="/game/:id" element={<OnlineGame />} />
+
+              <Route path="/settings" element={<SettingProfile />} />
+              <Route path="/settings/profile" element={<SettingProfile />} />
+              <Route path="/social" element={<Friends />} />
+              <Route path="/social/friend" element={<Friends />} />
+
+              <Route path="/play/demo" element={<Demo />} />
+              <Route path="/setting" element={<SettingPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
     </Providers>
   </StrictMode>,
 );

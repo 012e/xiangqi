@@ -36,7 +36,7 @@ function App() {
   }
 
   return (
-    <div className="w-screen">
+    <div className="w-screen bg-background text-foreground">
       <div className="flex flex-col gap-10 justify-center items-center p-20">
         <div className="flex justify-center items-center w-full h-full">
           {!isAuthenticated ? (

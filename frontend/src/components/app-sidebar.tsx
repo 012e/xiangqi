@@ -87,6 +87,28 @@ const navItems: NavItem[] = [
     url: 'setting',
     icon: Settings2,
   },
+  {
+    title: 'Social',
+    url: '/social',
+    icon: Globe,
+    items: [
+      {
+        title: 'Friends',
+        url: '/social/friend',
+      },
+    ],
+  },
+  {
+    title: 'Settings',
+    url: '/settings',
+    icon: Settings2,
+    items: [
+      {
+        title: 'Profile',
+        url: '/settings/profile',
+      },
+    ],
+  },
 ];
 
 function LoginRegister() {
