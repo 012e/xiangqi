@@ -7,7 +7,6 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StompSessionProvider } from 'react-stomp-hooks';
 import { Toaster } from './components/ui/sonner.tsx';
-import PlayGame from './pages/play/play-game.tsx';
 import NewGame from './pages/play/new-game.tsx';
 import OnlineGame from './pages/play/online-game.tsx';
 import PlayOnline from './pages/play/play-online.tsx';
@@ -16,11 +15,11 @@ import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
-import SettingProfile from './pages/settings/profile.tsx';
+import SettingProfile from './pages/settings/setting-page.tsx';
 import Friends from './pages/social/friends.tsx';
-import Demo from './pages/play/test.tsx';
+import Demo from './pages/test/test.tsx';
 
-import SettingPage from './pages/setting/setting-page.tsx';
+import SettingPage from './pages/settings/setting-form.tsx';
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
 
 const queryClient = new QueryClient();
@@ -67,7 +66,6 @@ createRoot(document.getElementById('root')!).render(
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<App />} />
-              <Route path="/play" element={<PlayGame />} />
               <Route path="/play/online" element={<PlayOnline />} />
               <Route path="/play/bot" element={<PlayBot />} />
               <Route path="/play/friend" element={<PlayFriend />} />

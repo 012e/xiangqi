@@ -3,6 +3,8 @@ import { useTheme } from '@/styles/ThemeContext';
 
 import { SuccessPopup, ErrorPopup } from '@/components/popups';
 import ModernButton from '@/components/ui/modern-button';
+import SettingForm from './setting-form.tsx';
+import { Separator } from '@/components/ui/separator';
 
 const SettingProfile: React.FC = () => {
   const { setThemeByName } = useTheme();
@@ -134,6 +136,12 @@ const SettingProfile: React.FC = () => {
           </div>
         </section>
 
+        <section>
+          <Separator></Separator>
+          <div className="flex py-5">
+            <SettingForm />
+          </div>
+        </section>
         {/* Button Save & Cancel */}
         <div className="flex justify-end gap-4">
           <ModernButton onClick={handleCancel} variant="ghost">

@@ -8,8 +8,8 @@ import {
   Bot,
   Signal,
 } from 'lucide-react';
-import SelfPlayBoard from './self-playboard';
-import { Button } from '@/components/ui/button';
+import SelfPlayBoard from '../play/self-playboard.tsx';
+import { Button } from '@/components/ui/button.tsx';
 const menuItems = [
   {
     icon: <Signal className="text-yellow-600 w-10 h-10" />,
@@ -37,7 +37,7 @@ const menuItems = [
     desc: 'Find fun new ways to play chess',
   },
 ];
-export default function PlayGame() {
+export default function Home() {
   return (
     <div className="w-full text-foreground ">
       <div className="bg-background grid grid-cols-1 lg:grid-cols-[550px_400px]">
