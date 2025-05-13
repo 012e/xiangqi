@@ -1,5 +1,5 @@
 import { useStompClient, useSubscription } from 'react-stomp-hooks';
-import { useGameActions, useGameStore } from '@/stores/onlineGame'; // Import your store
+import { useGameActions, useGameStore } from '@/stores/online-game-store';
 import { deserializeState } from './state';
 import { useGetGame } from '../api/game-controller/game-controller';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -54,8 +54,10 @@ export function useOnlineGame(gameId: string | undefined) {
       playingColor: 'white',
       player: user!.sub!,
       initialFen: fen,
-      timeBlack: 60 * 3 * 1000,
-      timeWhite: 60 * 3 * 1000,
+      timeBlack: data.blackTimeLeft,
+      timeWhite: data.whiteTimeLeft,
+
+      isEnded: false,
     });
     setIsFirstRun(false);
   }, [data, isFirstRun]);

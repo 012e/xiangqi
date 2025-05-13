@@ -4,6 +4,7 @@ import com.auth0.client.mgmt.ManagementAPI;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.*;
+import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.http.HttpClient;
+import java.time.Duration;
 import java.util.Random;
 
 
@@ -72,6 +74,16 @@ public class ApplicationConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        final var durationToLongConverter = new AbstractConverter<Duration, Long>() {
+            @Override
+            protected Long convert(Duration source) {
+                return source.toMillis();
+            }
+        };
+
+        final var modelMapper = new ModelMapper();
+        modelMapper.addConverter(durationToLongConverter);
+
+        return modelMapper;
     }
 }

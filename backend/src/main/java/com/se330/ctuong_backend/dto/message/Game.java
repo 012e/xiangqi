@@ -11,6 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Game {
     private String gameId;
-    private String blackPlayerId;
-    private String whitePlayerId;
+    private Long blackPlayerId;
+    private Long whitePlayerId;
+
+    @Data
+    @AllArgsConstructor
+    public static class CreateGameMessage {
+        private Long gameTypeId;
+    }
 }

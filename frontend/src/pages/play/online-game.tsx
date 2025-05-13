@@ -1,9 +1,10 @@
 import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
-import { useGameStore } from '@/stores/onlineGame'; // Import the store
+import { useGameStore } from '@/stores/online-game-store'; // Import the store
 import { Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
+import GameEndedDialog from '@/components/game-ended-dialog';
 
 export default function OnlineGame() {
   const { id } = useParams();
@@ -14,13 +15,17 @@ export default function OnlineGame() {
   const whiteTime = useGameStore((state) => state.whiteTime);
   const playingColor = useGameStore((state) => state.playingColor);
   const playerColor = useGameStore((state) => state.playerColor);
+  const fen = useGameStore((state) => state.fen);
+  const gameEnded = useGameStore((state) => state.isEnded);
 
   // Format time from milliseconds to MM:SS
-  const formatTime = (timeMs: number) => {
-    const minutes = Math.floor(timeMs / 60000);
-    const seconds = Math.floor((timeMs % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
+  function formatTime(ms: number): string {
+    //const totalSeconds = Math.round(ms / 1000);
+    //const minutes = Math.floor(totalSeconds / 60);
+    //const seconds = totalSeconds % 60;
+    //return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return ms.toString();
+  }
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
@@ -57,7 +62,7 @@ export default function OnlineGame() {
 
       <h1>{game.exportFen()}</h1>
       {isLoading ? (
-        <div className="flex justify-center items-enter w-full h-full animate-spin">
+        <div className="flex justify-center w-full h-full animate-spin items-enter">
           <Loader2 />{' '}
         </div>
       ) : (
@@ -66,13 +71,14 @@ export default function OnlineGame() {
             boardWidth={400}
             id="online-xiangqi-board"
             onPieceDrop={onMove}
-            isDraggablePiece={isPlayerTurn}
+            isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
             boardOrientation={playerColor}
-            position={game.exportFen()}
+            position={fen}
             animationDuration={200}
           />
         </div>
       )}
+      <GameEndedDialog />
     </div>
   );
 }

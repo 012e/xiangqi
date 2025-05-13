@@ -1,10 +1,10 @@
 package com.se330.ctuong_backend.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -15,12 +15,12 @@ public class HealthController {
     }
 
     @GetMapping("/health/auth")
-    public ResponseEntity<Map<String, Object>> healthAuth(JwtAuthenticationToken token) {
-        if (token == null) {
+    public ResponseEntity<?> healthAuth(Principal principal) {
+        if (principal == null) {
             var problem = Map.of("error", (Object) "User not authenticated");
             return ResponseEntity.badRequest().body(problem);
         }
-        return ResponseEntity.ok(Map.of("user", token.getTokenAttributes()));
+        return ResponseEntity.ok(principal);
 
     }
 }
