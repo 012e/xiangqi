@@ -92,7 +92,7 @@ export default function PlayBot() {
               </h1>
             </div>
             <div className="flex items-center">
-              <Combobox frameworks={frameworks} />
+              <Combobox gameType={frameworks} />
             </div>
             <div className="">
               <Button

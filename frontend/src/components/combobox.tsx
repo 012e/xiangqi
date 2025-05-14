@@ -18,16 +18,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { GameType } from '@/lib/online/game-type.ts';
+import { useCallback } from 'react';
 
-type Frameworks = {
-  value: string;
-  label: string;
+type ComboboxArgs = { gameType: GameType[] | undefined, onSelect: (current: GameType) => void };
+const DEFAULT_COMBOBOX_ARGS = {
+  gameType: undefined,
+  onSelect: () => {
+  }
 };
-
-export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
+export default function Combobox({ gameType, onSelect }: ComboboxArgs = DEFAULT_COMBOBOX_ARGS) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState('');
-
+  const [selectedTypeName, setSelectedTypeName] = React.useState('');
+  const handleSelect = useCallback((current: GameType) => {
+    setSelectedTypeName(current.typeName === selectedTypeName ? '' : current.typeName);
+    setOpen(false);
+    onSelect(current);
+  }, [selectedTypeName, onSelect]);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -37,8 +44,8 @@ export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
           aria-expanded={open}
           className="w-[200px] justify-between "
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+          {selectedTypeName
+            ? gameType?.find((currentType) => currentType.typeName === selectedTypeName)?.typeName
             : 'Select Time'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -49,26 +56,23 @@ export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {gameType?.map((currentType) => (
                 <CommandItem
                   className="hover:cursor-pointer"
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
-                    setOpen(false);
-                  }}
+                  key={currentType.id}
+                  value={currentType.typeName}
+                  onSelect={() => handleSelect(currentType)}
                 >
                   <Check
                     className={cn(
                       'mr-2 h-4 w-4',
-                      value === framework.value ? 'opacity-100' : 'opacity-0',
+                      selectedTypeName === currentType.typeName ? 'opacity-100' : 'opacity-0',
                     )}
                   />
                   <span>
-                    <Clock></Clock>
+                    <Clock/>
                   </span>
-                  {framework.label}
+                  {currentType.typeName}
                 </CommandItem>
               ))}
             </CommandGroup>

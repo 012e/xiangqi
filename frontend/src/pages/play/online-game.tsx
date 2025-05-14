@@ -2,9 +2,12 @@ import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
 import { useGameStore } from '@/stores/online-game-store'; // Import the store
-import { Loader2 } from 'lucide-react';
+import { ArrowUpDown, ChevronLeft, ChevronRight, CircleUser, Flag, Handshake, Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
-import GameEndedDialog from '@/components/game-ended-dialog';
+import MovePosition from '@/components/move-position.tsx';
+import { Button } from '@/components/ui/button.tsx';
+import { Textarea } from '@/components/ui/textarea.tsx';
+import GameEndedDialog from '@/components/game-ended-dialog.tsx';
 
 export default function OnlineGame() {
   const { id } = useParams();
@@ -18,22 +21,20 @@ export default function OnlineGame() {
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
 
-  // Format time from milliseconds to MM:SS
+  // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
-    //const totalSeconds = Math.round(ms / 1000);
-    //const minutes = Math.floor(totalSeconds / 60);
-    //const seconds = totalSeconds % 60;
-    //return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    return ms.toString();
+    // example : 137608 (s)
+    const totalSeconds = Math.round(ms / 1000); // 138
+    const minutes = Math.floor(totalSeconds / 60); // 2
+    const seconds = totalSeconds % 60;// 18
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
   }
 
-  function isPlayerTurn({
-    piece,
-  }: {
+  function isPlayerTurn({piece,}: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
@@ -41,43 +42,98 @@ export default function OnlineGame() {
   }
 
   return (
-    <div className="flex flex-col gap-10 justify-center items-center p-20">
-      {/* Timer display */}
-      <div className="flex justify-between w-full max-w-md">
-        <div
-          className={`text-xl font-bold ${
-            playingColor === 'black' ? 'text-red-600' : ''
-          }`}
-        >
-          Black: {formatTime(blackTime)}
+    <div className="w-full text-foreground">
+      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] items-start">
+        {/* Left */}
+        <div className="p-4 lg:block hidden mt-10 bg-background">
+          <div className="flex flex-wrap space-x-2 px-10 w-full">
+            <div className="flex flex-wrap space-x-2">
+              <span><CircleUser size={30} /></span>
+              <span>opp</span>
+            </div>
+            <div
+              className={`text-xl font-bold ml-auto ${
+                playingColor === 'black' ? 'text-red-600' : ''
+              }`}
+            >
+              {(playerColor === "black") ? formatTime(whiteTime) : formatTime(blackTime)}
+            </div>
+          </div>
+          <div className="flex justify-center p-3">
+            <div className="border-2">
+              <h1>{game.exportFen()}</h1>
+              {isLoading ? (
+                <div className="flex justify-center w-full h-full animate-spin items-enter">
+                  <Loader2 />{' '}
+                </div>
+              ) : (
+                <div className="w-1/2 h-1/2">
+                  <Chessboard
+                    boardWidth={400}
+                    id="online-xiangqi-board"
+                    onPieceDrop={onMove}
+                    isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
+                    boardOrientation={playerColor}
+                    position={fen}
+                    animationDuration={200}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-wrap space-x-2 px-10 w-full">
+            <div className="flex flex-wrap space-x-2">
+              <span><CircleUser size={30} /></span>
+              <span>Me</span>
+            </div>
+            <div
+              className={`text-xl font-bold ml-auto ${
+                playingColor === 'white' ? '' : ''
+              }`}
+            >
+              {(playerColor === "black") ? formatTime(blackTime) : formatTime(whiteTime)}
+            </div>
+          </div>
         </div>
-        <div
-          className={`text-xl font-bold ${
-            playingColor === 'white' ? 'text-red-600' : ''
-          }`}
-        >
-          White: {formatTime(whiteTime)}
+        {/* Right */}
+        <div className="rounded-4xl my-5 bg-muted shadow-lg shadow-ring">
+          <div className="flex flex-col items-center p-6 space-y-6">
+            {/*h1*/}
+            <div>
+              <h1 className="text-4xl font-bold justify-center tracking-tight">
+                Play Online
+              </h1>
+            </div>
+            {/*broad move*/}
+            <div className="bg-background rounded-2xl w-full">
+              <MovePosition moves={[]}></MovePosition>
+            </div>
+            {/*tools*/}
+            <div className="flex space-x-3">
+              <Button className="group">
+                <Handshake className="transition-transform group-hover:scale-150 text-green-500" />
+              </Button>
+              <Button className="group">
+                <Flag className="transition-transform group-hover:scale-150 "></Flag>
+              </Button>
+              <Button className="group">
+                <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400" />
+              </Button>
+              <Button className="group">
+                <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
+              </Button>
+              <Button className="group" >
+                <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
+              </Button>
+            </div>
+            <div className="grid gap-2 w-full">
+              <Textarea placeholder="Your Message"
+                        className="resize-none read-only:opacity-80 pointer-events-none h-30 " readOnly></Textarea>
+              <Textarea placeholder="Type your message here." className="resize-none " />
+            </div>
+          </div>
         </div>
       </div>
-
-      <h1>{game.exportFen()}</h1>
-      {isLoading ? (
-        <div className="flex justify-center w-full h-full animate-spin items-enter">
-          <Loader2 />{' '}
-        </div>
-      ) : (
-        <div className="w-1/2 h-1/2">
-          <Chessboard
-            boardWidth={400}
-            id="online-xiangqi-board"
-            onPieceDrop={onMove}
-            isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
-            boardOrientation={playerColor}
-            position={fen}
-            animationDuration={200}
-          />
-        </div>
-      )}
       <GameEndedDialog />
     </div>
   );

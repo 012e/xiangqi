@@ -5,11 +5,10 @@ import { SuccessPopup, ErrorPopup } from '@/components/popups';
 import ModernButton from '@/components/ui/modern-button';
 import SettingForm from './setting-form.tsx';
 import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 const SettingProfile: React.FC = () => {
   const { setThemeByName } = useTheme();
-  const [showPopupSaveSuccess, setShowPopupSaveSuccess] = useState(false);
-  const [showPopupCancelSuccess, setShowPopupCancelSuccess] = useState(false);
   const [shortBio, setShortBio] = useState('');
 
   const maxBioLength = 50;
@@ -21,16 +20,7 @@ const SettingProfile: React.FC = () => {
   };
 
   const handleSave = () => {
-    setShowPopupSaveSuccess(true);
-  };
-
-  const handleCancel = () => {
-    setShowPopupCancelSuccess(true);
-  };
-
-  const handleClosePopup = () => {
-    setShowPopupSaveSuccess(false);
-    setShowPopupCancelSuccess(false);
+    toast.success("Saved successfully!" ,{})
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,22 +142,6 @@ const SettingProfile: React.FC = () => {
           </ModernButton>
         </div>
       </main>
-
-      {/* Hiển thị pop-up thành công */}
-      {showPopupSaveSuccess && (
-        <SuccessPopup
-          title="Lưu thành công!"
-          message="Thay đổi của bạn đã được lưu thành công!"
-          onClose={handleClosePopup}
-        />
-      )}
-      {showPopupCancelSuccess && (
-        <ErrorPopup
-          title="Hủy thành công!"
-          message="Thay đổi của bạn đã được hủy bỏ!"
-          onClose={handleClosePopup}
-        />
-      )}
     </div>
   );
 };

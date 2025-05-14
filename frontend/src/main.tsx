@@ -21,8 +21,10 @@ import Demo from './pages/test/test.tsx';
 
 import SettingPage from './pages/settings/setting-form.tsx';
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient();
+
 
 function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
@@ -55,6 +57,7 @@ function Providers({ children }: { children: React.ReactNode }) {
           <Toaster />
         </StompSessionProvider>
       </Auth0Provider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

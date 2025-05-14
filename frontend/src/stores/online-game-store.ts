@@ -64,13 +64,12 @@ const DEFAULT_STATE: Partial<Data> = {
   player: '',
   playerColor: 'white',
   playingColor: 'white',
-  blackTime: 60 * 3 * 1000,
-  whiteTime: 60 * 3 * 1000,
+  blackTime: 60 * 10 * 1000,
+  whiteTime: 60 * 10 * 1000,
   interval: null,
   gameState: new Xiangqi(),
   isStarted: false,
   fen: Xiangqi.DEFAULT_FEN,
-
   showGameEndedDialog: false,
   isEnded: false,
 };
@@ -204,7 +203,7 @@ export const useGameStore = create<GameStore>()(
           case 'State.Error':
             console.error('Error from server:', message.data.message);
             break;
-          case 'State.GameEnd':
+          case 'State.GameEnd': {
             const gameResult = (message as StateGameEnd).data;
 
             set(() => ({
@@ -224,17 +223,17 @@ export const useGameStore = create<GameStore>()(
             switch (gameResult.result) {
               case 'white_win':
                 console.log('White wins');
-                if (gameResult.detail === "black_timeout") {
+                if (gameResult.detail === 'black_timeout') {
                   set(() => ({
                     blackTime: 0,
-                  }))
+                  }));
                 }
                 break;
               case 'black_win':
-                if (gameResult.detail === "white_timeout") {
+                if (gameResult.detail === 'white_timeout') {
                   set(() => ({
                     whiteTime: 0,
-                  }))
+                  }));
                 }
                 console.log('Black wins');
                 break;
@@ -245,6 +244,7 @@ export const useGameStore = create<GameStore>()(
                 console.error('Unknown game result:', gameResult.result);
             }
             break;
+          }
         }
       },
 
@@ -261,16 +261,16 @@ export const useGameStore = create<GameStore>()(
       },
 
       init({
-        gameId,
-        player,
-        playerColor,
-        playingColor,
-        timeBlack,
-        timeWhite,
-        initialFen,
-        isStarted = false,
-        isEnded = false,
-      }) {
+             gameId,
+             player,
+             playerColor,
+             playingColor,
+             timeBlack,
+             timeWhite,
+             initialFen,
+             isStarted = false,
+             isEnded = false,
+           }) {
         let gameState;
 
         if (initialFen) {
@@ -286,17 +286,14 @@ export const useGameStore = create<GameStore>()(
             id: gameId,
             player,
             playerColor,
-
             playingColor,
             blackTime: timeBlack,
             whiteTime: timeWhite,
             gameState,
             fen: gameState.exportFen(),
-
             isStarted,
-
             interval,
-            isEnded
+            isEnded,
           }),
           false,
           {
