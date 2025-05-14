@@ -21,20 +21,30 @@ import {
 import { GameType } from '@/lib/online/game-type.ts';
 import { useCallback } from 'react';
 
-type ComboboxArgs = { gameType: GameType[] | undefined, onSelect: (current: GameType) => void };
+type ComboboxArgs = {
+  gameType: GameType[] | undefined;
+  onSelect: (current: GameType) => void;
+};
 const DEFAULT_COMBOBOX_ARGS = {
   gameType: undefined,
-  onSelect: () => {
-  }
+  onSelect: () => {},
 };
-export default function Combobox({ gameType, onSelect }: ComboboxArgs = DEFAULT_COMBOBOX_ARGS) {
+export default function Combobox({
+  gameType,
+  onSelect,
+}: ComboboxArgs = DEFAULT_COMBOBOX_ARGS) {
   const [open, setOpen] = React.useState(false);
   const [selectedTypeName, setSelectedTypeName] = React.useState('');
-  const handleSelect = useCallback((current: GameType) => {
-    setSelectedTypeName(current.typeName === selectedTypeName ? '' : current.typeName);
-    setOpen(false);
-    onSelect(current);
-  }, [selectedTypeName, onSelect]);
+  const handleSelect = useCallback(
+    (current: GameType) => {
+      setSelectedTypeName(
+        current.typeName === selectedTypeName ? '' : current.typeName,
+      );
+      setOpen(false);
+      onSelect(current);
+    },
+    [selectedTypeName, onSelect],
+  );
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -45,7 +55,9 @@ export default function Combobox({ gameType, onSelect }: ComboboxArgs = DEFAULT_
           className="w-[200px] justify-between "
         >
           {selectedTypeName
-            ? gameType?.find((currentType) => currentType.typeName === selectedTypeName)?.typeName
+            ? gameType?.find(
+                (currentType) => currentType.typeName === selectedTypeName,
+              )?.typeName
             : 'Select Time'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -66,11 +78,13 @@ export default function Combobox({ gameType, onSelect }: ComboboxArgs = DEFAULT_
                   <Check
                     className={cn(
                       'mr-2 h-4 w-4',
-                      selectedTypeName === currentType.typeName ? 'opacity-100' : 'opacity-0',
+                      selectedTypeName === currentType.typeName
+                        ? 'opacity-100'
+                        : 'opacity-0',
                     )}
                   />
                   <span>
-                    <Clock/>
+                    <Clock />
                   </span>
                   {currentType.typeName}
                 </CommandItem>

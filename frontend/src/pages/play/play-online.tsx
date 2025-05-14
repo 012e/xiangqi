@@ -4,7 +4,8 @@ import {
   ChevronRight,
   CircleUser,
   Flag,
-  Handshake, Loader2,
+  Handshake,
+  Loader2,
   Play,
 } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
@@ -24,7 +25,9 @@ export default function PlayOnline() {
     queryKey: ['gameTypes'],
     queryFn: getGameTypes,
   });
-  const [selectedGameType, setSelectedGameType] = useState<GameType | undefined>();
+  const [selectedGameType, setSelectedGameType] = useState<
+    GameType | undefined
+  >();
 
   function togglePlayer() {
     setPlayer((prev) => (prev === 'white' ? 'black' : 'white'));
@@ -41,7 +44,9 @@ export default function PlayOnline() {
         {/* Left */}
         <div className="min-h-screen p-4 lg:block hidden mt-10 bg-background">
           <div className="flex flex-wrap space-x-2 justify-center">
-            <span><CircleUser size={30} /></span>
+            <span>
+              <CircleUser size={30} />
+            </span>
             <span>{opponent}</span>
           </div>
           <div className="flex justify-center p-3">
@@ -50,7 +55,9 @@ export default function PlayOnline() {
             </div>
           </div>
           <div className="flex flex-wrap space-x-2 justify-center ">
-            <span><CircleUser size={30} /></span>
+            <span>
+              <CircleUser size={30} />
+            </span>
             <span>Me</span>
           </div>
         </div>
@@ -63,21 +70,28 @@ export default function PlayOnline() {
               </h1>
             </div>
             <div className="flex items-center hover:cursor-pointer">
-              <Combobox gameType={gameTypes} onSelect={item => setSelectedGameType(item)} />
+              <Combobox
+                gameType={gameTypes}
+                onSelect={(item) => setSelectedGameType(item)}
+              />
             </div>
             <div className="">
               <Button
-                className="hovegr:text-4xl text-3xl h-13 font-bold w-2xs "
+                className="hovegr:text-4xl text-3xl h-13 font-bold w-2xs"
                 onClick={handleCreateGame}
-              >
-                <div>
-                  {loading ? (<div className="flex items-center"><Loader2
-                      className="!w-7 !h-auto mr-1 animate-spin"></Loader2>START</div>
-                  ) : (<div className="flex items-center"><Play className="!w-7 !h-auto mr-1"></Play>START
-                    </div>
-                  )}
-                </div>
-              </Button>
+              />
+              <div>
+                {loading ? (
+                  <div className="flex items-center">
+                    <Loader2 className="!w-7 !h-auto mr-1 animate-spin"></Loader2>
+                    START
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <Play className="!w-7 !h-auto mr-1"></Play>START
+                  </div>
+                )}
+              </div>
             </div>
             <div className="bg-background rounded-2xl w-full">
               <MovePosition></MovePosition>
