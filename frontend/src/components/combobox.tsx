@@ -18,6 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {useGameActions} from "@/stores/online-game-store.ts";
 
 type Frameworks = {
   value: string;
@@ -27,7 +28,14 @@ type Frameworks = {
 export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
-
+  const { setTime } = useGameActions();
+  const handleSelect = (current: string) => {
+    setValue(current === value ? '' : current);
+    setOpen(false);
+    if(value !== null) {
+        setTime({blackTime: parseInt(current)*60*1000, whiteTime: parseInt(current)*60*1000});
+    }
+  }
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -54,10 +62,7 @@ export default function Combobox({ frameworks }: { frameworks: Frameworks[] }) {
                   className="hover:cursor-pointer"
                   key={framework.value}
                   value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
-                    setOpen(false);
-                  }}
+                  onSelect={(current) => handleSelect(current)}
                 >
                   <Check
                     className={cn(

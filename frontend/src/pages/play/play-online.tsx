@@ -1,132 +1,141 @@
 import {
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  CircleUser,
-  Flag,
-  Handshake,
-  Play,
+    ArrowUpDown,
+    ChevronLeft,
+    ChevronRight,
+    CircleUser,
+    Flag,
+    Handshake, Loader2,
+    Play,
 } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
-import { Button } from '@/components/ui/button';
-import React from 'react';
+import {Button} from '@/components/ui/button';
+import React, {useState} from 'react';
 import MovePosition from '@/components/move-position';
-import { useCreateGame } from '../../stores/useCreateGame';
+import {useCreateGame} from "@/stores/useCreateGame.ts";
+
 const frameworks = [
-  {
-    value: '10',
-    label: '10 Minute',
-  },
-  {
-    value: '15',
-    label: '15 Minute',
-  },
-  {
-    value: '20',
-    label: '20 Minute',
-  },
-  {
-    value: '25',
-    label: '25 Minute',
-  },
-  {
-    value: '30',
-    label: '30 Minute',
-  },
-  {
-    value: '40',
-    label: '40 Minute',
-  },
-  {
-    value: '50',
-    label: '50 Minute',
-  },
-  {
-    value: '60',
-    label: '1 Hours',
-  },
-  {
-    value: '120',
-    label: '1h30',
-  },
-  {
-    value: '999999999',
-    label: 'None have time',
-  },
+    {
+        value: '10',
+        label: '10 Minute',
+    },
+    {
+        value: '15',
+        label: '15 Minute',
+    },
+    {
+        value: '20',
+        label: '20 Minute',
+    },
+    {
+        value: '25',
+        label: '25 Minute',
+    },
+    {
+        value: '30',
+        label: '30 Minute',
+    },
+    {
+        value: '40',
+        label: '40 Minute',
+    },
+    {
+        value: '50',
+        label: '50 Minute',
+    },
+    {
+        value: '60',
+        label: '1 Hours',
+    },
+    {
+        value: '120',
+        label: '1h30',
+    },
+    {
+        value: '999999999',
+        label: 'None have time',
+    },
 ];
 export default function PlayOnline() {
-  const { createGame } = useCreateGame();
-  const [opponent] = React.useState('Opponent');
-  // const [listMove, setListMove] = React.useState([]);
-  return (
-    <div className="w-full text-foreground">
-      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
-        {/* Left */}
-        <div className="min-h-screen p-4 lg:block hidden mt-10 bg-background">
-          <div className="flex flex-wrap space-x-2 justify-center">
-            <span>
-              <CircleUser size={30} />
-            </span>
-            <span>{opponent}</span>
-          </div>
-          <div className="flex justify-center p-3">
-            <div className="border-2">
-              <SelfPlayBoard boardOrientation="white" />
-            </div>
-          </div>
-          <div className="flex flex-wrap space-x-2 justify-center ">
-            <span>
-              <CircleUser size={30} />
-            </span>
-            <span>Me</span>
-          </div>
-        </div>
-        {/* Right */}
-        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring">
-          <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
-            <div>
-              <h1 className="text-4xl font-bold justify-center tracking-tight">
-                Play Online
-              </h1>
-            </div>
-            <div className="flex items-center hover:cursor-pointer">
-              <Combobox frameworks={frameworks} />
-            </div>
-            <div className="">
-              <Button
-                className="hover:text-4xl text-3xl h-13 font-bold w-2xs"
-                onClick={createGame}
-              >
-                <div className="flex items-center">
-                  <Play className="!w-7 !h-auto mr-1"></Play>
-                  START
+    const {createGame, loading} = useCreateGame();
+    const [opponent] = React.useState('Opponent');
+    const [player, setPlayer] = useState<'white' | 'black'>('white');
+
+    function togglePlayer() {
+        setPlayer((prev) => (prev === 'white' ? 'black' : 'white'));
+    }
+    // const [listMove, setListMove] = React.useState([]);
+    return (
+        <div className="w-full text-foreground">
+            <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
+                {/* Left */}
+                <div className="min-h-screen p-4 lg:block hidden mt-10 bg-background">
+                    <div className="flex flex-wrap space-x-2 justify-center">
+                        <span>
+                          <CircleUser size={30}/>
+                        </span>
+                        <span>{opponent}</span>
+                    </div>
+                    <div className="flex justify-center p-3">
+                        <div className="border-2">
+                            <SelfPlayBoard boardOrientation={player}/>
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap space-x-2 justify-center ">
+                        <span>
+                          <CircleUser size={30}/>
+                        </span>
+                        <span>Me</span>
+                    </div>
                 </div>
-              </Button>
+                {/* Right */}
+                <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring">
+                    <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
+                        <div>
+                            <h1 className="text-4xl font-bold justify-center tracking-tight">
+                                Play Online
+                            </h1>
+                        </div>
+                        <div className="flex items-center hover:cursor-pointer">
+                            <Combobox frameworks={frameworks}/>
+                        </div>
+                        <div className="">
+                            <Button
+                                className="hover:text-4xl text-3xl h-13 font-bold w-2xs "
+                                onClick={createGame}
+                            >
+                                <div>
+                                    {loading ? (<div className="flex items-center"><Loader2
+                                            className="!w-7 !h-auto mr-1 animate-spin"></Loader2>START</div>
+                                    ) : (<div className="flex items-center"><Play className="!w-7 !h-auto mr-1"></Play>START
+                                        </div>
+                                    )}
+                                </div>
+                            </Button>
+                        </div>
+                        <div className="bg-background rounded-2xl">
+                            <MovePosition></MovePosition>
+                        </div>
+                        <div className="flex space-x-3">
+                            <Button className="group">
+                                <Handshake className="transition-transform group-hover:scale-150 text-green-500"/>
+                            </Button>
+                            <Button className="group">
+                                <Flag className="transition-transform group-hover:scale-150 "></Flag>
+                            </Button>
+                            <Button className="group">
+                                <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400"/>
+                            </Button>
+                            <Button className="group">
+                                <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400"/>
+                            </Button>
+                            <Button className="group" onClick={togglePlayer}>
+                                <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400"/>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="bg-background rounded-2xl">
-              <MovePosition></MovePosition>
-            </div>
-            <div className="flex space-x-3">
-              <Button className="group">
-                <Handshake className="transition-transform group-hover:scale-150 text-green-500" />
-              </Button>
-              <Button className="group">
-                <Flag className="transition-transform group-hover:scale-150 "></Flag>
-              </Button>
-              <Button className="group">
-                <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400" />
-              </Button>
-              <Button className="group">
-                <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
-              </Button>
-              <Button className="group">
-                <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
-              </Button>
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }

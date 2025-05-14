@@ -18,11 +18,6 @@ export function useCreateGame() {
 
   useSubscription(`/user/${user?.sub}/game/join`, (message) => {
     const game = JSON.parse(message.body) as Game;
-    let player = 'white';
-    if (game.blackPlayerId === user?.sub) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      player = 'black';
-    }
     navigate(`/game/${game.gameId}`);
   });
 

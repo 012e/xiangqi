@@ -28,6 +28,13 @@ type Actions = {
       initialFen?: string;
       isEnded: boolean;
     }): void;
+    setTime({
+              blackTime,
+              whiteTime,
+            }: {
+      blackTime?: number;
+      whiteTime?: number;
+    }): void;
     handleTopicMessage(message: GameState): void;
     setGameEndedDialog(showGameEndedDialog: boolean): void;
   };
@@ -64,8 +71,8 @@ const DEFAULT_STATE: Partial<Data> = {
   player: '',
   playerColor: 'white',
   playingColor: 'white',
-  blackTime: 60 * 3 * 1000,
-  whiteTime: 60 * 3 * 1000,
+  blackTime: 60 * 10 * 1000,
+  whiteTime: 60 * 10 * 1000,
   interval: null,
   gameState: new Xiangqi(),
   isStarted: false,
@@ -105,10 +112,12 @@ function isEqualColor(
 }
 
 export const useGameStore = create<GameStore>()(
-  devtools((set, get) => ({
+
+    devtools((set, get) => ({
     ...DEFAULT_STATE,
 
     actions: {
+
       move(move): boolean {
 
         if (get().isEnded) {
@@ -259,7 +268,17 @@ export const useGameStore = create<GameStore>()(
           },
         );
       },
-
+      // set time in actions
+      setTime({ blackTime, whiteTime }) {
+        set(
+            (state) => ({
+              blackTime: blackTime !== undefined ? blackTime : state.blackTime,
+              whiteTime: whiteTime !== undefined ? whiteTime : state.whiteTime,
+            }),
+            false,
+            { type: 'board.setTime' },
+        );
+      },
       init({
         gameId,
         player,
