@@ -1,44 +1,55 @@
-import { useParams } from 'react-router';
-import { Chessboard } from 'react-xiangqiboard';
-import { Square } from 'react-xiangqiboard/dist/chessboard/types';
-import { useGameStore } from '@/stores/online-game-store'; // Import the store
-import { ArrowUpDown, ChevronLeft, ChevronRight, CircleUser, Flag, Handshake, Loader2 } from 'lucide-react';
-import { useOnlineGame } from '@/lib/online/useOnlineGame';
-import MovePosition from '@/components/move-position.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import { useState } from 'react';
+import SelfPlayBoard from '../play/self-playboard.tsx';
+import { ArrowUpDown, ChevronLeft, ChevronRight, CircleUser, Flag, Handshake, Loader2 } from 'lucide-react';
+import MovePosition from '@/components/move-position.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
-import GameEndedDialog from '@/components/game-ended-dialog.tsx';
+import { useGameStore } from '@/stores/online-game-store.ts';
+import { Square } from 'react-xiangqiboard/dist/chessboard/types';
+import { Chessboard } from 'react-xiangqiboard';
 
-export default function OnlineGame() {
-  const { id } = useParams();
-  const { game, onMove, isLoading } = useOnlineGame(id);
+export default function Demo() {
+  const [, setPlayer] = useState<'white' | 'black'>('white');
+  // const { id } = useParams();
+  // const { game, onMove, isLoading } = useOnlineGame(id);
 
   // Get the time from the store
   const blackTime = useGameStore((state) => state.blackTime);
   const whiteTime = useGameStore((state) => state.whiteTime);
   const playingColor = useGameStore((state) => state.playingColor);
   const playerColor = useGameStore((state) => state.playerColor);
-  const fen = useGameStore((state) => state.fen);
-  const gameEnded = useGameStore((state) => state.isEnded);
+  // const fen = useGameStore((state) => state.fen);
+  // const gameEnded = useGameStore((state) => state.isEnded);
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
-    // example : 137608 (s)
-    const totalSeconds = Math.round(ms / 1000); // 138
-    const minutes = Math.floor(totalSeconds / 60); // 2
-    const seconds = totalSeconds % 60;// 18
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const centiSeconds = Math.floor((ms % 1000) / 10);
+
+    const base = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    if (ms < 5 * 60 * 1000) {
+      return `${base}.${centiSeconds.toString().padStart(2, '0')}`;
+    }
+
+    return base;
   }
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
   }
 
-  function isPlayerTurn({piece,}: {
+  function isPlayerTurn({ piece }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
     return getPieceColor(piece) === playerColor;
+  }
+
+  function togglePlayer() {
+    setPlayer((prev) => (prev === 'white' ? 'black' : 'white'));
   }
 
   return (
@@ -56,7 +67,7 @@ export default function OnlineGame() {
                 playingColor === 'black' ? 'text-red-600' : ''
               }`}
             >
-              {(playerColor === "black") ? formatTime(whiteTime) : formatTime(blackTime)}
+              {formatTime(blackTime)}
             </div>
           </div>
           <div className="flex justify-center p-3">
@@ -91,7 +102,7 @@ export default function OnlineGame() {
                 playingColor === 'white' ? '' : ''
               }`}
             >
-              {(playerColor === "black") ? formatTime(blackTime) : formatTime(whiteTime)}
+              {formatTime(whiteTime)}
             </div>
           </div>
         </div>
@@ -122,7 +133,7 @@ export default function OnlineGame() {
               <Button className="group">
                 <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
               </Button>
-              <Button className="group" >
+              <Button className="group" onClick={togglePlayer}>
                 <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
               </Button>
             </div>
@@ -134,7 +145,6 @@ export default function OnlineGame() {
           </div>
         </div>
       </div>
-      <GameEndedDialog />
     </div>
   );
 }

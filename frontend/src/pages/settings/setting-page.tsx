@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useTheme } from '@/styles/ThemeContext';
 
-import { SuccessPopup, ErrorPopup } from '@/components/popups';
 import ModernButton from '@/components/ui/modern-button';
+import SettingForm from './setting-form.tsx';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button.tsx';
 
 const SettingProfile: React.FC = () => {
   const { setThemeByName } = useTheme();
-  const [showPopupSaveSuccess, setShowPopupSaveSuccess] = useState(false);
-  const [showPopupCancelSuccess, setShowPopupCancelSuccess] = useState(false);
   const [shortBio, setShortBio] = useState('');
 
   const maxBioLength = 50;
@@ -19,16 +20,7 @@ const SettingProfile: React.FC = () => {
   };
 
   const handleSave = () => {
-    setShowPopupSaveSuccess(true);
-  };
-
-  const handleCancel = () => {
-    setShowPopupCancelSuccess(true);
-  };
-
-  const handleClosePopup = () => {
-    setShowPopupSaveSuccess(false);
-    setShowPopupCancelSuccess(false);
+    toast.success("Saved successfully!" ,{})
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +36,8 @@ const SettingProfile: React.FC = () => {
         {/* Header */}
         <header>
           <div>
-            <h1 className="text-2xl font-bold mb-2">Chỉnh sửa hồ sơ</h1>
-            <p className="text-gray-600">
+            <h1 className="text-2xl font-bold mb-2">Setting</h1>
+            <p className="text-foreground">
               Thay đổi ảnh đại diện và chọn chủ đề giao diện của bạn. Mọi thứ ở
               đây sẽ hiển thị trên hồ sơ công khai của bạn.
             </p>
@@ -55,14 +47,14 @@ const SettingProfile: React.FC = () => {
         {/* Avatar & Bio */}
         <section className="mb-8">
           <div className="flex flex-wrap items-center justify-between gap-5">
-            <div className="flex-1 max-w-[150px] text-center p-4 border border-gray-300 rounded-lg">
+            <div className="flex-1 max-w-[150px] text-center p-4 border border-muted-foreground rounded-lg">
               <div
                 className="relative cursor-pointer inline-block"
                 onClick={() => document.getElementById('avatarInput')?.click()}
               >
                 <img
                   src="https://placehold.co/150x150"
-                  alt="Ảnh đại diện"
+                  alt="image not found"
                   className="w-full h-auto rounded-full shadow-md transition-opacity hover:opacity-70"
                 />
               </div>
@@ -75,10 +67,10 @@ const SettingProfile: React.FC = () => {
               />
             </div>
 
-            <div className="flex-1 p-4 border border-gray-300 rounded-lg">
+            <div className="flex-1 p-4 border-muted rounded-lg">
               <label
                 htmlFor="shortBio"
-                className="block mb-2 font-bold text-gray-700"
+                className="block mb-2 font-bold text-foreground"
               >
                 Giới thiệu ngắn ({shortBio.length}/{maxBioLength})
               </label>
@@ -87,7 +79,7 @@ const SettingProfile: React.FC = () => {
                 value={shortBio}
                 onChange={handleBioChange}
                 placeholder="Giới thiệu ngắn sẽ hiển thị bên cạnh ảnh đại diện"
-                className="w-full h-20 p-2 border border-gray-300 rounded resize-none"
+                className="w-full h-20 p-2 border text-foreground rounded resize-none"
               />
             </div>
           </div>
@@ -113,53 +105,40 @@ const SettingProfile: React.FC = () => {
         <section className="mb-8">
           <h3 className="text-lg font-bold mb-4">Chủ đề giao diện</h3>
           <div className="flex gap-4">
-            <button
+            <Button
               onClick={() => setThemeByName('light')}
-              className="px-4 py-2 bg-white text-black rounded-lg hover:bg-primary/90"
+              className="px-4 py-2 border border-border rounded-lg text-background bg-foreground hover:bg-primary/90"
             >
               Light Theme
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setThemeByName('dark')}
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-secondary/90"
+              className="px-4 py-2 bg-background border border-border text-foreground rounded-lg hover:bg-secondary/90"
             >
               Dark Theme
-            </button>
-            <button
-              onClick={() => setThemeByName('blueChill')}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-secondary/90"
-            >
-              Blue Theme
-            </button>
+            </Button>
+            {/*<Button*/}
+            {/*  onClick={() => setThemeByName('blueChill')}*/}
+            {/*  className="px-4 py-2 bg-foreground text-background rounded-lg hover:bg-secondary/90"*/}
+            {/*>*/}
+            {/*  Blue Theme*/}
+            {/*</Button>*/}
           </div>
         </section>
 
+        <section>
+          <Separator></Separator>
+          <div className="flex py-5">
+            <SettingForm />
+          </div>
+        </section>
         {/* Button Save & Cancel */}
         <div className="flex justify-end gap-4">
-          <ModernButton onClick={handleCancel} variant="ghost">
-            Hủy bỏ
-          </ModernButton>
           <ModernButton onClick={handleSave} variant="CTA">
             Lưu
           </ModernButton>
         </div>
       </main>
-
-      {/* Hiển thị pop-up thành công */}
-      {showPopupSaveSuccess && (
-        <SuccessPopup
-          title="Lưu thành công!"
-          message="Thay đổi của bạn đã được lưu thành công!"
-          onClose={handleClosePopup}
-        />
-      )}
-      {showPopupCancelSuccess && (
-        <ErrorPopup
-          title="Hủy thành công!"
-          message="Thay đổi của bạn đã được hủy bỏ!"
-          onClose={handleClosePopup}
-        />
-      )}
     </div>
   );
 };

@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button.tsx';
 
 import {
   Form,
@@ -12,12 +12,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useBackendUrl, useSettingActions } from '@/stores/setting-store';
+} from '@/components/ui/form.tsx';
+import { Input } from '@/components/ui/input.tsx';
+import { useBackendUrl, useSettingActions } from '@/stores/setting-store.ts';
 import { toast } from 'sonner';
-import { Separator } from '@/components/ui/separator';
-import { ModeToggle } from '@/components/mode-toggle';
 
 const formSchema = z.object({
   backendUrl: z
@@ -30,6 +28,7 @@ const formSchema = z.object({
             method: 'GET',
           });
           return request.ok;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
           return false;
         }
@@ -38,7 +37,7 @@ const formSchema = z.object({
     ),
 });
 
-export function SettingForm() {
+export default function SettingForm() {
   const { setBackendUrl } = useSettingActions();
   const backendUrl = useBackendUrl();
 
@@ -74,17 +73,5 @@ export function SettingForm() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-  );
-}
-
-export default function SettingPage() {
-  return (
-    <div className="flex flex-col gap-5 py-10 w-full px-30">
-      <h1 className="text-4xl font-bold tracking-tight">Settings</h1>
-      <Separator />
-      <div className="flex py-5">
-        <SettingForm />
-      </div>
-    </div>
   );
 }

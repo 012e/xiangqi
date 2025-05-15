@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ModernButton from '@/components/ui/modern-button';
+import { Input } from '@/components/ui/input.tsx';
 
 const AddFriendForm: React.FC = () => {
   const [friendName, setFriendName] = useState('');
@@ -11,12 +12,11 @@ const AddFriendForm: React.FC = () => {
 
   return (
     <div className="flex justify-between mb-4 bg-card text-card-foreground">
-      <input
-        type="text"
+      <Input
         placeholder="Nhập tên bạn bè"
         value={friendName}
         onChange={(e) => setFriendName(e.target.value)}
-        className="flex-1 p-2 mr-4 border border-gray-300 rounded-lg"
+        className="mr-4"
       />
       <ModernButton variant="ghost" onClick={handleAddFriend}>
         Thêm bạn bè

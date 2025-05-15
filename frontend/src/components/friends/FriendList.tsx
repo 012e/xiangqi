@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from '@/components/ui/input.tsx';
 
 interface Friend {
   id: number;
@@ -18,17 +19,16 @@ interface FriendListProps {
 const FriendList: React.FC<FriendListProps> = ({ friends, onSelectFriend }) => {
   return (
     <div className="flex-1 p-4 bg-card text-card-foreground border border-border rounded-lg">
-      <input
-        type="text"
+      <Input
         placeholder="Search Messenger"
-        className="w-full p-2 mb-4 rounded-full border border-gray-300 outline-none"
+        className="w-full mb-4 outline-none"
       />
       <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
         <ul>
           {friends.map((friend) => (
             <li
               key={friend.id}
-              className="flex justify-between items-center p-4 mb-4 rounded-lg cursor-pointer transition-colors hover:bg-gray-200 border-b border-gray-300"
+              className="flex justify-between items-center p-4 mb-4 rounded-lg cursor-pointer transition-colors hover:bg-muted border border-border"
               onClick={() =>
                 onSelectFriend(`${friend.firstName} ${friend.lastName}`)
               }
@@ -40,9 +40,9 @@ const FriendList: React.FC<FriendListProps> = ({ friends, onSelectFriend }) => {
               />
               <div className="flex-1">
                 <div className="font-bold text-sm">{`${friend.firstName} ${friend.lastName}`}</div>
-                <div className="text-xs text-gray-600">{friend.lastMessage}</div>
+                <div className="text-xs text-muted-foreground">{friend.lastMessage}</div>
               </div>
-              <div className="text-xs text-gray-500">{friend.lastMessageTime}</div>
+              <div className="text-xs text-muted-foreground">{friend.lastMessageTime}</div>
             </li>
           ))}
         </ul>

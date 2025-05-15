@@ -7,7 +7,6 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StompSessionProvider } from 'react-stomp-hooks';
 import { Toaster } from './components/ui/sonner.tsx';
-import PlayGame from './pages/play/play-game.tsx';
 import NewGame from './pages/play/new-game.tsx';
 import OnlineGame from './pages/play/online-game.tsx';
 import PlayOnline from './pages/play/play-online.tsx';
@@ -16,14 +15,15 @@ import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
-import SettingProfile from './pages/settings/profile.tsx';
+import SettingProfile from './pages/settings/setting-page.tsx';
 import Friends from './pages/social/friends.tsx';
-import Demo from './pages/play/test.tsx';
+import Demo from './pages/test/test.tsx';
 
-import SettingPage from './pages/setting/setting-page.tsx';
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient();
+
 
 function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
@@ -56,6 +56,7 @@ function Providers({ children }: { children: React.ReactNode }) {
           <Toaster />
         </StompSessionProvider>
       </Auth0Provider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
@@ -67,7 +68,6 @@ createRoot(document.getElementById('root')!).render(
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<App />} />
-              <Route path="/play" element={<PlayGame />} />
               <Route path="/play/online" element={<PlayOnline />} />
               <Route path="/play/bot" element={<PlayBot />} />
               <Route path="/play/friend" element={<PlayFriend />} />
@@ -75,12 +75,10 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/game/:id" element={<OnlineGame />} />
 
               <Route path="/settings" element={<SettingProfile />} />
-              <Route path="/settings/profile" element={<SettingProfile />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
-              <Route path="/play/demo" element={<Demo />} />
-              <Route path="/setting" element={<SettingPage />} />
+              <Route path="/demo" element={<Demo />} />
             </Route>
           </Routes>
         </BrowserRouter>
