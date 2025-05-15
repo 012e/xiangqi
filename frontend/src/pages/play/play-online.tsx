@@ -75,11 +75,11 @@ export default function PlayOnline() {
                 onSelect={(item) => setSelectedGameType(item)}
               />
             </div>
-            <div className="">
+            <div >
               <Button
                 className="hovegr:text-4xl text-3xl h-13 font-bold w-2xs"
                 onClick={handleCreateGame}
-              />
+              >
               <div>
                 {loading ? (
                   <div className="flex items-center">
@@ -88,13 +88,16 @@ export default function PlayOnline() {
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <Play className="!w-7 !h-auto mr-1"></Play>START
+                    <Play className="!w-7 !h-auto mr-1"></Play>
+                    START
                   </div>
                 )}
               </div>
+              </Button>
             </div>
+
             <div className="bg-background rounded-2xl w-full">
-              <MovePosition></MovePosition>
+              <MovePosition/>
             </div>
             <div className="flex space-x-3">
               <Button className="group">

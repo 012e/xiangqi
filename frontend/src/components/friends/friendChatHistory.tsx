@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import chatHistory from '@/dummyData/chatHistory.json';
 import MessageBubble from './messageBubble';
 import { File, Image, Plus, Smile, ThumbsUp } from 'lucide-react';
+import { Input } from '@/components/ui/input.tsx';
+import { Button } from '@/components/ui/button.tsx';
 
 const FriendChatHistory: React.FC = () => {
   const [message, setMessage] = useState('');
@@ -22,7 +24,7 @@ const FriendChatHistory: React.FC = () => {
 
   return (
     <div className="flex-3 p-4 bg-card text-card-foreground border border-border rounded-lg">
-      <div className="flex items-center p-4 border-b border-gray-300">
+      <div className="flex items-center p-4">
         <img
           src="https://placehold.co/50"
           alt="User Avatar"
@@ -31,7 +33,7 @@ const FriendChatHistory: React.FC = () => {
         <span className="font-bold text-lg">{chatData.sender}</span>
       </div>
 
-      <div className="max-h-[calc(100vh-280px)] overflow-y-auto border border-gray-200 mb-4 p-4">
+      <div className="max-h-[calc(100vh-280px)] overflow-y-auto border-muted-foreground border mb-4 p-4">
         {chatData.messages.map((msg, index) => (
           <MessageBubble
             key={index}
@@ -42,32 +44,27 @@ const FriendChatHistory: React.FC = () => {
         ))}
       </div>
 
-      <div className="flex items-center p-4 gap-4 border-t border-gray-300">
-        <button onClick={handleIconClick} className="text-gray-500">
+      <div className="flex items-center py-4 border-t border-muted-foreground">
+        <Button onClick={handleIconClick} className="text-foreground" variant="ghost">
           <Plus />
-        </button>
-        <button onClick={handleIconClick} className="text-gray-500">
+        </Button>
+        <Button onClick={handleIconClick} className="text-foreground" variant="ghost">
           <Image />
-        </button>
-        <button onClick={handleIconClick} className="text-gray-500">
+        </Button>
+        <Button onClick={handleIconClick} className="text-foreground" variant="ghost">
           <File />
-        </button>
-        <button onClick={handleIconClick} className="text-gray-500">
-          <Smile />
-        </button>
-        <input
-          type="text"
+        </Button>
+        <Input
           placeholder="Aa"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="flex-1 p-2 border border-gray-300 rounded-lg"
         />
-        <button onClick={handleIconClick} className="text-gray-500">
+        <Button onClick={handleIconClick} className="text-foreground" variant="ghost">
           <Smile />
-        </button>
-        <button onClick={handleIconClick} className="text-gray-500">
+        </Button>
+        <Button onClick={handleIconClick} className="text-foreground" variant="ghost">
           <ThumbsUp />
-        </button>
+        </Button>
       </div>
     </div>
   );

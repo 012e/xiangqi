@@ -19,7 +19,6 @@ import SettingProfile from './pages/settings/setting-page.tsx';
 import Friends from './pages/social/friends.tsx';
 import Demo from './pages/test/test.tsx';
 
-import SettingPage from './pages/settings/setting-form.tsx';
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -76,12 +75,10 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/game/:id" element={<OnlineGame />} />
 
               <Route path="/settings" element={<SettingProfile />} />
-              <Route path="/settings/profile" element={<SettingProfile />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
-              <Route path="/play/demo" element={<Demo />} />
-              <Route path="/setting" element={<SettingPage />} />
+              <Route path="/demo" element={<Demo />} />
             </Route>
           </Routes>
         </BrowserRouter>
