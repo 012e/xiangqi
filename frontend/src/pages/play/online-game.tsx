@@ -67,7 +67,7 @@ export default function OnlineGame() {
                   <Loader2 />{' '}
                 </div>
               ) : (
-                <div className="w-1/2 h-1/2">
+                <div className="w-1/2 h-1/2 border-none">
                   <Chessboard
                     boardWidth={400}
                     id="online-xiangqi-board"
