@@ -59,26 +59,30 @@ export default function OnlineGame() {
               {(playerColor === "black") ? formatTime(whiteTime) : formatTime(blackTime)}
             </div>
           </div>
-          <div className="flex justify-center p-3">
-            <div className="border-2">
-              <h1>{game.exportFen()}</h1>
-              {isLoading ? (
-                <div className="flex justify-center w-full h-full animate-spin items-enter">
-                  <Loader2 />{' '}
-                </div>
-              ) : (
-                <div className="w-1/2 h-1/2">
-                  <Chessboard
-                    boardWidth={400}
-                    id="online-xiangqi-board"
-                    onPieceDrop={onMove}
-                    isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
-                    boardOrientation={playerColor}
-                    position={fen}
-                    animationDuration={200}
-                  />
-                </div>
-              )}
+          <div className="flex justify-center items-center p-3 bg-background">
+            <div className="flex flex-col items-center">
+              {/*<div className="mb-4">*/}
+              {/*  /!*<h1>{game.exportFen()}</h1>*!/*/}
+              {/*</div>*/}
+              <div className="flex justify-center items-center w-full">
+                {isLoading ? (
+                  <div className="flex justify-center items-center w-full h-full animate-spin">
+                    <Loader2 />
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center">
+                    <Chessboard
+                      boardWidth={400}
+                      id="online-xiangqi-board"
+                      onPieceDrop={onMove}
+                      isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
+                      boardOrientation={playerColor}
+                      position={fen}
+                      animationDuration={200}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex flex-wrap space-x-2 px-10 w-full">
