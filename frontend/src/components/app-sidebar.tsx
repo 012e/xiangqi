@@ -69,19 +69,11 @@ const navItems: NavItem[] = [
     icon: Globe,
     items: [
       {
-        title: 'Friends',
+        title: 'Chat',
         url: '/social/friend',
       },
       {
-        title: 'Friend Link',
-        url: '#',
-      },
-      {
-        title: 'Send Email Invite',
-        url: '#',
-      },
-      {
-        title: 'Create challenge Link',
+        title: 'Friends',
         url: '#',
       },
     ],

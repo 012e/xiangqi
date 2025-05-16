@@ -381,7 +381,7 @@ public class Xiangqi {
         }
 
         // Check for "flying general" rule - kings cannot face each other directly
-        if (fromCol == toCol && isKingsFacingAfterMove(fromRow, fromCol, toRow, toCol)) {
+        if (isKingsFacingAfterMove(fromRow, fromCol, toRow, toCol)) {
             return MoveResult.fail("Kings cannot face each other directly");
         }
 
