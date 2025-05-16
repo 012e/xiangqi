@@ -85,7 +85,6 @@ export default function OnlineGame() {
               </div>
             </div>
           </div>
-
           <div className="flex flex-wrap space-x-2 px-10 w-full">
             <div className="flex flex-wrap space-x-2">
               <span><CircleUser size={30} /></span>
