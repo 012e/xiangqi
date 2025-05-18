@@ -118,7 +118,6 @@ export const useGameStore = create<GameStore>()(
     actions: {
 
       move(move): boolean {
-
         if (get().isEnded) {
           return false;
         }
@@ -143,27 +142,15 @@ export const useGameStore = create<GameStore>()(
         }
         if (isEqualColor(playingColor, 'black')) {
           newInterval = setInterval(() => {
-            set(
-              (state) => ({
-                blackTime: state.blackTime - 1000,
-              }),
-              false,
-              {
-                type: 'board.updateBlackTime',
-              },
-            );
+            set((state) => ({
+              blackTime: state.blackTime - 1000,
+            }));
           }, 1000);
         } else {
           newInterval = setInterval(() => {
-            set(
-              (state) => ({
-                whiteTime: state.whiteTime - 1000,
-              }),
-              false,
-              {
-                type: 'board.updateWhiteTime',
-              },
-            );
+            set((state) => ({
+              whiteTime: state.whiteTime - 1000,
+            }));
           }, 1000);
         }
 
@@ -324,27 +311,15 @@ export const useGameStore = create<GameStore>()(
           if (isStarted) {
             if (playingColor === 'black') {
               interval = setInterval(() => {
-                set(
-                  (state) => ({
-                    blackTime: state.blackTime - 1000,
-                  }),
-                  false,
-                  {
-                    type: 'board.updateBlackTime',
-                  },
-                );
+                set((state) => ({
+                  blackTime: state.blackTime - 1000,
+                }));
               }, 1000);
             } else {
               interval = setInterval(() => {
-                set(
-                  (state) => ({
-                    whiteTime: state.whiteTime - 1000,
-                  }),
-                  false,
-                  {
-                    type: 'board.updateWhiteTime',
-                  },
-                );
+                set((state) => ({
+                  whiteTime: state.whiteTime - 1000,
+                }));
               }, 1000);
             }
           }
