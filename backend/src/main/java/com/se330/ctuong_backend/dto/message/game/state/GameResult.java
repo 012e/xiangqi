@@ -3,7 +3,7 @@ package com.se330.ctuong_backend.dto.message.game.state;
 import lombok.Data;
 
 @Data
-public class GameResult {
+public class GameResult extends MessageData {
     private final String result;
     private final String detail;
 

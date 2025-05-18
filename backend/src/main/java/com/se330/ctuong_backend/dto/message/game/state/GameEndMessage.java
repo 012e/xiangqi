@@ -12,14 +12,5 @@ public class GameEndMessage extends BoardStateMessage<GameResult> {
     public GameEndMessage(GameResult data) {
         this.data = data;
     }
-
-    @Data
-    public static class PlayMessage extends BoardStateMessage<PlayData> {
-        protected BoardState type = BoardState.Play;
-        private PlayData data;
-
-        public PlayMessage(PlayData data) {
-            this.data = data;
-        }
-    }
 }
+

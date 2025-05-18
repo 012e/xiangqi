@@ -4,6 +4,7 @@ import com.auth0.exception.Auth0Exception;
 import com.se330.ctuong_backend.dto.message.Game;
 import com.se330.ctuong_backend.dto.message.game.state.BoardStateMessage;
 import com.se330.ctuong_backend.dto.message.game.state.GameEndMessage;
+import com.se330.ctuong_backend.dto.message.game.state.PlayMessage;
 import com.se330.ctuong_backend.repository.UserRepository;
 import com.se330.ctuong_backend.service.GameTimeoutService;
 import com.se330.ctuong_backend.service.GameService;
@@ -75,6 +76,6 @@ public class GameMovesController {
 
         final var playData = gameService.moveIfValid(game.getId(), move);
 
-        return new GameEndMessage.PlayMessage(playData);
+        return new PlayMessage(playData);
     }
 }
