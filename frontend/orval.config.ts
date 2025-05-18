@@ -14,7 +14,7 @@ export default {
             },
         },
         input: {
-            target: './api-docs.yaml',
+            target: './api-docs.json',
         },
     },
 };

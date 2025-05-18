@@ -5,8 +5,4 @@
  * OpenAPI spec version: v0
  */
 
-export interface GameTypeResponse {
-  id?: number;
-  typeName?: string;
-  timeControl?: number;
-}
+export type ProblemDetailProperties = {[key: string]: { [key: string]: unknown }};

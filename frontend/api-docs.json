@@ -1,0 +1,324 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "okta": []
+    }
+  ],
+  "paths": {
+    "/me": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Get current authenticated user",
+        "description": "Returns the currently authenticated user's details. If the user doesn't exist in the system, it tries to sync from Auth0.",
+        "operationId": "getUser",
+        "responses": {
+          "200": {
+            "description": "Authenticated user info",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/hello": {
+      "get": {
+        "tags": [
+          "health-controller"
+        ],
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/auth": {
+      "get": {
+        "tags": [
+          "health-controller"
+        ],
+        "operationId": "healthAuth",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game/{id}": {
+      "get": {
+        "tags": [
+          "game-controller"
+        ],
+        "operationId": "getGame",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game-types/": {
+      "get": {
+        "tags": [
+          "game-type-controller"
+        ],
+        "operationId": "get",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GameTypeResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "picture": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "id",
+          "sub"
+        ]
+      },
+      "ProblemDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string",
+            "format": "uri"
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "GameResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uciFen": {
+            "type": "string"
+          },
+          "whitePlayer": {
+            "$ref": "#/components/schemas/User"
+          },
+          "blackPlayer": {
+            "$ref": "#/components/schemas/User"
+          },
+          "whitePlayerRating": {
+            "type": "number",
+            "format": "float"
+          },
+          "blackPlayerRating": {
+            "type": "number",
+            "format": "float"
+          },
+          "whiteEloChange": {
+            "type": "number",
+            "format": "float"
+          },
+          "blackEloChange": {
+            "type": "number",
+            "format": "float"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "blackTimeLeft": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "whiteTimeLeft": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "result": {
+            "type": "string"
+          },
+          "resultDetail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "blackTimeLeft",
+          "whiteTimeLeft"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "picture": {
+            "type": "string"
+          }
+        }
+      },
+      "GameTypeResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "typeName": {
+            "type": "string"
+          },
+          "timeControl": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "okta": {
+        "type": "oauth2",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://dev-l5aemj1026u4dqia.us.auth0.com/authorize",
+            "tokenUrl": "https://dev-l5aemj1026u4dqia.us.auth0.com/oauth/token",
+            "scopes": {
+              "openid": "openid",
+              "email": "email",
+              "profile": "profile"
+            }
+          }
+        }
+      }
+    }
+  }
+}

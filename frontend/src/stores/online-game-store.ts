@@ -22,8 +22,15 @@ type Actions = {
       player: string;
       playerColor: Color;
       playingColor: Color;
-      timeBlack: number;
-      timeWhite: number;
+
+      blackTime: number;
+      blackUsername: string;
+      blackPicture: string;
+
+      whiteTime: number;
+      whiteUsername: string;
+      whitePicture: string;
+
       isStarted: boolean;
       initialFen?: string;
       isEnded: boolean;
@@ -42,6 +49,7 @@ type Actions = {
 
 type Color = 'white' | 'black';
 
+// TODO: group types
 type Data = {
   id: string;
 
@@ -49,8 +57,15 @@ type Data = {
   playerColor: Color;
 
   playingColor: Color;
+
   blackTime: number;
+  blackUsername: string;
+  blackPicture: string;
+
   whiteTime: number;
+  whiteUsername: string;
+  whitePicture: string;
+
   gameState: Xiangqi;
   isStarted: boolean;
   fen: string;
@@ -71,8 +86,15 @@ const DEFAULT_STATE: Partial<Data> = {
   player: '',
   playerColor: 'white',
   playingColor: 'white',
+
   whiteTime: 60 * 10 * 1000,
+  whiteUsername: undefined,
+  whitePicture: undefined,
+
   blackTime: 60 * 10 * 1000,
+  blackUsername: undefined,
+  blackPicture: undefined,
+
   interval: null,
   gameState: new Xiangqi(),
   isStarted: false,
@@ -260,8 +282,15 @@ export const useGameStore = create<GameStore>()(
           player,
           playerColor,
           playingColor,
-          timeBlack,
-          timeWhite,
+
+          blackTime,
+          blackUsername,
+          blackPicture,
+
+          whiteUsername,
+          whiteTime,
+          whitePicture,
+
           initialFen,
           isStarted = false,
           isEnded = false,
@@ -290,8 +319,15 @@ export const useGameStore = create<GameStore>()(
               player,
               playerColor,
               playingColor,
-              blackTime: timeBlack,
-              whiteTime: timeWhite,
+
+              blackTime,
+              blackUsername,
+              blackPicture,
+
+              whiteTime,
+              whiteUsername,
+              whitePicture,
+
               gameState,
               fen: gameState.exportFen(),
               showGameEndedDialog: false,
