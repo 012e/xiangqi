@@ -125,7 +125,7 @@ public class GameService {
         final var fen = gameLogic.exportUciFen();
 
         game.setUciFen(fen);
-        if (isWhiteTurn(gameLogic)) {
+        if (gameLogic.isWhiteTurn()) {
             game.updateBlackTime(); // previous was black's move
             gameTimeoutService.replaceTimerOrCreateNew(gameId, game.getWhiteTimeLeft());
             game.beginWhiteCounter();
@@ -197,30 +197,7 @@ public class GameService {
         return gameLogic.getCurrentPlayerColor().equals("white");
     }
 
-    public boolean isGameStarted(String gameId) {
-        final var game = gameRepository.getGameById(gameId);
-
-        if (game == null) {
-            throw new IllegalArgumentException("Game not found");
-        }
-
-        return game.getIsStarted();
-    }
-
-    private boolean isGameOver(@NotNull Game game) {
-        return game.getEndTime() != null;
-    }
-
-    public boolean isGameOver(String gameId) {
-        final var game = gameRepository.getGameById(gameId);
-
-        if (game == null) {
-            throw new IllegalArgumentException("Game not found");
-        }
-        return game.getEndTime() != null;
-    }
-
-    private void forceUpdateTimeLeft(Game game) throws SchedulerException {
+    private void patchTimeLeft(Game game) throws SchedulerException {
         final var gameLogic = Xiangqi.fromUciFen(game.getUciFen());
         if (!game.getIsStarted()) {
             return;
@@ -237,9 +214,8 @@ public class GameService {
         if (game == null) {
             return Optional.empty();
         }
-
-        forceUpdateTimeLeft(game);
-        gameRepository.save(game);
+        // TODO: persist or cache
+        patchTimeLeft(game);
 
         final var result = mapper.map(game, GameResponse.class);
         return Optional.of(result);

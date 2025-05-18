@@ -6,7 +6,7 @@ import {
   StatePlay,
 } from '@/lib/online/state';
 import Xiangqi from '@/lib/xiangqi';
-import { create, StateCreator } from 'zustand';
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type Move = {
@@ -71,8 +71,8 @@ const DEFAULT_STATE: Partial<Data> = {
   player: '',
   playerColor: 'white',
   playingColor: 'white',
-  blackTime: 60 * 10 * 1000,
   whiteTime: 60 * 10 * 1000,
+  blackTime: 60 * 10 * 1000,
   interval: null,
   gameState: new Xiangqi(),
   isStarted: false,
@@ -187,7 +187,6 @@ export const useGameStore = create<GameStore>()(
               break;
             case 'State.GameEnd': {
               const gameResult = (message as StateGameEnd).data;
-
               set(
                 () => ({
                   gameResult: gameResult.result,
@@ -275,8 +274,12 @@ export const useGameStore = create<GameStore>()(
             gameState = new Xiangqi();
           }
 
-          let interval: NodeJS.Timeout | null = null;
+          let oldInterval = get().interval;
+          if (oldInterval) {
+            clearInterval(oldInterval);
+          }
 
+          let interval: NodeJS.Timeout | null = null;
           if (isStarted) {
             interval = beginInterval(set, playingColor);
           }
@@ -291,6 +294,7 @@ export const useGameStore = create<GameStore>()(
               whiteTime: timeWhite,
               gameState,
               fen: gameState.exportFen(),
+              showGameEndedDialog: false,
               isStarted,
               interval,
               isEnded,
