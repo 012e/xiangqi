@@ -51,8 +51,14 @@ export function useOnlineGame(gameId: string | undefined) {
       playingColor: 'white',
       player: user!.sub!,
       initialFen: fen,
-      timeBlack: data.blackTimeLeft,
-      timeWhite: data.whiteTimeLeft,
+
+      blackTime: data.blackTimeLeft,
+      blackUsername: data.blackPlayer?.username!,
+      blackPicture: data.blackPlayer?.picture!,
+
+      whiteTime: data.whiteTimeLeft,
+      whiteUsername: data.whitePlayer?.username!,
+      whitePicture: data.whitePlayer?.picture!,
 
       isEnded: false,
     });

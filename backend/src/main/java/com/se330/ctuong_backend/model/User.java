@@ -24,6 +24,12 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "name")
+    @Column(name = "display_name")
     private String name;
+
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "picture")
+    private String picture;
 }
