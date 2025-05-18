@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class PlayMessage extends BoardStateMessage<PlayData> {
+public class PlayMessage extends GameMessage<PlayData> {
     protected BoardState type = BoardState.Play;
     private PlayData data;
 

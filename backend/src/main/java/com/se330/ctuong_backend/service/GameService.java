@@ -5,6 +5,7 @@ import com.se330.ctuong_backend.dto.GameDto;
 import com.se330.ctuong_backend.dto.message.game.state.GameEndMessage;
 import com.se330.ctuong_backend.dto.message.game.state.GameResult;
 import com.se330.ctuong_backend.dto.message.PlayData;
+import com.se330.ctuong_backend.dto.message.game.state.PlayMessage;
 import com.se330.ctuong_backend.dto.rest.GameResponse;
 import com.se330.ctuong_backend.model.Game;
 import com.se330.ctuong_backend.model.GameTypeRepository;
@@ -57,6 +58,7 @@ public class GameService {
                 .whiteTimeLeft(gameType.getTimeControl())
                 .uciFen(Xiangqi.INITIAL_UCI_FEN)
                 .isStarted(false)
+                .isEnded(false)
                 .build();
         gameRepository.save(newGame);
 
@@ -91,6 +93,7 @@ public class GameService {
         game.setEndTime(Instant.now());
         game.setResult(result.getResult());
         game.setResultDetail(result.getDetail());
+        game.setIsEnded(true);
 
         gameRepository.save(game);
         gameTimeoutService.removeTimerIfExists(gameId);
@@ -98,7 +101,7 @@ public class GameService {
         gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(result));
     }
 
-    public @Nullable PlayData moveIfValid(String gameId, Move move) throws SchedulerException {
+    public @Nullable void handleMove(String gameId, Move move) throws SchedulerException {
         final var beginCalculationTime = Instant.now();
         final var game = gameRepository.getGameById(gameId);
         if (game == null) {
@@ -106,12 +109,12 @@ public class GameService {
         }
         final var gameLogic = Xiangqi.fromUciFen(game.getUciFen());
 
-        if (isGameOver(game)) {
-            return null;
+        if (game.getIsEnded()) {
+            return;
         }
 
         if (!gameLogic.isLegalMove(move).isOk()) {
-            return null;
+            return;
         }
 
         if (game.getUciFen().equals(Xiangqi.INITIAL_UCI_FEN)) {
@@ -149,7 +152,45 @@ public class GameService {
         gameTimeoutService.compensateLoss(gameId, timeLoss);
         log.trace("Compensated loss: {}ms for game with ID {}", timeLoss.toMillis(), gameId);
 
-        return message;
+        gameMessageService.sendMessageGameTopic(gameId, new PlayMessage(message));
+        if (gameLogic.isGameOver()) {
+            handleGameEnd(gameId, gameLogic, game);
+        }
+    }
+
+    private void handleGameEnd(String gameId, Xiangqi gameLogic, Game game) {
+        final var result = gameLogic.getResult();
+
+        GameResult gameResult;
+
+        // This game result does not include external reasons like timeout/resign
+        switch (result) {
+            case BLACK_WIN -> gameResult = GameResult
+                    .builder()
+                    .blackWin()
+                    .byCheckmate();
+            case WHITE_WIN -> gameResult = GameResult
+                    .builder()
+                    .whiteWin()
+                    .byCheckmate();
+            case DRAW -> {
+                final var draw = GameResult.builder().draw();
+                if (gameLogic.isInsufficientMaterial()) {
+                    gameResult = draw.byInsufficientMaterial();
+                } else {
+                    gameResult = draw.byStalemate();
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + result);
+        }
+
+        game.setEndTime(Instant.now());
+        game.setResult(gameResult.getResult());
+        game.setResultDetail(gameResult.getDetail());
+        game.setIsEnded(true);
+        gameRepository.save(game);
+
+        gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(gameResult));
     }
 
     private static boolean isWhiteTurn(Xiangqi gameLogic) {

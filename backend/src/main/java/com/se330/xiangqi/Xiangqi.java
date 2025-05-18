@@ -771,6 +771,7 @@ public class Xiangqi {
         return GameResult.ONGOING;
     }
 
+
     public String exportUciFen() {
         StringBuilder uciFen = new StringBuilder();
 

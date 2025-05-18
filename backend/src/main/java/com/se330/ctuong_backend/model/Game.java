@@ -87,6 +87,9 @@ public class Game {
     @Column(name = "is_started")
     private Boolean isStarted = false;
 
+    @Column(name = "is_ended")
+    private Boolean isEnded = false;
+
     @Transient
     public Boolean getGameEnded() {
         return getEndTime() != null;

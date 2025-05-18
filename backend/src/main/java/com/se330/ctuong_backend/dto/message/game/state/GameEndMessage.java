@@ -1,11 +1,12 @@
 package com.se330.ctuong_backend.dto.message.game.state;
 
 import com.se330.ctuong_backend.dto.message.BoardState;
-import com.se330.ctuong_backend.dto.message.PlayData;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
-public class GameEndMessage extends BoardStateMessage<GameResult> {
+public class GameEndMessage extends GameMessage<GameResult> {
     protected BoardState type = BoardState.GameEnd;
     private GameResult data;
 
