@@ -771,6 +771,7 @@ public class Xiangqi {
         return GameResult.ONGOING;
     }
 
+
     public String exportUciFen() {
         StringBuilder uciFen = new StringBuilder();
 
@@ -829,5 +830,13 @@ public class Xiangqi {
      */
     public String getCurrentPlayerColor() {
         return currentPlayer;
+    }
+
+    public boolean isWhiteTurn() {
+        return currentPlayer.equals("white");
+    }
+
+    public boolean isBlackTurn() {
+        return currentPlayer.equals("white");
     }
 }

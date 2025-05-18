@@ -3,7 +3,8 @@ import { useGameActions, useGameStore } from '@/stores/online-game-store';
 import { deserializeState } from './state';
 import { useGetGame } from '../api/game-controller/game-controller';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { GameResponse } from '../api';
 
 export function useOnlineGame(gameId: string | undefined) {
   if (!gameId) {
@@ -11,7 +12,9 @@ export function useOnlineGame(gameId: string | undefined) {
   }
   const stompClient = useStompClient();
   const { user } = useAuth0();
-  const [isFirstRun, setIsFirstRun] = useState(true);
+
+  const initialData = useRef<GameResponse>(null);
+
 
   const { init } = useGameActions();
 
@@ -26,12 +29,7 @@ export function useOnlineGame(gameId: string | undefined) {
     isLoading: gameStateLoading,
     error,
     isError,
-  } = useGetGame(gameId, {
-    query: {
-      gcTime: 0, // Replaces `cacheTime` in v5
-      staleTime: 0, // Always treat data as stale
-    },
-  });
+  } = useGetGame(gameId);
 
   const isLoading = useMemo(() => {
     return gameStateLoading || !stompClient;
@@ -40,11 +38,10 @@ export function useOnlineGame(gameId: string | undefined) {
   if (isError) console.log(error);
 
   useEffect(() => {
-    if (!data) return;
-    if (!isFirstRun) {
+    if (initialData.current || !data) {
       return;
     }
-
+    initialData.current = data;
     const fen = data.uciFen?.substring(0, data.uciFen?.indexOf('|')).trim();
 
     init({
@@ -59,8 +56,7 @@ export function useOnlineGame(gameId: string | undefined) {
 
       isEnded: false,
     });
-    setIsFirstRun(false);
-  }, [data, isFirstRun]);
+  }, [data, initialData]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function onMove(from: string, to: string, _piece: string): boolean {
