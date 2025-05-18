@@ -74,6 +74,16 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
 
+              <Route path="/game/:id" element={<OnlineGame />} />
+              <Route path="/game/new" element={<NewGame />} />
+
+              <Route path="/play" element={<PlayGame />} />
+              <Route path="/play/bot" element={<PlayBot />} />
+              <Route path="/play/demo" element={<Demo />} />
+              <Route path="/play/friend" element={<PlayFriend />} />
+              <Route path="/play/online" element={<PlayOnline />} />
+
+              <Route path="/setting" element={<SettingPage />} />
               <Route path="/settings" element={<SettingProfile />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
