@@ -21,7 +21,7 @@ import java.time.Instant;
 public class Game {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy=GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
@@ -87,6 +87,9 @@ public class Game {
     @Column(name = "is_started")
     private Boolean isStarted = false;
 
+    @Column(name = "is_ended")
+    private Boolean isEnded = false;
+
     @Transient
     public Boolean getGameEnded() {
         return getEndTime() != null;
@@ -102,10 +105,12 @@ public class Game {
             return;
         }
 
+
         final var moveTime = Duration.between(whiteCounterStart, now);
-        if (whiteTime != null) {
-            setWhiteTimeLeft(whiteTime.minus(moveTime));
+        if (moveTime.isNegative()) {
+            throw new IllegalStateException("Move time cannot be negative");
         }
+        setWhiteTimeLeft(whiteTime.minus(moveTime));
     }
 
     @Transient
@@ -119,10 +124,10 @@ public class Game {
         }
 
         final var moveTime = Duration.between(blackCounterStart, now);
-
-        if (blackTime != null) {
-            setBlackTimeLeft(blackTime.minus(moveTime));
+        if (moveTime.isNegative()) {
+            throw new IllegalStateException("Move time cannot be negative");
         }
+        setBlackTimeLeft(blackTime.minus(moveTime));
     }
 
     @Transient

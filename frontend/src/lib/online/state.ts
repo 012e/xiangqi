@@ -1,126 +1,110 @@
-export type PlayerColor = 'white' | 'black';
-export type GameResult = 'white_win' | 'black_win' | 'draw';
-export type GameResultDetail =
-  | 'black_resign'
-  | 'black_timeout'
-  | 'black_checkmate'
-  | 'white_resign'
-  | 'white_timeout'
-  | 'white_checkmate'
-  | 'stalemate'
-  | 'insufficient_material'
-  | 'fifty_move_rule'
-  | 'mutual_agreement';
+import { z } from 'zod';
 
-interface BaseState<T extends string, D> {
-  type: T;
-  data: D;
-}
+// Enums
+export const PlayerColorSchema = z.enum(['white', 'black']);
+export type PlayerColor = z.infer<typeof PlayerColorSchema>;
 
-export class StatePlay
-  implements
-    BaseState<
-      'State.Play',
-      {
-        from: string;
-        to: string;
-        player: PlayerColor;
-        fen: string;
-        uciFen: string;
-        blackTime: number;
-        whiteTime: number;
-      }
-    >
-{
+export const GameResultSchema = z.enum(['white_win', 'black_win', 'draw']);
+export type GameResult = z.infer<typeof GameResultSchema>;
+
+export const GameResultDetailSchema = z.enum([
+  'black_resign',
+  'black_timeout',
+  'black_checkmate',
+  'white_resign',
+  'white_timeout',
+  'white_checkmate',
+  'stalemate',
+  'insufficient_material',
+  'fifty_move_rule',
+  'mutual_agreement',
+]);
+export type GameResultDetail = z.infer<typeof GameResultDetailSchema>;
+
+// State schemas
+export const StatePlaySchema = z.object({
+  type: z.literal('State.Play'),
+  data: z.object({
+    from: z.string(),
+    to: z.string(),
+    player: PlayerColorSchema,
+    fen: z.string(),
+    uciFen: z.string(),
+    blackTime: z.number(),
+    whiteTime: z.number(),
+  }),
+});
+
+export const StateErrorSchema = z.object({
+  type: z.literal('State.Error'),
+  data: z.object({
+    message: z.string(),
+  }),
+});
+
+export const StateGameEndSchema = z.object({
+  type: z.literal('State.GameEnd'),
+  data: z.object({
+    result: GameResultSchema,
+    detail: GameResultDetailSchema,
+  }),
+});
+
+export const ChessStateSchema = z.discriminatedUnion('type', [
+  StatePlaySchema,
+  StateErrorSchema,
+  StateGameEndSchema,
+]);
+
+// State classes
+export class StatePlay implements z.infer<typeof StatePlaySchema> {
   type = 'State.Play' as const;
 
-  constructor(
-    public data: {
-      from: string;
-      to: string;
-      player: PlayerColor;
-      fen: string;
-      uciFen: string;
-      blackTime: number;
-      whiteTime: number;
-    },
-  ) {}
+  constructor(public data: z.infer<typeof StatePlaySchema>['data']) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any): StatePlay {
-    return new StatePlay({
-      from: json.data.from,
-      to: json.data.to,
-      player: json.data.player,
-      fen: json.data.fen,
-      uciFen: json.data.uciFen,
-      blackTime: json.data.blackTime,
-      whiteTime: json.data.whiteTime,
-    });
+  static fromJSON(json: unknown): StatePlay {
+    const parsed = StatePlaySchema.parse(json);
+    return new StatePlay(parsed.data);
   }
 }
 
-export class StateError
-  implements BaseState<'State.Error', { message: string }>
-{
+export class StateError implements z.infer<typeof StateErrorSchema> {
   type = 'State.Error' as const;
 
-  constructor(public data: { message: string }) {}
+  constructor(public data: z.infer<typeof StateErrorSchema>['data']) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any): StateError {
-    return new StateError({ message: json.data.message });
+  static fromJSON(json: unknown): StateError {
+    const parsed = StateErrorSchema.parse(json);
+    return new StateError(parsed.data);
   }
 }
 
-export class StateGameEnd
-  implements
-    BaseState<
-      'State.GameEnd',
-      {
-        result: GameResult;
-        detail: GameResultDetail;
-      }
-    >
-{
+export class StateGameEnd implements z.infer<typeof StateGameEndSchema> {
   type = 'State.GameEnd' as const;
 
-  constructor(
-    public data: {
-      result: GameResult;
-      detail: GameResultDetail;
-    },
-  ) {}
+  constructor(public data: z.infer<typeof StateGameEndSchema>['data']) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any): StateGameEnd {
-    const result = json.data.result;
-    const detail = json.data.detail;
-    if (!result) {
-      throw new Error('Missing result in GameEnd state');
-    }
-    if (!detail) {
-      throw new Error('Missing detail in GameEnd state');
-    }
-    return new StateGameEnd({
-      result: result,
-      detail: detail,
-    });
+  static fromJSON(json: unknown): StateGameEnd {
+    const parsed = StateGameEndSchema.parse(json);
+    return new StateGameEnd(parsed.data);
   }
 }
 
 export type ChessState = StatePlay | StateError | StateGameEnd;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function deserializeState(json: any): ChessState {
-  switch (json.type) {
+// Deserialization
+export function deserializeState(json: unknown): ChessState {
+  const parsed = ChessStateSchema.parse(json);
+
+  switch (parsed.type) {
     case 'State.Play':
-      return StatePlay.fromJSON(json);
+      return new StatePlay(parsed.data);
     case 'State.Error':
-      return StateError.fromJSON(json);
+      return new StateError(parsed.data);
     case 'State.GameEnd':
-      return StateGameEnd.fromJSON(json);
+      return new StateGameEnd(parsed.data);
     default:
-      throw new Error(`Unknown state type: ${json.type}`);
+      throw new Error(`Unknown state type: ${(parsed as any).type}`);
   }
 }
+
