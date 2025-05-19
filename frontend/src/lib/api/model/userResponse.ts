@@ -5,11 +5,11 @@
  * OpenAPI spec version: v0
  */
 
-export interface User {
-  id?: number;
-  sub?: string;
-  email?: string;
-  name?: string;
+export interface UserResponse {
+  id: number;
+  sub: string;
+  email: string;
+  displayName?: string;
   username?: string;
   picture?: string;
 }

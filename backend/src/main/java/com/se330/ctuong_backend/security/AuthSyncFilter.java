@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.core.Ordered;
@@ -18,6 +20,7 @@ import java.io.IOException;
 
 @Component
 @Order()
+@RequiredArgsConstructor
 public class AuthSyncFilter extends OncePerRequestFilter {
     @Autowired
     private UserService userService;
@@ -26,7 +29,7 @@ public class AuthSyncFilter extends OncePerRequestFilter {
     private CacheManager cacheManager;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             filterChain.doFilter(request, response);
