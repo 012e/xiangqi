@@ -56,7 +56,7 @@ export default function OnlineGame() {
                 playingColor === 'black' ? 'text-red-600' : ''
               }`}
             >
-              hello {selfPlayerTime?.time}
+              hello {formatTime(selfPlayerTime?.time)}
             </div>
           </div>
           <div className="flex justify-center items-center p-3 bg-background">

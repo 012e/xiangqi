@@ -27,13 +27,6 @@ type Actions = {
       initialFen?: string;
       isEnded: boolean;
     }): void;
-    setTime({
-      blackTime,
-      whiteTime,
-    }: {
-      blackTime?: number;
-      whiteTime?: number;
-    }): void;
     handleTopicMessage(message: GameState): void;
     setGameEndedDialog(showGameEndedDialog: boolean): void;
   };
@@ -262,30 +255,6 @@ export const useGameStore = create<GameStore>()(
             },
           );
         },
-        // set time in actions
-        setTime({ blackTime, whiteTime }) {
-          set(
-            (state) => {
-              const self = state.selfPlayer;
-              const enemy = state.enemyPlayer;
-              if (self?.color === 'black' && blackTime !== undefined) {
-                self.time = blackTime;
-              } else if (self?.color === 'white' && whiteTime !== undefined) {
-                self.time = whiteTime;
-              }
-
-              if (enemy?.color === 'black' && blackTime !== undefined) {
-                enemy.time = blackTime;
-              } else if (enemy?.color === 'white' && whiteTime !== undefined) {
-                enemy.time = whiteTime;
-              }
-
-              return {
-                selfPlayer: self,
-                enemyPlayer: enemy,
-              };
-            }, false, { type: 'game.setTime' });
-        },
         init({
           gameId,
           selfPlayer,
@@ -369,7 +338,8 @@ function beginInterval(set: SetType, playingColor: Color | 'w' | 'b') {
 }
 
 export const useGameId = () => useGameStore((state) => state.id);
-export const usePlayer = () => useGameStore((state) => state.selfPlayer);
+export const useSelfPlayer = () => useGameStore((state) => state.selfPlayer);
+export const useEnemyPlayer = () => useGameStore((state) => state.enemyPlayer);
 export const usePlayerColor = () => useGameStore((state) => state.selfPlayer?.color);
 export const usePlayingColor = () =>
   useGameStore((state) => state.playingColor);
