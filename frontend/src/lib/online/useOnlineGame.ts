@@ -49,7 +49,7 @@ export function useOnlineGame(gameId: string | undefined) {
       isStarted: false,
       playerColor: user!.sub! === data.whitePlayer?.sub ? 'white' : 'black',
       playingColor: 'white',
-      player: user!.sub!,
+      selfPlayer: user!.sub!,
       initialFen: fen,
 
       blackTime: data.blackTimeLeft,

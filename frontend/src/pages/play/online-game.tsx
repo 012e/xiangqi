@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
-import { useGameStore } from '@/stores/online-game-store'; // Import the store
+import { useGameState, useGameStore } from '@/stores/online-game-store'; // Import the store
 import { ArrowUpDown, ChevronLeft, ChevronRight, CircleUser, Flag, Handshake, Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import MovePosition from '@/components/move-position.tsx';
@@ -14,16 +14,16 @@ export default function OnlineGame() {
   const { game, onMove, isLoading } = useOnlineGame(id);
 
   // Get the time from the store
-  const blackTime = useGameStore((state) => state.blackTime);
-  const whiteTime = useGameStore((state) => state.whiteTime);
+  const selfPlayerTime = useGameStore((state) => state.selfPlayer);
+  const enemyPlayerTime = useGameStore((state) => state.enemyPlayer);
   const playingColor = useGameStore((state) => state.playingColor);
-  const playerColor = useGameStore((state) => state.playerColor);
+  const playerColor = useGameStore((state) => state.selfPlayer?.color);
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
-    // example : 137608 (s)
+    // example: 137608 (s)
     const totalSeconds = Math.round(ms / 1000); // 138
     const minutes = Math.floor(totalSeconds / 60); // 2
     const seconds = totalSeconds % 60;// 18
@@ -56,14 +56,11 @@ export default function OnlineGame() {
                 playingColor === 'black' ? 'text-red-600' : ''
               }`}
             >
-              {(playerColor === "black") ? formatTime(whiteTime) : formatTime(blackTime)}
+              hello {selfPlayerTime?.time}
             </div>
           </div>
           <div className="flex justify-center items-center p-3 bg-background">
             <div className="flex flex-col items-center">
-              {/*<div className="mb-4">*/}
-              {/*  /!*<h1>{game.exportFen()}</h1>*!/*/}
-              {/*</div>*/}
               <div className="flex justify-center items-center w-full">
                 {isLoading ? (
                   <div className="flex justify-center items-center w-full h-full animate-spin">
@@ -95,7 +92,7 @@ export default function OnlineGame() {
                 playingColor === 'white' ? '' : ''
               }`}
             >
-              {(playerColor === "black") ? formatTime(blackTime) : formatTime(whiteTime)}
+              {selfPlayerTime?.time}
             </div>
           </div>
         </div>
