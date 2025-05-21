@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
-import { useGameState, useGameStore } from '@/stores/online-game-store'; // Import the store
+import { useGameStore } from '@/stores/online-game-store'; // Import the store
 import { ArrowUpDown, ChevronLeft, ChevronRight, CircleUser, Flag, Handshake, Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import MovePosition from '@/components/move-position.tsx';
@@ -35,7 +35,7 @@ export default function OnlineGame() {
     return piece[0] === 'b' ? 'black' : 'white';
   }
 
-  function isPlayerTurn({piece,}: {
+  function isPlayerTurn({ piece }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
@@ -124,7 +124,7 @@ export default function OnlineGame() {
               <Button className="group">
                 <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
               </Button>
-              <Button className="group" >
+              <Button className="group">
                 <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
               </Button>
             </div>

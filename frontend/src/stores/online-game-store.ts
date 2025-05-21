@@ -57,15 +57,14 @@ type Data = {
 };
 
 type GameStore = Data & Actions;
-class Player {
+export class Player {
   constructor(
     private _id: string,
     private _username: string,
-    private _picture: string,
     private _color: Color,
-    private _time: number = 60 * 10 * 1000
+    private _time: number = 60 * 10 * 1000,
+    private _picture: string = 'https://lh3.googleusercontent.com/proxy/7v4jrhphB5j_n7A9AAxQPk5gdVp-kawPq2lzWV_CuZqJNVIAOkdMSPHJF5Na22xmkrGt9jU4chs1va8-xRf4qDwgtg99B5f4d_ER',
   ) {}
-
   public get id() { return this._id; }
   public get username() { return this._username; }
   public get picture() { return this._picture; }
@@ -78,8 +77,8 @@ class Player {
 }
 const DEFAULT_STATE: Partial<Data> = {
   id: '',
-  selfPlayer: new Player('', '', '','white', 60 * 10 * 1000),
-  enemyPlayer: new Player('', '', '','black', 60 * 10 * 1000),
+  selfPlayer: new Player('', '', 'white', 60 * 10 * 1000),
+  enemyPlayer: new Player('', '', 'black', 60 * 10 * 1000),
   playingColor: 'white',
   interval: null,
   gameState: new Xiangqi(),
@@ -94,7 +93,7 @@ function clonePlayer(player: Player, time?: number): Player {
   return new Player(
     player.id,
     player.username,
-    player.picture,
+    // player.picture,
     player.color,
     time !== undefined ? time : player.time,
   );
@@ -128,13 +127,11 @@ export const useGameStore = create<GameStore>()(
           const interval = get().interval;
 
           // handle game state
-          // const gameState = get().gameState;
           const gameState = new Xiangqi(get().gameState.exportFen());
           if (!gameState.isLegalMove(move).ok) {
             return false;
           }
           gameState.move(move);
-          // const newGameState = Object.assign(gameState, {});
 
           // begin a new interval for the other player
           const playingColor = invertColor(get().playingColor);
@@ -176,17 +173,23 @@ export const useGameStore = create<GameStore>()(
                 };
                 moveHandler(move);
               }
+              let selfPlayer: Player;
+              let enemyPlayer: Player;
+              const enemyColor = get().enemyPlayer.color;
+              if (enemyColor === 'black') {
+                selfPlayer = clonePlayer(get().selfPlayer, message.data.blackTime);
+                enemyPlayer = clonePlayer(get().enemyPlayer, message.data.whiteTime);
+              } else {
+                enemyPlayer = clonePlayer(get().selfPlayer, message.data.blackTime);
+                selfPlayer = clonePlayer(get().enemyPlayer, message.data.whiteTime);
+              }
 
               // Sync the board (mostly for spectator mode)
               set(state => ({
                   ...state,
                   fen: message.data.fen,
-                  selfPlayer: state.selfPlayer
-                    ? clonePlayer(state.selfPlayer, state.selfPlayer.color === 'black' ? message.data.blackTime : message.data.whiteTime)
-                    : undefined,
-                  enemyPlayer: state.enemyPlayer
-                    ? clonePlayer(state.enemyPlayer, state.enemyPlayer.color === 'black' ? message.data.blackTime : message.data.whiteTime)
-                    : undefined,
+                  selfPlayer,
+                  enemyPlayer,
               }), undefined, 'game.sync');
               break;
             }
@@ -268,13 +271,6 @@ export const useGameStore = create<GameStore>()(
           isStarted = false,
           isEnded = false,
         }) {
-          // let gameState;
-          //
-          // if (initialFen) {
-          //   gameState = new Xiangqi(initialFen);
-          // } else {
-          //   gameState = new Xiangqi();
-          // }
           const gameState = initialFen ? new Xiangqi(initialFen) : new Xiangqi();
 
           const oldInterval = get().interval;

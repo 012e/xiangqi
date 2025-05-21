@@ -1,10 +1,34 @@
 import { useStompClient, useSubscription } from 'react-stomp-hooks';
-import { useGameActions, useGameStore } from '@/stores/online-game-store';
+import { Player, useGameActions, useGameStore } from '@/stores/online-game-store';
 import { deserializeState } from './state';
-import { useGetGame } from '../api/game-controller/game-controller';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useMemo, useRef } from 'react';
-import { GameResponse } from '../api';
+import { useQuery } from '@tanstack/react-query';
+import { appAxios } from '@/services/AxiosClient.ts';
+import { GameResponse, UserPlayer } from '@/lib/online/game-response.ts';
+
+function createPlayer(player: UserPlayer, color: 'white' | 'black', time: number): Player {
+  const id = player?.id ?? '';
+  const username = player?.name ?? '';
+  const pic = player.picture;
+  return new Player(id.toString(), username, color, time, pic);
+}
+
+function getOurPlayer(data: GameResponse, ourUserId: string): Player {
+  if (data.whitePlayer?.sub === ourUserId) {
+    return createPlayer(data.whitePlayer, 'white', data.whiteTimeLeft);
+  } else {
+    return createPlayer(data.blackPlayer, 'black', data.blackTimeLeft);
+  }
+}
+
+function getEnemyPlayer(data: GameResponse, ourUserId: string): Player {
+  if (data.whitePlayer?.sub !== ourUserId) {
+    return createPlayer(data.whitePlayer, 'white', data.whiteTimeLeft);
+  } else {
+    return createPlayer(data.blackPlayer, 'black', data.blackTimeLeft);
+  }
+}
 
 export function useOnlineGame(gameId: string | undefined) {
   if (!gameId) {
@@ -20,7 +44,6 @@ export function useOnlineGame(gameId: string | undefined) {
 
   // Access store actions and state
   const gameState = useGameStore((state) => state.gameState);
-  const playerColor = useGameStore((state) => state.playerColor);
   const playingColor = useGameStore((state) => state.playingColor);
   const { move, handleTopicMessage } = useGameStore((state) => state.actions);
 
@@ -29,7 +52,14 @@ export function useOnlineGame(gameId: string | undefined) {
     isLoading: gameStateLoading,
     error,
     isError,
-  } = useGetGame(gameId);
+  } = useQuery({
+    queryKey: ['gameId', gameId],
+    queryFn: async () => {
+      const response = await appAxios.get<GameResponse>(`/game/${gameId}`);
+      return response.data;
+    },
+    enabled: !!gameId,
+  });
 
   const isLoading = useMemo(() => {
     return gameStateLoading || !stompClient;
@@ -41,28 +71,25 @@ export function useOnlineGame(gameId: string | undefined) {
     if (initialData.current || !data) {
       return;
     }
-    initialData.current = data;
+    initialData.current = data as GameResponse;
+    
     const fen = data.uciFen?.substring(0, data.uciFen?.indexOf('|')).trim();
-
+    
+    const ourPlayer: Player = getOurPlayer(data, user?.sub ?? '');
+    const enemyPlayer: Player = getEnemyPlayer(data, user?.sub ?? '');
+    
+    const playingColor = data.uciFen?.includes('w') ? 'white' : 'black';
     init({
       gameId: gameId,
       isStarted: false,
-      playerColor: user!.sub! === data.whitePlayer?.sub ? 'white' : 'black',
-      playingColor: 'white',
-      selfPlayer: user!.sub!,
+      playingColor: playingColor ?? 'white',
+      selfPlayer: ourPlayer,
+      enemyPlayer: enemyPlayer,
       initialFen: fen,
 
-      blackTime: data.blackTimeLeft,
-      blackUsername: data.blackPlayer?.username!,
-      blackPicture: data.blackPlayer?.picture!,
-
-      whiteTime: data.whiteTimeLeft,
-      whiteUsername: data.whitePlayer?.username!,
-      whitePicture: data.whitePlayer?.picture!,
-
-      isEnded: false,
+      isEnded: !!data.result,
     });
-  }, [data, initialData]);
+  }, [data, initialData, gameId, init, user]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function onMove(from: string, to: string, _piece: string): boolean {
@@ -101,7 +128,6 @@ export function useOnlineGame(gameId: string | undefined) {
     game: gameState,
     fen: useGameStore((state) => state.fen),
     onMove,
-    playerColor,
     playingColor,
     isLoading,
   };
