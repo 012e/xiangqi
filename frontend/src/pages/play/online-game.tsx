@@ -14,8 +14,9 @@ export default function OnlineGame() {
   const { game, onMove, isLoading } = useOnlineGame(id);
 
   // Get the time from the store
-  const selfPlayerTime = useGameStore((state) => state.selfPlayer);
-  const enemyPlayerTime = useGameStore((state) => state.enemyPlayer);
+
+  const selfPlayer = useGameStore((state) => state.selfPlayer);
+  const enemyPlayer = useGameStore((state) => state.enemyPlayer);
   const playingColor = useGameStore((state) => state.playingColor);
   const playerColor = useGameStore((state) => state.selfPlayer?.color);
   const fen = useGameStore((state) => state.fen);
@@ -56,7 +57,7 @@ export default function OnlineGame() {
                 playingColor === 'black' ? 'text-red-600' : ''
               }`}
             >
-              hello {formatTime(selfPlayerTime?.time)}
+              hello {formatTime(selfPlayer?.time)}
             </div>
           </div>
           <div className="flex justify-center items-center p-3 bg-background">
@@ -92,7 +93,7 @@ export default function OnlineGame() {
                 playingColor === 'white' ? '' : ''
               }`}
             >
-              {selfPlayerTime?.time}
+              {selfPlayer?.time}
             </div>
           </div>
         </div>

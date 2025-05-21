@@ -38,8 +38,8 @@ type Color = 'white' | 'black';
 type Data = {
   id: string;
 
-  selfPlayer: Player | null;
-  enemyPlayer: Player | null;
+  selfPlayer: Player;
+  enemyPlayer: Player;
 
   playingColor: Color;
 
@@ -57,20 +57,6 @@ type Data = {
 };
 
 type GameStore = Data & Actions;
-
-const DEFAULT_STATE: Partial<Data> = {
-  id: '',
-  selfPlayer: null,
-  enemyPlayer: null,
-  playingColor: 'white',
-  interval: null,
-  gameState: new Xiangqi(),
-  isStarted: false,
-  fen: Xiangqi.DEFAULT_FEN,
-  showGameEndedDialog: false,
-  isEnded: false,
-};
-
 class Player {
   constructor(
     private _id: string,
@@ -90,7 +76,29 @@ class Player {
     this._time = value;
   }
 }
+const DEFAULT_STATE: Partial<Data> = {
+  id: '',
+  selfPlayer: new Player('', '', '','white', 60 * 10 * 1000),
+  enemyPlayer: new Player('', '', '','white', 60 * 10 * 1000),
+  playingColor: 'white',
+  interval: null,
+  gameState: new Xiangqi(),
+  isStarted: false,
+  fen: Xiangqi.DEFAULT_FEN,
+  showGameEndedDialog: false,
+  isEnded: false,
+};
 
+
+function clonePlayer(player: Player, time?: number): Player {
+  return new Player(
+    player.id,
+    player.username,
+    player.picture,
+    player.color,
+    time !== undefined ? time : player.time,
+  );
+}
 function invertColor(color: Color): Color {
   return color === 'white' ? 'black' : 'white';
 }
@@ -170,23 +178,17 @@ export const useGameStore = create<GameStore>()(
               }
 
               // Sync the board (mostly for spectator mode)
-              set((state) => {
-                const self = state.selfPlayer;
-                const enemy = state.enemyPlayer;
-
-                if (self?.color === 'black') self.time = message.data.blackTime;
-                if (self?.color === 'white') self.time = message.data.whiteTime;
-
-                if (enemy?.color === 'black') enemy.time = message.data.blackTime;
-                if (enemy?.color === 'white') enemy.time = message.data.whiteTime;
-
+              set(state => {
                 return {
                   fen: message.data.fen,
-                  selfPlayer: self,
-                  enemyPlayer: enemy,
+                  selfPlayer: state.selfPlayer
+                    ? clonePlayer(state.selfPlayer, state.selfPlayer.color === 'black' ? message.data.blackTime : message.data.whiteTime)
+                    : null,
+                  enemyPlayer: state.enemyPlayer
+                    ? clonePlayer(state.enemyPlayer, state.enemyPlayer.color === 'black' ? message.data.blackTime : message.data.whiteTime)
+                    : null,
                 };
               }, undefined, 'game.sync');
-
               break;
             }
             case 'State.Error':
@@ -218,18 +220,20 @@ export const useGameStore = create<GameStore>()(
                   if (gameResult.detail === 'black_timeout') {
                     const self = get().selfPlayer;
                     const enemy = get().enemyPlayer;
-                    if (self?.color === 'black') self.time = 0;
-                    if (enemy?.color === 'black') enemy.time = 0;
-                    set({selfPlayer: self, enemyPlayer: enemy});
+                    set({
+                      selfPlayer: self?.color === 'black' ? clonePlayer(self, 0) : self,
+                      enemyPlayer: enemy?.color === 'black' ? clonePlayer(enemy, 0) : enemy,
+                    });
                   }
                   break;
                 case 'black_win':
                   if (gameResult.detail === 'white_timeout') {
                     const self = get().selfPlayer;
                     const enemy = get().enemyPlayer;
-                    if (self?.color === 'white') self.time = 0;
-                    if (enemy?.color === 'white') enemy.time = 0;
-                    set({selfPlayer: self, enemyPlayer: enemy});
+                    set({
+                      selfPlayer: self?.color === 'white' ? clonePlayer(self, 0) : self,
+                      enemyPlayer: enemy?.color === 'white' ? clonePlayer(enemy, 0) : enemy,
+                    });
                   }
                   console.log('Black wins');
                   break;
@@ -323,11 +327,9 @@ function beginInterval(set: SetType, playingColor: Color | 'w' | 'b') {
       if (!self || !enemy) return {};
 
       if (isEqualColor(self.color, playingColor)) {
-        self.time -= 1000;
-        return { selfPlayer: self };
+        return { selfPlayer: clonePlayer(self, self.time - 1000) };
       } else if (isEqualColor(enemy.color, playingColor)) {
-        enemy.time -= 1000;
-        return { enemyPlayer: enemy };
+        return { enemyPlayer: clonePlayer(enemy, enemy.time - 1000) };
       }
 
       return {};
