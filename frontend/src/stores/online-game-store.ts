@@ -79,7 +79,7 @@ class Player {
 const DEFAULT_STATE: Partial<Data> = {
   id: '',
   selfPlayer: new Player('', '', '','white', 60 * 10 * 1000),
-  enemyPlayer: new Player('', '', '','white', 60 * 10 * 1000),
+  enemyPlayer: new Player('', '', '','black', 60 * 10 * 1000),
   playingColor: 'white',
   interval: null,
   gameState: new Xiangqi(),
@@ -178,17 +178,16 @@ export const useGameStore = create<GameStore>()(
               }
 
               // Sync the board (mostly for spectator mode)
-              set(state => {
-                return {
+              set(state => ({
+                  ...state,
                   fen: message.data.fen,
                   selfPlayer: state.selfPlayer
                     ? clonePlayer(state.selfPlayer, state.selfPlayer.color === 'black' ? message.data.blackTime : message.data.whiteTime)
-                    : null,
+                    : undefined,
                   enemyPlayer: state.enemyPlayer
                     ? clonePlayer(state.enemyPlayer, state.enemyPlayer.color === 'black' ? message.data.blackTime : message.data.whiteTime)
-                    : null,
-                };
-              }, undefined, 'game.sync');
+                    : undefined,
+              }), undefined, 'game.sync');
               break;
             }
             case 'State.Error':
