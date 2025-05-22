@@ -17,18 +17,17 @@ export default function OnlineGame() {
 
   const selfPlayer = useGameStore((state) => state.selfPlayer);
   const enemyPlayer = useGameStore((state) => state.enemyPlayer);
-  const playingColor = useGameStore((state) => state.playingColor);
-  const playerColor = useGameStore((state) => state.selfPlayer?.color);
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
+    return ms.toString();
     // example: 137608 (s)
-    const totalSeconds = Math.round(ms / 1000); // 138
-    const minutes = Math.floor(totalSeconds / 60); // 2
-    const seconds = totalSeconds % 60;// 18
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    // const totalSeconds = Math.round(ms / 1000); // 138
+    // const minutes = Math.floor(totalSeconds / 60); // 2
+    // const seconds = totalSeconds % 60;// 18
+    // return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   function getPieceColor(piece: string): 'white' | 'black' {
@@ -39,7 +38,7 @@ export default function OnlineGame() {
     piece: string;
     sourceSquare: Square;
   }): boolean {
-    return getPieceColor(piece) === playerColor;
+    return getPieceColor(piece) === selfPlayer?.color;
   }
 
   return (
@@ -53,9 +52,7 @@ export default function OnlineGame() {
               <span>opp</span>
             </div>
             <div
-              className={`text-xl font-bold ml-auto ${
-                playingColor === 'black' ? 'text-red-600' : ''
-              }`}
+              className={`text-xl font-bold ml-auto`}
             >
               {formatTime(enemyPlayer?.time)}
             </div>
@@ -74,7 +71,7 @@ export default function OnlineGame() {
                       id="online-xiangqi-board"
                       onPieceDrop={onMove}
                       isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
-                      boardOrientation={playerColor}
+                      boardOrientation={selfPlayer?.color}
                       position={fen}
                       animationDuration={200}
                     />
@@ -89,9 +86,7 @@ export default function OnlineGame() {
               <span>Me</span>
             </div>
             <div
-              className={`text-xl font-bold ml-auto ${
-                playingColor === 'white' ? '' : ''
-              }`}
+              className={`text-xl font-bold ml-auto`}
             >
               {formatTime(selfPlayer?.time)}
             </div>

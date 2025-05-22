@@ -8,6 +8,7 @@ import {
 import Xiangqi from '@/lib/xiangqi';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 
 type Move = {
   from: string;
@@ -57,28 +58,40 @@ type Data = {
 };
 
 type GameStore = Data & Actions;
-export class Player {
-  constructor(
-    private _id: string,
-    private _username: string,
-    private _color: Color,
-    private _time: number = 60 * 10 * 1000,
-    private _picture: string = 'https://lh3.googleusercontent.com/proxy/7v4jrhphB5j_n7A9AAxQPk5gdVp-kawPq2lzWV_CuZqJNVIAOkdMSPHJF5Na22xmkrGt9jU4chs1va8-xRf4qDwgtg99B5f4d_ER',
-  ) {}
-  public get id() { return this._id; }
-  public get username() { return this._username; }
-  public get picture() { return this._picture; }
-  public get color() { return this._color; }
-  public get time() { return this._time; }
 
-  public set time(value: number) {
-    this._time = value;
-  }
-}
+export type Player = {
+  id: number;
+  username: string;
+  color: Color;
+  time: number;
+  picture: string;
+  name: string;
+  sub: string;
+  email: string;
+};
+
 const DEFAULT_STATE: Partial<Data> = {
   id: '',
-  selfPlayer: new Player('', '', 'white', 60 * 10 * 1000),
-  enemyPlayer: new Player('', '', 'black', 60 * 10 * 1000),
+  selfPlayer: {
+    id: 0,
+    username: '',
+    color: 'white',
+    time: 60 * 10 * 1000,
+    picture: '',
+    name: '',
+    sub: '',
+    email: '',
+  },
+  enemyPlayer: {
+    id: 0,
+    username: '',
+    color: 'black',
+    time: 60 * 10 * 1000,
+    picture: '',
+    name: '',
+    sub: '',
+    email: '',
+  },
   playingColor: 'white',
   interval: null,
   gameState: new Xiangqi(),
@@ -88,16 +101,6 @@ const DEFAULT_STATE: Partial<Data> = {
   isEnded: false,
 };
 
-
-function clonePlayer(player: Player, time?: number): Player {
-  return new Player(
-    player.id,
-    player.username,
-    // player.picture,
-    player.color,
-    time !== undefined ? time : player.time,
-  );
-}
 function invertColor(color: Color): Color {
   return color === 'white' ? 'black' : 'white';
 }
@@ -113,207 +116,211 @@ function isEqualColor(
 }
 
 export const useGameStore = create<GameStore>()(
-  devtools(
-    (set, get) => ({
-      ...DEFAULT_STATE,
+  immer(
+    devtools(
+      (set, get) => ({
+        ...DEFAULT_STATE,
 
-      actions: {
-        move(move): boolean {
-          if (get().isEnded) {
-            return false;
-          }
-
-          // remove an old interval
-          const interval = get().interval;
-
-          // handle game state
-          const gameState = new Xiangqi(get().gameState.exportFen());
-          if (!gameState.isLegalMove(move).ok) {
-            return false;
-          }
-          gameState.move(move);
-
-          // begin a new interval for the other player
-          const playingColor = invertColor(get().playingColor);
-
-          let newInterval: NodeJS.Timeout | null = null;
-          if (interval) {
-            clearInterval(interval);
-          }
-          newInterval = beginInterval(set, playingColor);
-
-          set(
-            (state) => ({
-              move,
-              gameState,
-              isStarted: true,
-              interval: newInterval,
-              playingColor: invertColor(state.playingColor),
-              fen: gameState.exportFen(),
-            }),
-            false,
-            {
-              type: 'game.move',
-            },
-          );
-          return true;
-        },
-
-        handleTopicMessage(message: GameState) {
-          const playerColor = get().selfPlayer?.color;
-          switch (message.type) {
-            case 'State.Play': {
-              const moveHandler = get().actions.move;
-              const play = message as StatePlay;
-
-              if (playerColor && isEqualColor(playerColor, play.data.player)) {
-                const move = {
-                  from: play.data.from,
-                  to: play.data.to,
-                };
-                moveHandler(move);
-              }
-              let selfPlayer: Player;
-              let enemyPlayer: Player;
-              const enemyColor = get().enemyPlayer.color;
-              if (enemyColor === 'black') {
-                selfPlayer = clonePlayer(get().selfPlayer, message.data.blackTime);
-                enemyPlayer = clonePlayer(get().enemyPlayer, message.data.whiteTime);
-              } else {
-                enemyPlayer = clonePlayer(get().selfPlayer, message.data.blackTime);
-                selfPlayer = clonePlayer(get().enemyPlayer, message.data.whiteTime);
-              }
-
-              // Sync the board (mostly for spectator mode)
-              set(state => ({
-                  ...state,
-                  fen: message.data.fen,
-                  selfPlayer,
-                  enemyPlayer,
-              }), undefined, 'game.sync');
-              break;
+        actions: {
+          move(move): boolean {
+            if (get().isEnded) {
+              return false;
             }
-            case 'State.Error':
-              console.error('Error from server:', message.data.message);
-              break;
-            case 'State.GameEnd': {
-              const gameResult = (message as StateGameEnd).data;
-              set(
-                () => ({
-                  gameResult: gameResult.result,
-                  gameResultDetail: gameResult.detail,
 
-                  showGameEndedDialog: true,
-                  isEnded: true,
-                }),
-                undefined,
-                'game.end',
-              );
+            // remove an old interval
+            const interval = get().interval;
 
-              // clear timer interval
-              const interval = get().interval;
-              if (interval) {
-                clearInterval(interval);
-              }
-
-              switch (gameResult.result) {
-                case 'white_win':
-                  console.log('White wins');
-                  if (gameResult.detail === 'black_timeout') {
-                    const self = get().selfPlayer;
-                    const enemy = get().enemyPlayer;
-                    set({
-                      selfPlayer: self?.color === 'black' ? clonePlayer(self, 0) : self,
-                      enemyPlayer: enemy?.color === 'black' ? clonePlayer(enemy, 0) : enemy,
-                    });
-                  }
-                  break;
-                case 'black_win':
-                  if (gameResult.detail === 'white_timeout') {
-                    const self = get().selfPlayer;
-                    const enemy = get().enemyPlayer;
-                    set({
-                      selfPlayer: self?.color === 'white' ? clonePlayer(self, 0) : self,
-                      enemyPlayer: enemy?.color === 'white' ? clonePlayer(enemy, 0) : enemy,
-                    });
-                  }
-                  console.log('Black wins');
-                  break;
-                case 'draw':
-                  console.log('Draw');
-                  break;
-                default:
-                  console.error('Unknown game result:', gameResult.result);
-              }
-              break;
+            // handle game state
+            const gameState = new Xiangqi(get().gameState.exportFen());
+            if (!gameState.isLegalMove(move).ok) {
+              return false;
             }
-          }
+            gameState.move(move);
+
+            // begin a new interval for the other player
+            const playingColor = invertColor(get().playingColor);
+
+            let newInterval: NodeJS.Timeout | null = null;
+            if (interval) {
+              clearInterval(interval);
+            }
+            newInterval = beginInterval(set, playingColor);
+
+            set(
+              (state) => ({
+                move,
+                gameState,
+                isStarted: true,
+                interval: newInterval,
+                playingColor: invertColor(state.playingColor),
+                fen: gameState.exportFen(),
+              }),
+              false,
+              {
+                type: 'game.move',
+              },
+            );
+            return true;
+          },
+
+          handleTopicMessage(message: GameState) {
+            const playerColor = get().selfPlayer?.color;
+            switch (message.type) {
+              case 'State.Play': {
+                const moveHandler = get().actions.move;
+                const play = message as StatePlay;
+
+                if (isEqualColor(playerColor, play.data.player)) {
+                  const move = {
+                    from: play.data.from,
+                    to: play.data.to,
+                  };
+                  moveHandler(move);
+                }
+                // Sync the board (mostly for spectator mode)
+                set(state => {
+                  state.fen = play.data.fen;
+                  if (state.selfPlayer.color === 'black') {
+                    state.selfPlayer.time = play.data.blackTime;
+                    state.enemyPlayer.time = play.data.whiteTime;
+                  } else {
+                    state.selfPlayer.time = play.data.whiteTime;
+                    state.enemyPlayer.time = play.data.blackTime;
+                  }
+                }, undefined, 'game.sync');
+                break;
+              }
+              case 'State.Error':
+                console.error('Error from server:', message.data.message);
+                break;
+              case 'State.GameEnd': {
+                const gameResult = (message as StateGameEnd).data;
+                set(
+                  () => ({
+                    gameResult: gameResult.result,
+                    gameResultDetail: gameResult.detail,
+
+                    showGameEndedDialog: true,
+                    isEnded: true,
+                  }),
+                  undefined,
+                  'game.end',
+                );
+
+                // clear timer interval
+                const interval = get().interval;
+                if (interval) {
+                  clearInterval(interval);
+                }
+
+                switch (gameResult.result) {
+                  case 'white_win':
+                    console.log('White wins');
+                    if (gameResult.detail === 'black_timeout') {
+                      const self = get().selfPlayer;
+                      const enemy = get().enemyPlayer;
+                      if (self.color === 'black') {
+                        self.time = 0;
+                      } else {
+                        enemy.time = 0;
+                      }
+                      set((state) => {
+                        state.selfPlayer = self;
+                        state.enemyPlayer = enemy;
+                      });
+                    }
+                    break;
+                  case 'black_win':
+                    if (gameResult.detail === 'white_timeout') {
+                      const self = get().selfPlayer;
+                      const enemy = get().enemyPlayer;
+                      if (self.color === 'white') {
+                        self.time = 0;
+                      } else {
+                        enemy.time = 0;
+                      }
+                      set((state) => {
+                        state.selfPlayer = self;
+                        state.enemyPlayer = enemy;
+                      });
+                    }
+                    console.log('Black wins');
+                    break;
+                  case 'draw':
+                    console.log('Draw');
+                    break;
+                  default:
+                    console.error('Unknown game result:', gameResult.result);
+                }
+                break;
+              }
+            }
+          },
+
+          setGameEndedDialog(showGameEndedDialog?: boolean): void {
+            set(
+              () => ({
+                showGameEndedDialog: showGameEndedDialog,
+              }),
+              false,
+              {
+                type: 'game.setGameEndedDialog',
+              },
+            );
+          },
+          init({
+                 gameId,
+                 selfPlayer,
+                 enemyPlayer,
+                 playingColor,
+
+                 initialFen,
+                 isStarted = false,
+                 isEnded = false,
+               }) {
+            const gameState = initialFen ? new Xiangqi(initialFen) : new Xiangqi();
+
+            const oldInterval = get().interval;
+            if (oldInterval) {
+              clearInterval(oldInterval);
+            }
+
+            let interval: NodeJS.Timeout | null = null;
+            if (isStarted) {
+              interval = beginInterval(set, playingColor);
+            }
+
+            set(
+              () => ({
+                id: gameId,
+                selfPlayer,
+                enemyPlayer,
+                playingColor,
+                gameState,
+                fen: gameState.exportFen(),
+                showGameEndedDialog: false,
+                isStarted,
+                interval,
+                isEnded,
+              }),
+              false,
+              {
+                type: 'game.init',
+              },
+            );
+          },
         },
-
-        setGameEndedDialog(showGameEndedDialog?: boolean): void {
-          set(
-            () => ({
-              showGameEndedDialog: showGameEndedDialog,
-            }),
-            false,
-            {
-              type: 'game.setGameEndedDialog',
-            },
-          );
-        },
-        init({
-          gameId,
-          selfPlayer,
-          enemyPlayer,
-          playingColor,
-
-          initialFen,
-          isStarted = false,
-          isEnded = false,
-        }) {
-          const gameState = initialFen ? new Xiangqi(initialFen) : new Xiangqi();
-
-          const oldInterval = get().interval;
-          if (oldInterval) {
-            clearInterval(oldInterval);
-          }
-
-          let interval: NodeJS.Timeout | null = null;
-          if (isStarted) {
-            interval = beginInterval(set, playingColor);
-          }
-
-          set(
-            () => ({
-              id: gameId,
-              selfPlayer,
-              enemyPlayer,
-              playingColor,
-              gameState,
-              fen: gameState.exportFen(),
-              showGameEndedDialog: false,
-              isStarted,
-              interval,
-              isEnded,
-            }),
-            false,
-            {
-              type: 'game.init',
-            },
-          );
-        },
+      }),
+      {
+        actionsDenylist: ['game.updatePlayerTime'],
       },
-    }),
-    {
-      actionsDenylist: ['game.updateSelfPlayer', 'game.updateEnemyPlayer'],
-    },
-  ),
-);
+    ),
+  ));
 
 type GetType = typeof useGameStore.getState; // typeof get
 type SetType = typeof useGameStore.setState; // typeof get
 
-function beginInterval(set: SetType, playingColor: Color | 'w' | 'b') {
+function beginInterval(set: SetType, playingColor: Color | 'w' | 'b'): NodeJS.Timeout {
   return setInterval(() => {
     set((state) => {
       const self = state.selfPlayer;
@@ -322,12 +329,10 @@ function beginInterval(set: SetType, playingColor: Color | 'w' | 'b') {
       if (!self || !enemy) return {};
 
       if (isEqualColor(self.color, playingColor)) {
-        return { selfPlayer: clonePlayer(self, self.time - 1000) };
-      } else if (isEqualColor(enemy.color, playingColor)) {
-        return { enemyPlayer: clonePlayer(enemy, enemy.time - 1000) };
+        state.selfPlayer.time -= 1000;
+        return;
       }
-
-      return {};
+      state.enemyPlayer.time -= 1000;
     }, undefined, {
       type: 'game.updatePlayerTime',
     });

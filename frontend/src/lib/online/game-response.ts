@@ -1,4 +1,4 @@
-export type UserPlayer = {
+export type Player = {
   id: number,
   sub: string,
   email: string,
@@ -9,8 +9,8 @@ export type UserPlayer = {
 export type GameResponse = {
   id: string,
   uciFen: string,
-  whitePlayer: UserPlayer,
-  blackPlayer: UserPlayer,
+  whitePlayer: Player,
+  blackPlayer: Player,
   whitePlayerRating: 0.1,
   blackPlayerRating: 0.1,
   whiteEloChange: 0.1,

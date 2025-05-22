@@ -5,28 +5,37 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { appAxios } from '@/services/AxiosClient.ts';
-import { GameResponse, UserPlayer } from '@/lib/online/game-response.ts';
-
-function createPlayer(player: UserPlayer, color: 'white' | 'black', time: number): Player {
-  const id = player?.id ?? '';
-  const username = player?.name ?? '';
-  const pic = player.picture;
-  return new Player(id.toString(), username, color, time, pic);
-}
+import { GameResponse } from '@/lib/online/game-response.ts';
 
 function getOurPlayer(data: GameResponse, ourUserId: string): Player {
   if (data.whitePlayer?.sub === ourUserId) {
-    return createPlayer(data.whitePlayer, 'white', data.whiteTimeLeft);
+    return {
+      ...data.whitePlayer,
+      color: 'white',
+      time: data.whiteTimeLeft,
+    };
   } else {
-    return createPlayer(data.blackPlayer, 'black', data.blackTimeLeft);
+    return {
+      ...data.blackPlayer,
+      color: 'black',
+      time: data.blackTimeLeft,
+    };
   }
 }
 
 function getEnemyPlayer(data: GameResponse, ourUserId: string): Player {
   if (data.whitePlayer?.sub !== ourUserId) {
-    return createPlayer(data.whitePlayer, 'white', data.whiteTimeLeft);
+    return {
+      ...data.whitePlayer,
+      color: 'white',
+      time: data.whiteTimeLeft,
+    };
   } else {
-    return createPlayer(data.blackPlayer, 'black', data.blackTimeLeft);
+    return {
+      ...data.blackPlayer,
+      color: 'black',
+      time: data.blackTimeLeft,
+    };
   }
 }
 
@@ -82,7 +91,7 @@ export function useOnlineGame(gameId: string | undefined) {
     init({
       gameId: gameId,
       isStarted: false,
-      playingColor: playingColor ?? 'white',
+      playingColor: playingColor,
       selfPlayer: ourPlayer,
       enemyPlayer: enemyPlayer,
       initialFen: fen,
