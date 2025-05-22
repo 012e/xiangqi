@@ -14,31 +14,31 @@ export default function OnlineGame() {
   const { game, onMove, isLoading } = useOnlineGame(id);
 
   // Get the time from the store
-  const blackTime = useGameStore((state) => state.blackTime);
-  const whiteTime = useGameStore((state) => state.whiteTime);
-  const playingColor = useGameStore((state) => state.playingColor);
-  const playerColor = useGameStore((state) => state.playerColor);
+
+  const selfPlayer = useGameStore((state) => state.selfPlayer);
+  const enemyPlayer = useGameStore((state) => state.enemyPlayer);
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
-    // example : 137608 (s)
-    const totalSeconds = Math.round(ms / 1000); // 138
-    const minutes = Math.floor(totalSeconds / 60); // 2
-    const seconds = totalSeconds % 60;// 18
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return ms.toString();
+    // example: 137608 (s)
+    // const totalSeconds = Math.round(ms / 1000); // 138
+    // const minutes = Math.floor(totalSeconds / 60); // 2
+    // const seconds = totalSeconds % 60;// 18
+    // return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
   }
 
-  function isPlayerTurn({piece,}: {
+  function isPlayerTurn({ piece }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
-    return getPieceColor(piece) === playerColor;
+    return getPieceColor(piece) === selfPlayer?.color;
   }
 
   return (
@@ -52,18 +52,13 @@ export default function OnlineGame() {
               <span>opp</span>
             </div>
             <div
-              className={`text-xl font-bold ml-auto ${
-                playingColor === 'black' ? 'text-red-600' : ''
-              }`}
+              className={`text-xl font-bold ml-auto`}
             >
-              {(playerColor === "black") ? formatTime(whiteTime) : formatTime(blackTime)}
+              {formatTime(enemyPlayer?.time)}
             </div>
           </div>
           <div className="flex justify-center items-center p-3 bg-background">
             <div className="flex flex-col items-center">
-              {/*<div className="mb-4">*/}
-              {/*  /!*<h1>{game.exportFen()}</h1>*!/*/}
-              {/*</div>*/}
               <div className="flex justify-center items-center w-full">
                 {isLoading ? (
                   <div className="flex justify-center items-center w-full h-full animate-spin">
@@ -76,7 +71,7 @@ export default function OnlineGame() {
                       id="online-xiangqi-board"
                       onPieceDrop={onMove}
                       isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
-                      boardOrientation={playerColor}
+                      boardOrientation={selfPlayer?.color}
                       position={fen}
                       animationDuration={200}
                     />
@@ -91,11 +86,9 @@ export default function OnlineGame() {
               <span>Me</span>
             </div>
             <div
-              className={`text-xl font-bold ml-auto ${
-                playingColor === 'white' ? '' : ''
-              }`}
+              className={`text-xl font-bold ml-auto`}
             >
-              {(playerColor === "black") ? formatTime(blackTime) : formatTime(whiteTime)}
+              {formatTime(selfPlayer?.time)}
             </div>
           </div>
         </div>
@@ -126,7 +119,7 @@ export default function OnlineGame() {
               <Button className="group">
                 <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
               </Button>
-              <Button className="group" >
+              <Button className="group">
                 <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
               </Button>
             </div>
