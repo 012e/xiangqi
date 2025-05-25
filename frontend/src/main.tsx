@@ -22,6 +22,7 @@ import Demo from './pages/test/test.tsx';
 
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
 
 const queryClient = new QueryClient();
 
@@ -86,6 +87,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/settings" element={<SettingProfile />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
+              <Route path="/social/friend/findByUsername" element={<FindFriendsByUsername />} />
               <Route path="/social/chat" element={<Chat />} />
 
               <Route path="/demo" element={<Demo />} />

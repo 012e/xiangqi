@@ -2,20 +2,26 @@ import React from 'react';
 import ActionCard from '@/components/actionCard';
 import { FaFacebook, FaLink, FaEnvelope, FaSearch } from 'react-icons/fa';
 import UserRow from '@/components/userRow';
+import { useNavigate } from 'react-router';
 
 import friendsData from '@/dummyData/friends.json';
 
 const Friends: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleFindByUsername = () => {
+    navigate('/social/friend/findByUsername');
+  };
+
   return (
     <div className="w-full text-foreground">
       <main className="p-4">
         <h1 className="text-2xl font-bold mb-4">Bạn bè</h1>
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            <ActionCard icon={<FaLink />} label="Friend Link" />
-            <ActionCard icon={<FaFacebook />} label="Find Facebook Friends" />
-            <ActionCard icon={<FaEnvelope />} label="Send Email Invite" />
-            <ActionCard icon={<FaLink />} label="Create Challenge Link" />
+          <div className="grid grid-cols-5 gap-4 mb-6">
+            <ActionCard icon={<FaLink />} label="Kết bạn bằng Username" onClick={handleFindByUsername}/>
+            <ActionCard icon={<FaFacebook />} label="Kết bạn bằng Facebook" />
+            <ActionCard icon={<FaEnvelope />} label="Kết bạn bằng Email" />
           </div>
 
           <div className="grid grid-cols-1 gap-4 mb-6">
