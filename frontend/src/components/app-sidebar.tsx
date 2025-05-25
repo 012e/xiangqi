@@ -70,11 +70,11 @@ const navItems: NavItem[] = [
     items: [
       {
         title: 'Chat',
-        url: '/social/friend',
+        url: '/social/chat',
       },
       {
         title: 'Friends',
-        url: '#',
+        url: '/social/friend',
       },
     ],
   },

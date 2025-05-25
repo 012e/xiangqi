@@ -31,7 +31,7 @@ const SettingProfile: React.FC = () => {
   };
 
   return (
-    <div className="settings-profile w-screen">
+    <div className="w-full text-foreground">
       <main className="p-8 m-4 min-w-[600px] bg-card text-card-foreground rounded-lg border border-border">
         {/* Header */}
         <header>

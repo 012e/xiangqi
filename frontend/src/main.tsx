@@ -17,6 +17,7 @@ import PlayFriend from './pages/play/play-friend.tsx';
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
 import SettingProfile from './pages/settings/setting-page.tsx';
 import Friends from './pages/social/friends.tsx';
+import Chat from './pages/social/chat.tsx';
 import Demo from './pages/test/test.tsx';
 
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
@@ -85,6 +86,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/settings" element={<SettingProfile />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
+              <Route path="/social/chat" element={<Chat />} />
 
               <Route path="/demo" element={<Demo />} />
             </Route>
