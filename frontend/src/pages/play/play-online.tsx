@@ -81,7 +81,7 @@ export default function PlayOnline() {
             <div className="flex items-center hover:cursor-pointer">
               <Combobox
                 gameType={gameTypes}
-                onSelect={(item) => setSelectedGameType(item)}
+                onSelect={setSelectedGameType}
                 defaultSelected={gameTypes?.[4]}
               />
             </div>
