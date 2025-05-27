@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  AddFriendForm,
   FriendList,
   FriendChatHistory,
 } from '@/components/friends';

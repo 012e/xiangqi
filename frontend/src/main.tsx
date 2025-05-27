@@ -23,6 +23,9 @@ import Demo from './pages/test/test.tsx';
 import { useBackendUrl, useTheme } from './stores/setting-store.ts';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
+import Guide from './pages/document/Guide.tsx';
+import Rule from './pages/document/Rule.tsx';
+import TipsTricks from './pages/document/TipsTricks.tsx';
 
 const queryClient = new QueryClient();
 
@@ -85,10 +88,16 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/play/online" element={<PlayOnline />} />
 
               <Route path="/settings" element={<SettingProfile />} />
+
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
               <Route path="/social/friend/findByUsername" element={<FindFriendsByUsername />} />
               <Route path="/social/chat" element={<Chat />} />
+
+              <Route path="/document" element={<Guide />}/>
+              <Route path="/document/guide" element={<Guide />} />
+              <Route path="/document/rule" element={<Rule />} />
+              <Route path="/document/tip-and-trick" element={<TipsTricks />} />
 
               <Route path="/demo" element={<Demo />} />
             </Route>

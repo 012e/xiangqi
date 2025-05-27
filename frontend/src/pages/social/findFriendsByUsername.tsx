@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import UserRow from '@/components/userRow';
 
 import friendsData from '@/dummyData/friends.json';
+import AddFriendRow from '@/components/addFriendRow';
 
 const FindFriendsByUsername: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,25 +36,16 @@ const FindFriendsByUsername: React.FC = () => {
           {searchTerm && (
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
               {filteredFriends.map((friend) => (
-                <UserRow
+                <AddFriendRow
                   key={friend.id}
                   avatarUrl={friend.image}
                   username={`${friend.firstName.toLowerCase()}_${friend.lastName.toLowerCase()}`}
                   displayName={`${friend.firstName} ${friend.lastName}`}
-                  onPlayClick={() =>
+                  onAcceptClick={() =>
                     console.log(`Play with ${friend.firstName}`)
                   }
-                  onMessageClick={() =>
+                  onDeclineClick={() =>
                     console.log(`Message ${friend.firstName}`)
-                  }
-                  onAddFriendClick={() =>
-                    console.log(`Add ${friend.firstName}`)
-                  }
-                  onProfileClick={() =>
-                    console.log(`View ${friend.firstName}'s profile`)
-                  }
-                  onGiftClick={() =>
-                    console.log(`Send gift to ${friend.firstName}`)
                   }
                 />
               ))}

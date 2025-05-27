@@ -46,20 +46,20 @@ const navItems: NavItem[] = [
   },
   {
     title: 'Document',
-    url: '#',
+    url: '/document',
     icon: BookOpen,
     items: [
       {
         title: 'Guide',
-        url: '#',
+        url: '/document/guide',
       },
       {
         title: 'Rule',
-        url: '#',
+        url: '/document/rule',
       },
       {
         title: 'Tip and trick',
-        url: '#',
+        url: '/document/tip-and-trick',
       },
     ],
   },
