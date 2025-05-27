@@ -1,5 +1,7 @@
 package com.se330.ctuong_backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.se330.ctuong_backend.config.ApplicationConfiguration;
 import com.se330.ctuong_backend.model.GameType;
 import com.se330.ctuong_backend.model.Tournament;
 import com.se330.ctuong_backend.model.User;
@@ -36,4 +38,10 @@ public class GameDto {
     private Boolean isRated = true;
     private Boolean isStarted = false;
     private Integer botStrength;
+
+    @JsonIgnore
+    public boolean isGameWithBot() {
+        final var botId = ApplicationConfiguration.getBotId();
+        return whitePlayer.getId().equals(botId) || blackPlayer.getId().equals(botId);
+    }
 }

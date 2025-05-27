@@ -11,16 +11,16 @@ import java.time.Duration;
 
 @Configuration
 public class EngineConfiguration {
-    private static final int MAX_ENGINE_COUNT = 100; // Maximum number of engines in the pool
+    private static final int MAX_ENGINE_COUNT = 2; // Maximum number of engines in the pool
 
     @Bean
     public GenericObjectPool<FairyStockFishEngine> fairyStockFishEnginePool() {
         GenericObjectPoolConfig<FairyStockFishEngine> config = new GenericObjectPoolConfig<>();
         config.setMaxTotal(MAX_ENGINE_COUNT);
         config.setBlockWhenExhausted(true);
-        config.setMaxWait(Duration.ofMillis(5000)); // wait up to 5 seconds to borrow an engine
-        config.setTestOnBorrow(true);
-        config.setTestOnReturn(true);
+        config.setMinEvictableIdleDuration(Duration.ofMillis(15000));
+        config.setMaxWait(Duration.ofMillis(5000));
+        config.setJmxEnabled(false);
         return new GenericObjectPool<>(new FairyStockfishEnginePool(), config);
     }
 }

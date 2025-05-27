@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8090:8080"
     depends_on:
       - database
     environment:
@@ -17,3 +17,8 @@ services:
       POSTGRES_PASSWORD: user
     ports:
       - "5432:5432"
+  rabbitmq:
+    image: rabbitmq:4.1.0-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"

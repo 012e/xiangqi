@@ -1,9 +1,11 @@
 package com.se330.ctuong_backend.service.engine;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
+@Slf4j
 public class FairyStockfishEnginePool implements PooledObjectFactory<FairyStockFishEngine> {
     private FairyStockFishEngine getEngine(PooledObject<FairyStockFishEngine> pooledObject) {
         return pooledObject.getObject();
@@ -12,9 +14,7 @@ public class FairyStockfishEnginePool implements PooledObjectFactory<FairyStockF
     @Override
     public void activateObject(PooledObject<FairyStockFishEngine> pooledObject) throws Exception {
         final var engine = getEngine(pooledObject);
-        if (!engine.isRunning()) {
-            engine.start();
-        }
+        engine.start();
     }
 
     @Override
@@ -28,6 +28,7 @@ public class FairyStockfishEnginePool implements PooledObjectFactory<FairyStockF
     @Override
     public PooledObject<FairyStockFishEngine> makeObject() throws Exception {
         final var engine = FairyStockFishEngine.withDefaults();
+        log.info("Another xiangqi engine are created");
         return new DefaultPooledObject<>(engine);
     }
 

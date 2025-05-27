@@ -4,41 +4,24 @@ import com.se330.ctuong_backend.config.ApplicationConfiguration;
 import com.se330.ctuong_backend.dto.GameDto;
 import com.se330.ctuong_backend.repository.GameRepository;
 import com.se330.ctuong_backend.service.GameService;
-import com.se330.xiangqi.Move;
 import com.se330.xiangqi.Xiangqi;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EngineService {
     private final FairyStockFishEngineFactory fairyStockFishEngineFactory;
     private final GameRepository gameRepository;
+    private final GameService gameService;
 
-    private String getOurColor(GameDto game, Xiangqi gameLogic) {
-        final var whiteId = game.getWhitePlayer().getId();
-        if (Objects.equals(whiteId, ApplicationConfiguration.getBotId())) {
-            return "white";
-        } else if (Objects.equals(game.getBlackPlayer().getId(), ApplicationConfiguration.getBotId())) {
-            return "black";
-        }
-        throw new IllegalStateException("Not a game with bot");
-    }
-
-    private boolean isOurTurn(GameDto game, Xiangqi gameLogic) {
-        final var color = getOurColor(game, gameLogic);
-        if (color.equals("white")) {
-            return gameLogic.isWhiteTurn();
-        } else if (color.equals("black")) {
-            return !gameLogic.isWhiteTurn();
-        }
-        return false;
-    }
-
-    public Move generateMove(GameDto gameDto) {
-        final var game = gameRepository.getGameById(gameDto.getId());
+    public void move(String gameId) {
+        final var game = gameRepository.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found");
         }
@@ -48,7 +31,6 @@ public class EngineService {
         }
 
         final var gameLogic = Xiangqi.fromUciFen(game.getUciFen());
-        gameLogic.isWhiteTurn();
 
         final var engine = fairyStockFishEngineFactory.borrow();
         try {
@@ -58,7 +40,10 @@ public class EngineService {
                     .blackTimeLeft(game.getBlackTimeLeft())
                     .whiteTimeLeft(game.getWhiteTimeLeft())
                     .build();
-            return engine.generateMove(generateMoveArgs);
+            final var move = engine.generateMove(generateMoveArgs);
+            gameService.handleBotMove(gameId, move);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
         } finally {
             fairyStockFishEngineFactory.restore(engine);
         }

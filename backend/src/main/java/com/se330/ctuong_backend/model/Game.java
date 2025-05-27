@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.model;
 
+import com.se330.ctuong_backend.config.ApplicationConfiguration;
 import com.se330.ctuong_backend.config.Jpa;
 import com.se330.xiangqi.Xiangqi;
 import jakarta.persistence.*;
@@ -141,5 +142,11 @@ public class Game {
     @Transient
     public void beginWhiteCounter() {
         setWhiteCounterStart(Instant.now());
+    }
+
+    @Transient
+    public boolean isGameWithBot() {
+        return whitePlayer != null && whitePlayer.getId().equals(ApplicationConfiguration.getBotId()) ||
+               blackPlayer != null && blackPlayer.getId().equals(ApplicationConfiguration.getBotId());
     }
 }
