@@ -19,19 +19,22 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { GameType } from '@/lib/online/game-type.ts';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 type ComboboxArgs = {
   gameType: GameType[] | undefined;
   onSelect: (current: GameType) => void;
+  defaultSelected?: GameType;
 };
 const DEFAULT_COMBOBOX_ARGS = {
   gameType: undefined,
   onSelect: () => {},
+  defaultSelected: undefined,
 };
 export default function Combobox({
   gameType,
   onSelect,
+  defaultSelected,
 }: ComboboxArgs = DEFAULT_COMBOBOX_ARGS) {
   const [open, setOpen] = React.useState(false);
   const [selectedTypeName, setSelectedTypeName] = React.useState('');
@@ -45,6 +48,14 @@ export default function Combobox({
     },
     [selectedTypeName, onSelect],
   );
+  
+  useEffect(() => {
+    if (defaultSelected) {
+      setSelectedTypeName(defaultSelected.typeName);
+      onSelect(defaultSelected);
+    }
+  }, [defaultSelected, onSelect]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -56,9 +67,9 @@ export default function Combobox({
         >
           {selectedTypeName
             ? gameType?.find(
-                (currentType) => currentType.typeName === selectedTypeName,
-              )?.typeName
-            : 'Select Time'}
+                (currentType) =>
+                  currentType.typeName === selectedTypeName)?.typeName
+            : gameType?.[4]?.typeName}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -67,7 +78,7 @@ export default function Combobox({
           <CommandInput placeholder="Time" />
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup>
+            <CommandGroup >
               {gameType?.map((currentType) => (
                 <CommandItem
                   className="hover:cursor-pointer"

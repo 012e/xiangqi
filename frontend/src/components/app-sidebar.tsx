@@ -79,11 +79,10 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    title: 'Settings',
-    url: '/settings',
+    title: 'Profile',
+    url: '/profile',
     icon: Settings2,
   },
-
 ];
 
 function LoginRegister() {

@@ -74,6 +74,7 @@ export default function PlayOnline() {
               <Combobox
                 gameType={gameTypes}
                 onSelect={(item) => setSelectedGameType(item)}
+                defaultSelected={gameTypes?.[4]}
               />
             </div>
             <div>

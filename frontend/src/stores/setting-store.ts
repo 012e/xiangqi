@@ -10,6 +10,7 @@ const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 type SettingState = {
   backendUrl: string;
   theme: Theme;
+  accessToken?: string;
 };
 
 type SettingActions = {
@@ -17,6 +18,7 @@ type SettingActions = {
     setBackendUrl: (url: string) => void;
     setTheme: (theme: Theme) => void;
     toggleTheme: () => void;
+    setToken: (token: string) => void;
   };
 };
 
@@ -67,6 +69,9 @@ const useSettingStore = create<SettingStore>()(
         },
         setBackendUrl(url): void {
           set({ backendUrl: url });
+        },
+        setToken(token): void {
+          set({ accessToken: token });
         },
       },
     }),
