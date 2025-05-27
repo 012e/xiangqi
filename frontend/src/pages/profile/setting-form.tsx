@@ -62,7 +62,7 @@ export default function SettingForm() {
           name="backendUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Backend URL</FormLabel>
+              <FormLabel className="text-lg font-bold">Backend URL</FormLabel>
               <FormControl>
                 <Input placeholder="Website URL" {...field} />
               </FormControl>

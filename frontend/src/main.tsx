@@ -1,6 +1,6 @@
 import { StrictMode, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Auth0Provider } from '@auth0/auth0-react';
+import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import '@/styles/index.css';
 import App from './App.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router';
@@ -15,15 +15,28 @@ import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
-import SettingProfile from './pages/settings/setting-page.tsx';
+import SettingProfile from '@/pages/profile/profile-page.tsx';
 import Friends from './pages/social/friends.tsx';
 import Demo from './pages/test/test.tsx';
 
-import { useBackendUrl, useTheme } from './stores/setting-store.ts';
+import useSettingStore, { useBackendUrl, useTheme } from './stores/setting-store.ts';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient();
 
+
+function AccessTokenProvider({children}: { children: React.ReactNode}) {
+  const { getAccessTokenSilently, user } = useAuth0();
+  useEffect(() => {
+    if (user?.sub) {
+      getAccessTokenSilently().then(token => {
+        useSettingStore.getState().actions.setToken(token);
+      })
+    }
+  }, [user?.sub, getAccessTokenSilently]);
+
+  return children;
+}
 
 function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
@@ -51,10 +64,13 @@ function Providers({ children }: { children: React.ReactNode }) {
         }}
         cacheLocation="localstorage"
       >
+
+        <AccessTokenProvider>
         <StompSessionProvider url={stompUrl} key={stompUrl}>
           {children}
           <Toaster />
         </StompSessionProvider>
+        </AccessTokenProvider>
       </Auth0Provider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
@@ -74,18 +90,11 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
 
-              <Route path="/game/:id" element={<OnlineGame />} />
-              <Route path="/game/new" element={<NewGame />} />
-
-              <Route path="/play/bot" element={<PlayBot />} />
-              <Route path="/play/demo" element={<Demo />} />
-              <Route path="/play/friend" element={<PlayFriend />} />
-              <Route path="/play/online" element={<PlayOnline />} />
-
-              <Route path="/settings" element={<SettingProfile />} />
+              <Route path="/profile" element={<SettingProfile />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
+              <Route path="/play/demo" element={<Demo />} />
               <Route path="/demo" element={<Demo />} />
             </Route>
           </Routes>

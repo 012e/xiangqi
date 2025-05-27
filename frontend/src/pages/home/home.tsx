@@ -39,10 +39,10 @@ const menuItems = [
 ];
 export default function Home() {
   return (
-    <div className="w-full text-foreground ">
+    <div className="w-full h-fulltext-foreground ">
       <div className="bg-background grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
-        <div className="min-h-screen p-4 lg:block hidden mt-10">
+        <div className="p-4 lg:block hidden mt-25">
           <div className="text-foreground flex flex-wrap space-x-2 justify-center">
             <span>
               <CircleUser size={30} />
@@ -63,8 +63,8 @@ export default function Home() {
         </div>
         {/* Right */}
         <div className="rounded-4xl my-5 h-auto bg-muted shadow-lg shadow-ring">
-          <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
-            <div>
+          <div className="h-auto flex flex-col items-center p-6 space-y-6">
+            <div className="h-auto">
               <h1 className="text-4xl font-bold justify-center text-foreground tracking-tight">
                 Play Chess
               </h1>
@@ -85,7 +85,6 @@ export default function Home() {
                 ))}
               </div>
             </div>
-
             <div className="flex gap-10 text-sm items-center">
               <div className="flex items-center gap-2">
                 <Button className="hover:font-bold">

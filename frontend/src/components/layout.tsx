@@ -6,7 +6,7 @@ export default function Layout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <Outlet />
       </div>
     </SidebarProvider>

@@ -15,7 +15,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameResponse {
+public class    GameResponse {
     private String id;
     private String uciFen;;
     private User whitePlayer;
