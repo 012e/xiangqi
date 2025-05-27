@@ -41,12 +41,12 @@ export default function Combobox({
   const handleSelect = useCallback(
     (current: GameType) => {
       setSelectedTypeName(
-        current.typeName === selectedTypeName ? '' : current.typeName,
+        current.typeName
       );
       setOpen(false);
       onSelect(current);
     },
-    [selectedTypeName, onSelect],
+    [onSelect],
   );
   
   useEffect(() => {

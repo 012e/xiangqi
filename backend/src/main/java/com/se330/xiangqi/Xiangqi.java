@@ -102,7 +102,7 @@ public class Xiangqi {
         }
     }
 
-    @Override
+    @Override 
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < 10; i++) {

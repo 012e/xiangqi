@@ -2,7 +2,15 @@ import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
 import { useGameStore } from '@/stores/online-game-store'; // Import the store
-import { ArrowUpDown, ChevronLeft, ChevronRight, CircleUser, Flag, Handshake, Loader2 } from 'lucide-react';
+import {
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleUser,
+  Flag,
+  Handshake,
+  Loader2,
+} from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import MovePosition from '@/components/move-position.tsx';
 import { Button } from '@/components/ui/button.tsx';
@@ -22,19 +30,23 @@ export default function OnlineGame() {
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
-    return ms.toString();
+    // return ms.toString();
     // example: 137608 (s)
-    // const totalSeconds = Math.round(ms / 1000); // 138
-    // const minutes = Math.floor(totalSeconds / 60); // 2
-    // const seconds = totalSeconds % 60;// 18
-    // return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const totalSeconds = Math.round(ms / 1000); // 138
+    const minutes = Math.floor(totalSeconds / 60); // 2
+    const seconds = totalSeconds % 60; // 18
+    return `${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`;
   }
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
   }
 
-  function isPlayerTurn({ piece }: {
+  function isPlayerTurn({
+    piece,
+  }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
@@ -48,16 +60,16 @@ export default function OnlineGame() {
         <div className="p-4 lg:block hidden mt-10 bg-background">
           <div className="flex flex-wrap space-x-2 px-10 w-full">
             <div className="flex flex-wrap space-x-2">
-              <span><CircleUser size={30} /></span>
+              <span>
+                <CircleUser size={30} />
+              </span>
               <span>opp</span>
             </div>
-            <div
-              className={`text-xl font-bold ml-auto`}
-            >
+            <div className={`text-xl font-bold ml-auto`}>
               {formatTime(enemyPlayer?.time)}
             </div>
           </div>
-          <div className="flex justify-center items-center p-3 bg-background">
+          <div className="flex justify-center items-center p-3 bg-background ">
             <div className="flex flex-col items-center">
               <div className="flex justify-center items-center w-full">
                 {isLoading ? (
@@ -70,7 +82,9 @@ export default function OnlineGame() {
                       boardWidth={400}
                       id="online-xiangqi-board"
                       onPieceDrop={onMove}
-                      isDraggablePiece={(piece) => isPlayerTurn(piece) && !gameEnded}
+                      isDraggablePiece={(piece) =>
+                        isPlayerTurn(piece) && !gameEnded
+                      }
                       boardOrientation={selfPlayer?.color}
                       position={fen}
                       animationDuration={200}
@@ -82,12 +96,12 @@ export default function OnlineGame() {
           </div>
           <div className="flex flex-wrap space-x-2 px-10 w-full">
             <div className="flex flex-wrap space-x-2">
-              <span><CircleUser size={30} /></span>
+              <span>
+                <CircleUser size={30} />
+              </span>
               <span>Me</span>
             </div>
-            <div
-              className={`text-xl font-bold ml-auto`}
-            >
+            <div className={`text-xl font-bold ml-auto`}>
               {formatTime(selfPlayer?.time)}
             </div>
           </div>
@@ -124,9 +138,15 @@ export default function OnlineGame() {
               </Button>
             </div>
             <div className="grid gap-2 w-full">
-              <Textarea placeholder="Your Message"
-                        className="resize-none read-only:opacity-80 pointer-events-none h-30 " readOnly></Textarea>
-              <Textarea placeholder="Type your message here." className="resize-none " />
+              <Textarea
+                placeholder="Your Message"
+                className="resize-none read-only:opacity-80 pointer-events-none h-30 "
+                readOnly
+              ></Textarea>
+              <Textarea
+                placeholder="Type your message here."
+                className="resize-none "
+              />
             </div>
           </div>
         </div>

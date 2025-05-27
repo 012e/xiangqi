@@ -767,7 +767,7 @@ describe('Xiangqi', () => {
 
       // Game should be over
       expect(xiangqi.isGameOver()).toBe(true);
-      expect(xiangqi.getWinner()).toBe('red');
+      expect(xiangqi.getWinner()).toBe('white');
     });
 
     it('should handle stalemate correctly', () => {

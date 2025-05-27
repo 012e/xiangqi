@@ -62,6 +62,7 @@ export default class Xiangqi {
   private currentPlayer: 'w' | 'b' = 'w'; // 'w' for red, 'b' for black
   private moveCount = 0;
   private kings = { b: [0, 4], w: [9, 4] }; // Initial positions of kings
+  private moveHistory: string[] = []; // Store move history in UCI format
   static readonly DEFAULT_FEN =
     'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0';
 
@@ -72,10 +73,72 @@ export default class Xiangqi {
   constructor(
     fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w 0',
   ) {
-    this.parseFen(fen);
+    if (fen.includes('|')) {
+      this.parseUciFen(fen);
+    } else {
+      this.parseFen(fen);
+    }
     this.kings.b = this.findKing('b', this.board);
     this.kings.w = this.findKing('w', this.board);
   }
+  /**
+   * Create Xiangqi instance from UCI-style FEN
+   * @param uciFen - UCI-style FEN string
+   * @returns New Xiangqi instance
+   */
+  static fromUciFen(uciFen: string): Xiangqi {
+    const instance = new Xiangqi();
+    instance.parseUciFen(uciFen);
+    instance.kings.b = instance.findKing('b', instance.board);
+    instance.kings.w = instance.findKing('w', instance.board);
+    return instance;
+  }
+
+  /**
+   * Parse UCI-style FEN string to initialize board state, current player, move count, and move history
+   * Format: board_string current_player move_count | move_history
+   * Example: "rnbakabnr/9/.../RNBAKABNR w 0 | e2e3 e3e4"
+   * @param uciFen - UCI-style FEN string
+   */
+  private parseUciFen(uciFen: string): void {
+    const fenAndMoves = uciFen.trim().split('|');
+    const parts = fenAndMoves[0].trim().split(' ');
+
+    const boardPart = parts[0];
+    this.currentPlayer = parts.length > 1 && parts[1] === 'b' ? 'b' : 'w';
+    this.moveCount = parts.length > 2 ? parseInt(parts[2], 10) : 0;
+
+    // Initialize empty board (10x9)
+    this.board = Array(10)
+      .fill(null)
+      .map(() => Array(9).fill(''));
+
+    // Parse board layout
+    const rows = boardPart.split('/');
+    for (let i = 0; i < 10; i++) {
+      let col = 0;
+      for (const char of rows[i]) {
+        if (/\d/.test(char)) {
+          col += parseInt(char, 10);
+        } else {
+          this.board[i][col] = char;
+          col++;
+        }
+      }
+    }
+
+    // Parse move history if present
+    this.moveHistory = [];
+    if (fenAndMoves.length > 1) {
+      const moves = fenAndMoves[1].trim().split(' ');
+      for (const moveStr of moves) {
+        if (moveStr && moveStr.trim()) {
+          this.moveHistory.push(moveStr.trim());
+        }
+      }
+    }
+  }
+
   findKing(Color: 'w' | 'b' = 'w', board: string[][]): number[] {
     const king = Color === 'w' ? 'K' : 'k';
     for (let row = 0; row < 10; row++) {
@@ -104,7 +167,7 @@ export default class Xiangqi {
    * Parse FEN string and setup the board
    * @param fen - Forsyth-Edwards Notation string
    */
-  private parseFen(fen: string): void {
+  public parseFen(fen: string): void {
     const parts = fen.trim().split(' ');
     const boardPart = parts[0];
     this.currentPlayer = parts[1] as 'w' | 'b';
@@ -314,6 +377,10 @@ export default class Xiangqi {
     // Update player and move count
     this.currentPlayer = this.currentPlayer === 'w' ? 'b' : 'w';
     this.moveCount++;
+
+    // Add move to history in UCI format
+    this.moveHistory.push(`${from}${to}`);
+
     return true;
   }
 
@@ -836,5 +903,18 @@ export default class Xiangqi {
       default:
         return false;
     }
+  }
+  public exportUciFen(): string {
+    const uciFen = this.exportFen();
+
+    if (this.moveHistory.length > 0) {
+      return `${uciFen} | ${this.moveHistory.join(' ')}`;
+    }
+
+    return uciFen;
+  }
+
+  public getHistory(): string[] {
+    return [...this.moveHistory]; // Return a copy
   }
 }

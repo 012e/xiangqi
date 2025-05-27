@@ -1,27 +1,53 @@
 import { Chessboard } from 'react-xiangqiboard';
 import { ChessboardProps } from 'react-xiangqiboard/dist/chessboard/types';
-import { useState } from 'react';
 import Xiangqi from '@/lib/xiangqi';
+import { useCallback, useState } from 'react';
+type MoveEvent = {
+  from: string;
+  to: string;
+  piece: string;
+  oldBoard: Xiangqi;
+  newBoard: Xiangqi;
+};
+type SelfPlayBoardProps = {
+  onMove?: (event: MoveEvent) => void;
+} & Partial<ChessboardProps>;
 
-export default function SelfPlayBoard(props: ChessboardProps) {
+const DEFAULT_PROPS: SelfPlayBoardProps = {};
+
+export default function SelfPlayBoard({
+  onMove,
+  ...chessboardProps
+}: SelfPlayBoardProps = DEFAULT_PROPS) {
   const [game, setGame] = useState(new Xiangqi());
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function onMove(from: string, to: string, _piece: string): boolean {
-    const gameCopy: Xiangqi = Object.create(game) as Xiangqi;
-    const move = gameCopy.move({ from, to });
-    setGame(gameCopy);
-    if (!move) return false;
-    return true;
-  }
+  const handleMoveInternal = useCallback(
+    (from: string, to: string, piece: string) => {
+      const oldBoard: Xiangqi = structuredClone(game);
+      const newBoard: Xiangqi = Object.create(game) as Xiangqi;
+      const move = newBoard.move({ from, to });
+      if (move) {
+        setGame(newBoard);
+        onMove?.({
+          from,
+          to,
+          piece,
+          oldBoard,
+          newBoard,
+        });
+        return true;
+      }
+      return false;
+    },
+    [game, onMove],
+  );
 
   return (
     <Chessboard
-      {...props}
+      {...chessboardProps}
       boardWidth={400}
       id="online-xiangqi-board"
-      onPieceDrop={onMove}
-      position={game.exportFen()}
+      onPieceDrop={handleMoveInternal}
+      position={game.exportUciFen()}
     />
   );
 }
