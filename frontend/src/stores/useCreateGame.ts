@@ -1,5 +1,4 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { DEFAULT_MIN_VERSION } from 'node:tls';
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { useStompClient, useSubscription } from 'react-stomp-hooks';
@@ -58,7 +57,7 @@ export function useCreateGame() {
 
       let message: string | undefined;
       if (playWithComputer) {
-        message = handlePlayWithComputer();
+        message = handlePlayWithComputer(strength);
       } else {
         message = JSON.stringify({
           type: 'normal',
