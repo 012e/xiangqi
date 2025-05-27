@@ -19,6 +19,7 @@ import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
 
 export default function PlayOnline() {
   const { createGame, loading } = useCreateGame();
+  const [history, setHistory] = useState<string[]>([]);
   const [opponent] = React.useState('Opponent');
   const [player, setPlayer] = useState<'white' | 'black'>('white');
   const { data: gameTypes } = useQuery({
@@ -28,9 +29,11 @@ export default function PlayOnline() {
   const [selectedGameType, setSelectedGameType] = useState<
     GameType | undefined
   >();
-
   function togglePlayer() {
     setPlayer((prev) => (prev === 'white' ? 'black' : 'white'));
+  }
+  function updateHistory(history: string[]) {
+    setHistory([...history]);
   }
 
   function handleCreateGame() {
@@ -49,10 +52,15 @@ export default function PlayOnline() {
               <CircleUser size={30} />
             </span>
             <span>{opponent}</span>
-          </div>
+          </div>{' '}
           <div className="flex justify-center p-3">
             <div className="border-2">
-              <SelfPlayBoard boardOrientation={player} />
+              <SelfPlayBoard
+                boardOrientation={player}
+                onMove={({ newBoard }) => {
+                  updateHistory(newBoard.getHistory());
+                }}
+              />
             </div>
           </div>
           <div className="flex flex-wrap space-x-2 justify-center ">
@@ -63,7 +71,7 @@ export default function PlayOnline() {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring">
+        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring select-none">
           <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
             <div>
               <h1 className="text-4xl font-bold justify-center tracking-tight">
@@ -96,10 +104,9 @@ export default function PlayOnline() {
                   )}
                 </div>
               </Button>
-            </div>
-
+            </div>{' '}
             <div className="bg-background rounded-2xl w-full">
-              <MovePosition />
+              <MovePosition moves={history} />
             </div>
             <div className="flex space-x-3">
               <Button className="group">
