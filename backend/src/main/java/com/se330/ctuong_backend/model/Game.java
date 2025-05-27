@@ -90,6 +90,9 @@ public class Game {
     @Column(name = "is_ended")
     private Boolean isEnded = false;
 
+    @Column(name = "bot_strength")
+    private Integer botStrength;
+
     @Transient
     public Boolean getGameEnded() {
         return getEndTime() != null;

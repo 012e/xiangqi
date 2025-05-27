@@ -86,4 +86,8 @@ public class ApplicationConfiguration {
 
         return modelMapper;
     }
+
+    public static Long getBotId() {
+        return 1L;
+    }
 }

@@ -35,4 +35,5 @@ public class GameDto {
     private Tournament tournament;
     private Boolean isRated = true;
     private Boolean isStarted = false;
+    private Integer botStrength;
 }
