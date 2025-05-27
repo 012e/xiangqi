@@ -12,13 +12,16 @@ import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import MovePosition from '@/components/move-position';
+import MovePosition, { HistoryMove } from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
+import { set } from 'zod';
 
 export default function PlayOnline() {
+  const [currentFen, setCurrentFen] = useState<string>('');
   const { createGame, loading } = useCreateGame();
+  const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);
   const [opponent] = React.useState('Opponent');
   const [player, setPlayer] = useState<'white' | 'black'>('white');
@@ -41,6 +44,26 @@ export default function PlayOnline() {
       return createGame(selectedGameType.id);
     }
   }
+  function getRestoreGame(state: HistoryMove) {
+    setSelectHistory(state);
+    if (state.color === 'white') {
+      const slicedFen = sliceFen(currentFen, state.index * 2 - 1);
+      setCurrentFen(slicedFen);
+    } else {
+      const slicedFen = sliceFen(currentFen, state.index * 2);
+      setCurrentFen(slicedFen);
+    }
+  }
+
+  function sliceFen(fen: string, index: number): string {
+    const [positionPart, movePart] = fen.split('|').map((part) => part.trim());
+
+    if (!movePart) return fen;
+
+    const moves = movePart.split(/\s+/);
+    const slicedMoves = moves.slice(0, index);
+    return `${positionPart} | ${slicedMoves.join(' ')}`;
+  }
 
   return (
     <div className="w-full text-foreground">
@@ -58,8 +81,10 @@ export default function PlayOnline() {
               <SelfPlayBoard
                 boardOrientation={player}
                 onMove={({ newBoard }) => {
+                  setCurrentFen(newBoard.exportUciFen());
                   updateHistory(newBoard.getHistory());
                 }}
+                restoreGameState={selectHistory}
               />
             </div>
           </div>
@@ -106,7 +131,10 @@ export default function PlayOnline() {
               </Button>
             </div>{' '}
             <div className="bg-background rounded-2xl w-full">
-              <MovePosition moves={history} />
+              <MovePosition
+                moves={history}
+                setRestoreHistory={getRestoreGame}
+              />
             </div>
             <div className="flex space-x-3">
               <Button className="group">
