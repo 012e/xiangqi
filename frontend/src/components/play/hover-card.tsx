@@ -35,7 +35,7 @@ export function HoverCardOpponent({ props }: { props: HoverCardType }) {
                 {props.name}
               </div>
               <div className="text-md text-muted-foreground flex items-center tracking-tight">
-                ( <Zap className="size-3"></Zap>{props.score})
+                ( <Zap className="size-3"></Zap>{props.score ?? 0})
               </div>
             </div>
           </HoverCardTrigger>
@@ -43,14 +43,14 @@ export function HoverCardOpponent({ props }: { props: HoverCardType }) {
         <HoverCardContent className="w-auto">
           <div className="flex flex-col gap-2 p-3">
             <div className="flex">
-              <img src={props.image} className="rounded-md size-25" alt="Avatar" />
+              <img src={props.image} className="rounded-md size-25 flex items-center" alt="Avatar" />
               <div className="flex flex-col p-3 gap-2">
                 <div className="font-semibold text-muted-foreground text-md tracking-tight">
                   {props.name}
                 </div>
                 <div className="text-md text-muted-foreground flex gap-1 tracking-tight">
                   <Zap className="size-5"></Zap>
-                  {props.score}
+                  {props.score ?? 0}
                 </div>
               </div>
             </div>
@@ -110,8 +110,8 @@ export function HoverCardMe({ props }: { props: HoverCardType }) {
       <HoverCard>
         <div className="flex items-center">
           <HoverCardTrigger>
-            <div className="w-13 h-13">
-              <img className="size-full rounded-xs" src={props.image} alt="Avatar" />
+            <div className="w-13 h-13 flex items-center">
+              <img className="size-full rounded-xs flex items-center" src={props.image} alt="Avatar" />
             </div>
           </HoverCardTrigger>
           <HoverCardTrigger>
@@ -120,7 +120,7 @@ export function HoverCardMe({ props }: { props: HoverCardType }) {
                 {props.name}
               </div>
               <div className="text-md text-muted-foreground flex items-center tracking-tight">
-                ( <Zap className="size-3"></Zap>{props.score})
+                ( <Zap className="size-3"></Zap>{props.score ?? 0})
               </div>
             </div>
           </HoverCardTrigger>
@@ -128,14 +128,14 @@ export function HoverCardMe({ props }: { props: HoverCardType }) {
         <HoverCardContent className="w-auto">
           <div className="flex flex-col gap-2 p-3">
             <div className="flex">
-              <img src={props.image} className="rounded-md size-25" alt="Avatar" />
+              <img src={props.image} className="rounded-md size-25 flex items-center" alt="Avatar" />
               <div className="flex flex-col p-3 gap-2">
                 <div className="font-semibold text-md text-muted-foreground tracking-tight">
                   {props.name}
                 </div>
                 <div className="text-md text-muted-foreground flex gap-1 tracking-tight">
                   <Zap className="size-5"></Zap>
-                  {props.score}
+                  {props.score ?? 0}
                 </div>
               </div>
             </div>

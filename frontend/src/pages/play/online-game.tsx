@@ -16,16 +16,7 @@ import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
 import HoverCardOpponent, { HoverCardMe, HoverCardType } from '@/components/play/hover-card.tsx';
-const DEFAULT_OPPONENT: HoverCardType = {
-  name: 'i am counter',
-  score: 1000,
-  image: 'https://placehold.co/50',
-}
-const DEFAULT_ME: HoverCardType = {
-  name: 'fuck you bitch',
-  score: 1000,
-  image: 'https://placehold.co/50',
-}
+
 export default function OnlineGame() {
   const { id } = useParams();
   const { game, onMove, isLoading } = useOnlineGame(id);
@@ -68,7 +59,11 @@ export default function OnlineGame() {
         {/* Left */}
         <div className="p-4 lg:block hidden mt-10 bg-background">
           <div className="flex items-center px-8 w-full">
-            <HoverCardOpponent props={DEFAULT_OPPONENT}/>
+            <HoverCardOpponent props={{
+              name: enemyPlayer.username,
+              score: 0,
+              image: enemyPlayer.picture,
+            }}/>
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(enemyPlayer?.time)}
             </div>
@@ -99,7 +94,11 @@ export default function OnlineGame() {
             </div>
           </div>
           <div className="flex items-center px-8 w-full">
-            <HoverCardMe props={DEFAULT_ME}/>
+            <HoverCardMe props={{
+              name: selfPlayer.username,
+              score: 0,
+              image: selfPlayer.picture,
+            }}/>
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(selfPlayer?.time)}
             </div>

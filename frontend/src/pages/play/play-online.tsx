@@ -85,17 +85,10 @@ export default function PlayOnline() {
             </div>
           </div>
           <div className="flex flex-wrap justify-center space-x-2">
-            <HoverCard>
-              <HoverCardTrigger>
-                <div>
                   <span>
                     <CircleUser size={30} />
                   </span>
-                  <span>Me</span>
-                </div>
-              </HoverCardTrigger>
-              <HoverCardContent>helo</HoverCardContent>
-            </HoverCard>
+              <span>Me</span>
           </div>
           <div className="p-3 mx-5">
             {isViewingHistory && (
