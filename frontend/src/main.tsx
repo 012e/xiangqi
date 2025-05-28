@@ -94,7 +94,6 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
-              <Route path="/play/demo" element={<Demo />} />
               <Route path="/demo" element={<Demo />} />
             </Route>
           </Routes>

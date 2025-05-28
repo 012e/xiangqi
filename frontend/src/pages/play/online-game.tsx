@@ -6,7 +6,6 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  CircleUser,
   Flag,
   Handshake,
   Loader2,
@@ -16,7 +15,17 @@ import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
-
+import HoverCardOpponent, { HoverCardMe, HoverCardType } from '@/components/play/hover-card.tsx';
+const DEFAULT_OPPONENT: HoverCardType = {
+  name: 'i am counter',
+  score: 1000,
+  image: 'https://placehold.co/50',
+}
+const DEFAULT_ME: HoverCardType = {
+  name: 'fuck you bitch',
+  score: 1000,
+  image: 'https://placehold.co/50',
+}
 export default function OnlineGame() {
   const { id } = useParams();
   const { game, onMove, isLoading } = useOnlineGame(id);
@@ -58,18 +67,13 @@ export default function OnlineGame() {
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] items-start">
         {/* Left */}
         <div className="p-4 lg:block hidden mt-10 bg-background">
-          <div className="flex flex-wrap space-x-2 px-10 w-full">
-            <div className="flex flex-wrap space-x-2">
-              <span>
-                <CircleUser size={30} />
-              </span>
-              <span>opp</span>
-            </div>
+          <div className="flex items-center px-8 w-full">
+            <HoverCardOpponent props={DEFAULT_OPPONENT}/>
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(enemyPlayer?.time)}
             </div>
           </div>
-          <div className="flex justify-center items-center p-3 bg-background ">
+          <div className="flex justify-center items-center px-3 bg-background ">
             <div className="flex flex-col items-center">
               <div className="flex justify-center items-center w-full">
                 {isLoading ? (
@@ -94,13 +98,8 @@ export default function OnlineGame() {
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap space-x-2 px-10 w-full">
-            <div className="flex flex-wrap space-x-2">
-              <span>
-                <CircleUser size={30} />
-              </span>
-              <span>Me</span>
-            </div>
+          <div className="flex items-center px-8 w-full">
+            <HoverCardMe props={DEFAULT_ME}/>
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(selfPlayer?.time)}
             </div>

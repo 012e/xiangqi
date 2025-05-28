@@ -12,7 +12,7 @@ import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import MovePosition from '@/components/move-position';
+// import MovePosition from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
@@ -20,7 +20,7 @@ import { Slider } from '@/components/ui/slider';
 
 export default function PlayOnline() {
   const { createGame, loading } = useCreateGame();
-  const [history, setHistory] = useState<string[]>([]);
+  // const [history, setHistory] = useState<string[]>([]);
   const [opponent] = React.useState('Opponent');
   const [player, setPlayer] = useState<'white' | 'black'>('white');
   const { data: gameTypes } = useQuery({
@@ -36,9 +36,9 @@ export default function PlayOnline() {
     setPlayer((prev) => (prev === 'white' ? 'black' : 'white'));
   }
 
-  function updateHistory(history: string[]) {
-    setHistory([...history]);
-  }
+  // function updateHistory(history: string[]) {
+  //   setHistory([...history]);
+  // }
 
   function handleCreateGame() {
     if (selectedGameType) {
@@ -65,9 +65,9 @@ export default function PlayOnline() {
             <div className="border-2">
               <SelfPlayBoard
                 boardOrientation={player}
-                onMove={({ newBoard }) => {
-                  updateHistory(newBoard.getHistory());
-                }}
+                // onMove={({ newBoard }) => {
+                //   updateHistory(newBoard.getHistory());
+                // }}
               />
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function PlayOnline() {
               </Button>
             </div>{' '}
             <div className="w-full rounded-2xl bg-background">
-              <MovePosition moves={history} />
+              {/* <MovePosition moves={history} /> */}
             </div>
             <div className="flex space-x-3">
               <Button className="group">

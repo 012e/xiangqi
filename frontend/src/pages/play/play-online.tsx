@@ -16,6 +16,11 @@ import MovePosition, { HistoryMove } from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 
 export default function PlayOnline() {
   const { createGame, loading } = useCreateGame();
@@ -80,10 +85,17 @@ export default function PlayOnline() {
             </div>
           </div>
           <div className="flex flex-wrap justify-center space-x-2">
-            <span>
-              <CircleUser size={30} />
-            </span>
-            <span>Me</span>
+            <HoverCard>
+              <HoverCardTrigger>
+                <div>
+                  <span>
+                    <CircleUser size={30} />
+                  </span>
+                  <span>Me</span>
+                </div>
+              </HoverCardTrigger>
+              <HoverCardContent>helo</HoverCardContent>
+            </HoverCard>
           </div>
           <div className="p-3 mx-5">
             {isViewingHistory && (
