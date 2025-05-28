@@ -1,10 +1,9 @@
 package com.se330.ctuong_backend.controller;
 
 import com.auth0.exception.Auth0Exception;
+import com.se330.ctuong_backend.dto.message.CreateGameMessage;
 import com.se330.ctuong_backend.dto.message.Game;
-import com.se330.ctuong_backend.dto.message.game.state.GameMessage;
 import com.se330.ctuong_backend.repository.UserRepository;
-import com.se330.ctuong_backend.service.GameTimeoutService;
 import com.se330.ctuong_backend.service.GameService;
 import com.se330.ctuong_backend.service.MatchMaker;
 import com.se330.ctuong_backend.service.UserService;
@@ -30,7 +29,7 @@ public class GameMovesController {
     private final UserService userService;
 
     @MessageMapping("/game/join")
-    public void join(Principal principal, @Payload Game.CreateGameMessage createGameMessage) throws Auth0Exception {
+    public void join(Principal principal, @Payload CreateGameMessage createGameMessage) throws Auth0Exception {
         if (principal == null) {
             return;
         }
@@ -38,7 +37,7 @@ public class GameMovesController {
         final var sub = principal.getName();
         var player = userRepository.getUserBySub(sub);
         if (player.isPresent()) {
-            matchMaker.addToPlayerPool(player.get().getId(), createGameMessage);
+            matchMaker.addToPool(player.get().getId(), createGameMessage);
             return;
         }
 
@@ -48,7 +47,7 @@ public class GameMovesController {
                 .getUserBySub(sub)
                 .orElseThrow(() -> new IllegalStateException("user must be synced"));
 
-        matchMaker.addToPlayerPool(syncedUser.getId(), createGameMessage);
+        matchMaker.addToPool(syncedUser.getId(), createGameMessage);
     }
 
     @MessageMapping("/game/{gameId}")
@@ -69,6 +68,6 @@ public class GameMovesController {
         }
         final var game = gameDtoOptional.get();
 
-        gameService.handleMove(game.getId(), move);
+        gameService.handleHumanMove(game.getId(), move);
     }
 }

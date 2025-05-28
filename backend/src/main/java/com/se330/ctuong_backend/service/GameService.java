@@ -13,7 +13,6 @@ import com.se330.ctuong_backend.repository.GameRepository;
 import com.se330.ctuong_backend.repository.UserRepository;
 import com.se330.xiangqi.Move;
 import com.se330.xiangqi.Xiangqi;
-import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +36,7 @@ public class GameService {
     private final UserRepository userRepository;
     private final GameMessageService gameMessageService;
     private final ModelMapper mapper;
+    private final BotMessageService botMessageService;
 
     public GameDto createGame(@Valid CreateGameDto dto) {
         final var white = userRepository
@@ -50,7 +50,8 @@ public class GameService {
                 .findById(dto.getGameTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid game type"));
 
-        final var newGame = Game.builder()
+
+        final var newGameBuilder = Game.builder()
                 .gameType(gameType)
                 .blackPlayer(black)
                 .whitePlayer(white)
@@ -58,14 +59,19 @@ public class GameService {
                 .whiteTimeLeft(gameType.getTimeControl())
                 .uciFen(Xiangqi.INITIAL_UCI_FEN)
                 .isStarted(false)
-                .isEnded(false)
-                .build();
+                .isEnded(false);
+
+        if (dto.getBotStrength() != null) {
+            newGameBuilder.botStrength(dto.getBotStrength());
+        }
+
+        final var newGame = newGameBuilder.build();
         gameRepository.save(newGame);
 
         return mapper.map(newGame, GameDto.class);
     }
 
-    private void startGame(Game game) throws SchedulerException {
+    private void startGame(Game game) {
         game.setIsStarted(true);
         game.setWhiteCounterStart(Instant.now());
         game.setStartTime(Timestamp.from(Instant.now()));
@@ -101,12 +107,29 @@ public class GameService {
         gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(result));
     }
 
-    public @Nullable void handleMove(String gameId, Move move) throws SchedulerException {
-        final var beginCalculationTime = Instant.now();
+    public void handleBotMove(String gameId, Move move) throws SchedulerException {
         final var game = gameRepository.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found");
         }
+
+        handleMove(game, move);
+    }
+
+    public void handleHumanMove(String gameId, Move move) throws SchedulerException {
+        final var game = gameRepository.getGameById(gameId);
+        if (game == null) {
+            throw new IllegalArgumentException("Game not found");
+        }
+        handleMove(game, move);
+
+        if (game.isGameWithBot()) {
+            botMessageService.makeBotMove(game.getId());
+        }
+    }
+
+    private void handleMove(Game game, Move move) throws SchedulerException {
+        final var beginCalculationTime = Instant.now();
         final var gameLogic = Xiangqi.fromUciFen(game.getUciFen());
 
         if (game.getIsEnded()) {
@@ -127,11 +150,11 @@ public class GameService {
         game.setUciFen(fen);
         if (gameLogic.isWhiteTurn()) {
             game.updateBlackTime(); // previous was black's move
-            gameTimeoutService.replaceTimerOrCreateNew(gameId, game.getWhiteTimeLeft());
+            gameTimeoutService.replaceTimerOrCreateNew(game.getId(), game.getWhiteTimeLeft());
             game.beginWhiteCounter();
         } else {
             game.updateWhiteTime(); // previous was white's move
-            gameTimeoutService.replaceTimerOrCreateNew(gameId, game.getBlackTimeLeft());
+            gameTimeoutService.replaceTimerOrCreateNew(game.getId(), game.getBlackTimeLeft());
             game.beginBlackCounter();
         }
 
@@ -149,12 +172,12 @@ public class GameService {
         final var endCalculationTime = Instant.now();
 
         final var timeLoss = Duration.between(beginCalculationTime, endCalculationTime);
-        gameTimeoutService.compensateLoss(gameId, timeLoss);
-        log.trace("Compensated loss: {}ms for game with ID {}", timeLoss.toMillis(), gameId);
+        gameTimeoutService.compensateLoss(game.getId(), timeLoss);
+        log.trace("Compensated loss: {}ms for game with ID {}", timeLoss.toMillis(), game.getId());
 
-        gameMessageService.sendMessageGameTopic(gameId, new PlayMessage(message));
+        gameMessageService.sendMessageGameTopic(game.getId(), new PlayMessage(message));
         if (gameLogic.isGameOver()) {
-            handleGameEnd(gameId, gameLogic, game);
+            handleGameEnd(game.getId(), gameLogic, game);
         }
     }
 

@@ -4,7 +4,7 @@ import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.client.mgmt.filter.UserFilter;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.mgmt.users.User;
-import com.se330.ctuong_backend.dto.rest.UserResponse;
+import com.se330.ctuong_backend.dto.rest.UserDto;
 import com.se330.ctuong_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class UserService {
     private final ModelMapper modelMapper;
 
 
-    public UserResponse syncAuthUser(Principal principal) throws Auth0Exception {
+    public UserDto syncAuthUser(Principal principal) throws Auth0Exception {
         if (principal == null) {
             throw new IllegalArgumentException("Principal must not be null");
         }
@@ -56,18 +56,18 @@ public class UserService {
         }
         return userRepository
                 .getUserBySub(subject)
-                .map(u -> modelMapper.map(u, UserResponse.class))
+                .map(u -> modelMapper.map(u, UserDto.class))
                 .orElseThrow(() -> new IllegalStateException("User not found in database"));
     }
 
-    public Optional<UserResponse> getUserById(Long id) {
+    public Optional<UserDto> getUserById(Long id) {
         return userRepository.findById(id)
-                .map(user -> modelMapper.map(user, UserResponse.class));
+                .map(user -> modelMapper.map(user, UserDto.class));
     }
 
-    public Optional<UserResponse> getUserBySub(String sub) {
+    public Optional<UserDto> getUserBySub(String sub) {
         return userRepository.getUserBySub(sub)
-                .map(user -> modelMapper.map(user, UserResponse.class));
+                .map(user -> modelMapper.map(user, UserDto.class));
     }
 
 //    public void updateUser(Principal principal, UpdateUserRequest updateUserRequest) {

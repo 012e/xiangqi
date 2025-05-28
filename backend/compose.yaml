@@ -9,6 +9,7 @@ services:
       - database
     environment:
       DATABASE_URL: jdbc:postgresql://database:5432/postgres
+      RABBITMQ_HOST: rabbitmq
   database:
     image: postgres:16.4
     environment:
@@ -17,3 +18,8 @@ services:
       POSTGRES_PASSWORD: user
     ports:
       - "5432:5432"
+  rabbitmq:
+    image: rabbitmq:4.1.0-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"

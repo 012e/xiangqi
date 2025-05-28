@@ -1,20 +1,16 @@
 package com.se330.ctuong_backend.controller;
 
 import com.auth0.exception.Auth0Exception;
-import com.se330.ctuong_backend.dto.rest.UserResponse;
-import com.se330.ctuong_backend.model.User;
+import com.se330.ctuong_backend.dto.rest.UserDto;
 import com.se330.ctuong_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -29,7 +25,7 @@ public class UserController {
     @Operation(summary = "Get current authenticated user",
             description = "Returns the currently authenticated user's details. If the user doesn't exist in the system, it tries to sync from Auth0.")
     @ApiResponse(responseCode = "200", description = "Authenticated user info",
-            content = @Content(schema = @Schema(implementation = UserResponse.class)))
+            content = @Content(schema = @Schema(implementation = UserDto.class)))
     @ApiResponse(responseCode = "401", description = "User not authenticated",
             content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public Object getUser(Principal principal) {

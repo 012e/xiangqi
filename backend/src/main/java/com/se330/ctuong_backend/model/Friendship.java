@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @Entity
 @Table(name = "friendships")
@@ -33,4 +34,8 @@ public class Friendship {
 
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @ManyToOne()
+    @JoinColumn(name = "request_owner_id")
+    private User requestOwner;
 }
