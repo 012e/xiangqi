@@ -12,7 +12,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
-import MovePosition from '@/components/move-position.tsx';
+// import MovePosition from '@/components/move-position.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
@@ -117,7 +117,7 @@ export default function OnlineGame() {
             </div>
             {/*broad move*/}
             <div className="bg-background rounded-2xl w-full">
-              <MovePosition moves={[]}></MovePosition>
+              {/* <MovePosition moves={[]}></MovePosition> */}
             </div>
             {/*tools*/}
             <div className="flex space-x-3">

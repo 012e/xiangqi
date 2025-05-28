@@ -12,16 +12,18 @@ import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import MovePosition from '@/components/move-position';
+import MovePosition, { HistoryMove } from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
 
 export default function PlayOnline() {
   const { createGame, loading } = useCreateGame();
+  const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);
   const [opponent] = React.useState('Opponent');
   const [player, setPlayer] = useState<'white' | 'black'>('white');
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
   const { data: gameTypes } = useQuery({
     queryKey: ['gameTypes'],
     queryFn: getGameTypes,
@@ -41,6 +43,15 @@ export default function PlayOnline() {
       return createGame({ gameTypeId: selectedGameType.id });
     }
   }
+  function getRestoreGame(state: HistoryMove) {
+    setSelectHistory(state);
+    setIsViewingHistory(true);
+  }
+
+  function handleReturnToCurrentGame() {
+    setSelectHistory(undefined);
+    setIsViewingHistory(false);
+  }
 
   return (
     <div className="w-full text-foreground">
@@ -51,6 +62,7 @@ export default function PlayOnline() {
             <span>
               <CircleUser size={30} />
             </span>
+
             <span>{opponent}</span>
           </div>{' '}
           <div className="flex justify-center p-3">
@@ -60,6 +72,10 @@ export default function PlayOnline() {
                 onMove={({ newBoard }) => {
                   updateHistory(newBoard.getHistory());
                 }}
+                currentHistory={history}
+                restoreGameState={selectHistory}
+                isViewingHistory={isViewingHistory}
+                onReturnToCurrentGame={handleReturnToCurrentGame}
               />
             </div>
           </div>
@@ -69,10 +85,17 @@ export default function PlayOnline() {
             </span>
             <span>Me</span>
           </div>
+          <div className="p-3 mx-5">
+            {isViewingHistory && (
+              <div className=" bg-yellow-500 text-black text-center py-1 text-sm font-bold z-10">
+                Watching history
+              </div>
+            )}
+          </div>
         </div>
         {/* Right */}
-        <div className="my-5 shadow-lg select-none rounded-4xl h-165 bg-muted shadow-ring">
-          <div className="flex flex-col items-center p-6 space-y-6 min-h-screen">
+        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring select-none">
+          <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
             <div>
               <h1 className="justify-center text-4xl font-bold tracking-tight">
                 Play Online
@@ -105,8 +128,13 @@ export default function PlayOnline() {
                 </div>
               </Button>
             </div>{' '}
-            <div className="w-full rounded-2xl bg-background">
-              <MovePosition moves={history} />
+            <div className="bg-background rounded-2xl w-full">
+              <MovePosition
+                moves={history}
+                setRestoreHistory={getRestoreGame}
+                isViewingHistory={isViewingHistory}
+                onReturnToCurrentGame={handleReturnToCurrentGame}
+              />
             </div>
             <div className="flex space-x-3">
               <Button className="group">
