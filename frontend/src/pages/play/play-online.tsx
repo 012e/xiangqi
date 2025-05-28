@@ -38,7 +38,7 @@ export default function PlayOnline() {
 
   function handleCreateGame() {
     if (selectedGameType) {
-      return createGame(selectedGameType.id);
+      return createGame({ gameTypeId: selectedGameType.id });
     }
   }
 
@@ -46,8 +46,8 @@ export default function PlayOnline() {
     <div className="w-full text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
-        <div className="min-h-screen p-4 lg:block hidden mt-10 bg-background">
-          <div className="flex flex-wrap space-x-2 justify-center">
+        <div className="hidden p-4 mt-10 min-h-screen lg:block bg-background">
+          <div className="flex flex-wrap justify-center space-x-2">
             <span>
               <CircleUser size={30} />
             </span>
@@ -63,7 +63,7 @@ export default function PlayOnline() {
               />
             </div>
           </div>
-          <div className="flex flex-wrap space-x-2 justify-center ">
+          <div className="flex flex-wrap justify-center space-x-2">
             <span>
               <CircleUser size={30} />
             </span>
@@ -71,10 +71,10 @@ export default function PlayOnline() {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring select-none">
-          <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
+        <div className="my-5 shadow-lg select-none rounded-4xl h-165 bg-muted shadow-ring">
+          <div className="flex flex-col items-center p-6 space-y-6 min-h-screen">
             <div>
-              <h1 className="text-4xl font-bold justify-center tracking-tight">
+              <h1 className="justify-center text-4xl font-bold tracking-tight">
                 Play Online
               </h1>
             </div>
@@ -87,7 +87,7 @@ export default function PlayOnline() {
             </div>
             <div>
               <Button
-                className="hovegr:text-4xl text-3xl h-13 font-bold w-2xs"
+                className="text-3xl font-bold hovegr:text-4xl h-13 w-2xs"
                 onClick={handleCreateGame}
               >
                 <div>
@@ -105,24 +105,24 @@ export default function PlayOnline() {
                 </div>
               </Button>
             </div>{' '}
-            <div className="bg-background rounded-2xl w-full">
+            <div className="w-full rounded-2xl bg-background">
               <MovePosition moves={history} />
             </div>
             <div className="flex space-x-3">
               <Button className="group">
-                <Handshake className="transition-transform group-hover:scale-150 text-green-500" />
+                <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
               </Button>
               <Button className="group">
-                <Flag className="transition-transform group-hover:scale-150 "></Flag>
+                <Flag className="transition-transform group-hover:scale-150"></Flag>
               </Button>
               <Button className="group">
-                <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400" />
+                <ChevronLeft className="text-gray-400 transition-transform group-hover:scale-150" />
               </Button>
               <Button className="group">
-                <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
+                <ChevronRight className="text-gray-400 transition-transform group-hover:scale-150" />
               </Button>
               <Button className="group" onClick={togglePlayer}>
-                <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
+                <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
               </Button>
             </div>
           </div>

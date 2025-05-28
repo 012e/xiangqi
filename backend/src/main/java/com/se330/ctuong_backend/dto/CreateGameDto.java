@@ -20,4 +20,7 @@ public class CreateGameDto {
 
     @NotNull
     private Long gameTypeId;
+
+    // WARN: WILL NEED REFACTORING
+    private Integer botStrength;
 }
