@@ -57,6 +57,7 @@
   "devDependencies": {
     "@eslint/js": "^9.23.0",
     "@netlify/vite-plugin-react-router": "^1.0.0",
+    "@radix-ui/react-hover-card": "^1.1.14",
     "@types/node": "^22.13.15",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
