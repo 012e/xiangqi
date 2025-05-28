@@ -15,7 +15,7 @@ import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
-import HoverCardOpponent, { HoverCardMe, HoverCardType } from '@/components/play/hover-card.tsx';
+import HoverCardOpponent, { HoverCardMe } from '@/components/play/hover-card.tsx';
 
 export default function OnlineGame() {
   const { id } = useParams();

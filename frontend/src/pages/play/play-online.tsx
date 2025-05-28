@@ -16,11 +16,6 @@ import MovePosition, { HistoryMove } from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
 
 export default function PlayOnline() {
   const { createGame, loading } = useCreateGame();

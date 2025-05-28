@@ -30,12 +30,15 @@ export function HoverCardOpponent({ props }: { props: HoverCardType }) {
             </div>
           </HoverCardTrigger>
           <HoverCardTrigger>
-            <div className="flex flex-col p-2">
-              <div className="font-semibold text-md tracking-tight">
+            <div className="flex flex-col p-2 ">
+              <div className="font-semibold text-md tracking-tight items-center">
                 {props.name}
               </div>
               <div className="text-md text-muted-foreground flex items-center tracking-tight">
-                ( <Zap className="size-3"></Zap>{props.score ?? 0})
+                ( <Zap className="size-3"></Zap>
+                <span>{props.score ?? 0}
+                  </span>
+                )
               </div>
             </div>
           </HoverCardTrigger>
@@ -120,7 +123,9 @@ export function HoverCardMe({ props }: { props: HoverCardType }) {
                 {props.name}
               </div>
               <div className="text-md text-muted-foreground flex items-center tracking-tight">
-                ( <Zap className="size-3"></Zap>{props.score ?? 0})
+                ( <Zap className="size-3"></Zap>
+                <span>{props.score ?? 0}
+                  </span>)
               </div>
             </div>
           </HoverCardTrigger>
