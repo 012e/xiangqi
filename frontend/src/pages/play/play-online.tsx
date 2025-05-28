@@ -16,15 +16,14 @@ import MovePosition, { HistoryMove } from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
-import { set } from 'zod';
 
 export default function PlayOnline() {
-  const [currentFen, setCurrentFen] = useState<string>('');
   const { createGame, loading } = useCreateGame();
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);
   const [opponent] = React.useState('Opponent');
   const [player, setPlayer] = useState<'white' | 'black'>('white');
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
   const { data: gameTypes } = useQuery({
     queryKey: ['gameTypes'],
     queryFn: getGameTypes,
@@ -46,23 +45,12 @@ export default function PlayOnline() {
   }
   function getRestoreGame(state: HistoryMove) {
     setSelectHistory(state);
-    if (state.color === 'white') {
-      const slicedFen = sliceFen(currentFen, state.index * 2 - 1);
-      setCurrentFen(slicedFen);
-    } else {
-      const slicedFen = sliceFen(currentFen, state.index * 2);
-      setCurrentFen(slicedFen);
-    }
+    setIsViewingHistory(true);
   }
 
-  function sliceFen(fen: string, index: number): string {
-    const [positionPart, movePart] = fen.split('|').map((part) => part.trim());
-
-    if (!movePart) return fen;
-
-    const moves = movePart.split(/\s+/);
-    const slicedMoves = moves.slice(0, index);
-    return `${positionPart} | ${slicedMoves.join(' ')}`;
+  function handleReturnToCurrentGame() {
+    setSelectHistory(undefined);
+    setIsViewingHistory(false);
   }
 
   return (
@@ -74,6 +62,7 @@ export default function PlayOnline() {
             <span>
               <CircleUser size={30} />
             </span>
+
             <span>{opponent}</span>
           </div>{' '}
           <div className="flex justify-center p-3">
@@ -81,10 +70,12 @@ export default function PlayOnline() {
               <SelfPlayBoard
                 boardOrientation={player}
                 onMove={({ newBoard }) => {
-                  setCurrentFen(newBoard.exportUciFen());
                   updateHistory(newBoard.getHistory());
                 }}
+                currentHistory={history}
                 restoreGameState={selectHistory}
+                isViewingHistory={isViewingHistory}
+                onReturnToCurrentGame={handleReturnToCurrentGame}
               />
             </div>
           </div>
@@ -93,6 +84,13 @@ export default function PlayOnline() {
               <CircleUser size={30} />
             </span>
             <span>Me</span>
+          </div>
+          <div className="p-3 mx-5">
+            {isViewingHistory && (
+              <div className=" bg-yellow-500 text-black text-center py-1 text-sm font-bold z-10">
+                Watching history
+              </div>
+            )}
           </div>
         </div>
         {/* Right */}
@@ -134,6 +132,8 @@ export default function PlayOnline() {
               <MovePosition
                 moves={history}
                 setRestoreHistory={getRestoreGame}
+                isViewingHistory={isViewingHistory}
+                onReturnToCurrentGame={handleReturnToCurrentGame}
               />
             </div>
             <div className="flex space-x-3">

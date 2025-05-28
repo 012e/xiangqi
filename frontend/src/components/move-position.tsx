@@ -17,11 +17,15 @@ export type HistoryMove = {
 };
 type MovePositionProps = {
   moves?: string[];
-  setRestoreHistory?: (state: HistoryMove) => void;
+  setRestoreHistory: (state: HistoryMove) => void;
+  isViewingHistory?: boolean;
+  onReturnToCurrentGame?: () => void;
 };
 export default function MovePosition({
   moves,
   setRestoreHistory,
+  isViewingHistory = false,
+  onReturnToCurrentGame,
 }: MovePositionProps) {
   const parsedMoves: HistoryMove[] = useMemo(() => {
     if (!moves || moves.length === 0) {
@@ -39,8 +43,16 @@ export default function MovePosition({
   }, [moves]);
   return (
     <div className="border-2 rounded-2xl">
-      <div className="p-3 font-bold text-2xl flex justify-center">
-        Positions Board
+      <div className="p-3 font-bold text-2xl flex justify-center items-center">
+        <span>Positions Board</span>
+        {isViewingHistory && (
+          <button
+            onClick={onReturnToCurrentGame}
+            className="font-bold ml-4 text-sm bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Return Game
+          </button>
+        )}
       </div>
       <hr />
       <div className="p-3 overflow-y-auto h-70">
@@ -57,13 +69,15 @@ export default function MovePosition({
                 <div className="ml-10 ">
                   {index + 1}
                   <span>.</span>
-                </div>
+                </div>{' '}
                 {move.moves[0] && (
                   <div
                     className="font-bold flex justify-center"
                     onClick={() => {
-                      move.color = 'white';
-                      setRestoreHistory?.(move);
+                      setRestoreHistory({
+                        ...move,
+                        color: 'white',
+                      });
                     }}
                   >
                     {move.moves[0]}
@@ -73,8 +87,10 @@ export default function MovePosition({
                   <div
                     className="font-bold flex justify-center "
                     onClick={() => {
-                      move.color = 'black';
-                      setRestoreHistory?.(move);
+                      setRestoreHistory({
+                        ...move,
+                        color: 'black',
+                      });
                     }}
                   >
                     {move.moves[1]}
