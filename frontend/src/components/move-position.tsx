@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { useMemo } from 'react';
+import { Button } from './ui/button';
 
 function chunk<T>(arr: T[], size: number): T[][] {
   return arr.reduce((acc: T[][], _, index) => {
@@ -46,12 +47,12 @@ export default function MovePosition({
       <div className="p-3 font-bold text-2xl flex justify-center items-center">
         <span>Positions Board</span>
         {isViewingHistory && (
-          <button
+          <Button
             onClick={onReturnToCurrentGame}
             className="font-bold ml-4 text-sm bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
           >
             Return Game
-          </button>
+          </Button>
         )}
       </div>
       <hr />
@@ -60,19 +61,14 @@ export default function MovePosition({
           parsedMoves.length !== 0 &&
           parsedMoves.map((move, index) => {
             return (
-              <div
-                key={index}
-                className={clsx(
-                  'grid grid-cols-3 hover:cursor-pointer hover:pl-3 hover:bg-secondary',
-                )}
-              >
+              <div key={index} className={clsx('grid grid-cols-3')}>
                 <div className="ml-10 ">
                   {index + 1}
                   <span>.</span>
                 </div>{' '}
                 {move.moves[0] && (
                   <div
-                    className="font-bold flex justify-center"
+                    className="font-bold flex justify-center hover:bg-accent hover:cursor-pointer"
                     onClick={() => {
                       setRestoreHistory({
                         ...move,
@@ -85,7 +81,7 @@ export default function MovePosition({
                 )}
                 {move.moves[1] && (
                   <div
-                    className="font-bold flex justify-center "
+                    className="font-bold flex justify-center hover:bg-accent hover:cursor-pointer"
                     onClick={() => {
                       setRestoreHistory({
                         ...move,

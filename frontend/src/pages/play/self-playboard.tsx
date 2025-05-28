@@ -42,21 +42,17 @@ export default function SelfPlayBoard({
         // Thực hiện nước đi trên trạng thái hiện tại
         const oldBoard: Xiangqi = structuredClone(currentGame);
         const newBoard: Xiangqi = Object.create(currentGame) as Xiangqi;
-        const move = newBoard.move({ from, to });
 
-        if (move) {
-          setGame(newBoard);
-          setCurrentGame(newBoard);
-          onMove?.({
-            from,
-            to,
-            piece,
-            oldBoard,
-            newBoard,
-          });
-          return true;
-        }
-        return false;
+        setGame(newBoard);
+        setCurrentGame(newBoard);
+        onMove?.({
+          from,
+          to,
+          piece,
+          oldBoard,
+          newBoard,
+        });
+        return true;
       }
 
       // Logic bình thường khi không xem lịch sử
