@@ -1,11 +1,11 @@
-import { HoverCardMe, HoverCardOpponent } from '@/components/play/hover-card.tsx';
+import { HoverCardMe, MyHoverCard } from '@/components/play/my-hover-card.tsx';
 
 
 export default function Demo() {
 
   return (
     <div className="flex gap-5">
-      <HoverCardOpponent props={{
+      <myHoverCard props={{
         name: 'test',
         image: 'https://placehold.co/50',
         score: 100,

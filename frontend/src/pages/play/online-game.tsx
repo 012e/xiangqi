@@ -15,7 +15,7 @@ import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
-import HoverCardOpponent, { HoverCardMe } from '@/components/play/hover-card.tsx';
+import { MyHoverCard } from '@/components/play/my-hover-card.tsx';
 
 export default function OnlineGame() {
   const { id } = useParams();
@@ -59,10 +59,11 @@ export default function OnlineGame() {
         {/* Left */}
         <div className="p-4 lg:block hidden mt-10 bg-background">
           <div className="flex items-center px-8 w-full">
-            <HoverCardOpponent props={{
+            <MyHoverCard props={{
               name: enemyPlayer.username,
               score: 0,
               image: enemyPlayer.picture,
+              isMe: false,
             }}/>
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(enemyPlayer?.time)}
@@ -94,10 +95,11 @@ export default function OnlineGame() {
             </div>
           </div>
           <div className="flex items-center px-8 w-full">
-            <HoverCardMe props={{
+            <MyHoverCard props={{
               name: selfPlayer.username,
               score: 0,
               image: selfPlayer.picture,
+              isMe: true,
             }}/>
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(selfPlayer?.time)}
