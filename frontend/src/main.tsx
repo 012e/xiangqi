@@ -11,7 +11,6 @@ import NewGame from './pages/play/new-game.tsx';
 import OnlineGame from './pages/play/online-game.tsx';
 import PlayOnline from './pages/play/play-online.tsx';
 import Layout from './components/layout.tsx';
-import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
@@ -84,8 +83,8 @@ createRoot(document.getElementById('root')!).render(
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<App />} />
-              <Route path="/play/online" element={<PlayOnline />} />
-              <Route path="/play/bot" element={<PlayBot />} />
+              <Route path="/play/online" element={<PlayOnline isOnline={true} />} />
+              <Route path="/play/bot" element={<PlayOnline isOnline={false} />} />
               <Route path="/play/friend" element={<PlayFriend />} />
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />

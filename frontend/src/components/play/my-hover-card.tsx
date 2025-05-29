@@ -121,4 +121,5 @@ export function MyHoverCard({ props }: { props: HoverCardType }) {
     </div>
   );
 }
+export default MyHoverCard;
 
