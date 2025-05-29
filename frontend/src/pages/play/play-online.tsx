@@ -16,8 +16,9 @@ import MovePosition, { HistoryMove } from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
+import { Slider } from '@/components/ui/slider.tsx';
 
-export default function PlayOnline() {
+export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
   const { createGame, loading } = useCreateGame();
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);
@@ -31,18 +32,30 @@ export default function PlayOnline() {
   const [selectedGameType, setSelectedGameType] = useState<
     GameType | undefined
   >();
+  const [strength, setStrength] = useState<number>(0);
+
   function togglePlayer() {
     setPlayer((prev) => (prev === 'white' ? 'black' : 'white'));
   }
+
   function updateHistory(history: string[]) {
     setHistory([...history]);
   }
 
   function handleCreateGame() {
     if (selectedGameType) {
-      return createGame({ gameTypeId: selectedGameType.id });
+      if (isOnline) {
+        return createGame({ gameTypeId: selectedGameType.id });
+      } else {
+        return createGame({
+          gameTypeId: selectedGameType.id,
+          playWithComputer: true,
+          strength,
+        });
+      }
     }
   }
+
   function getRestoreGame(state: HistoryMove) {
     setSelectHistory(state);
     setIsViewingHistory(true);
@@ -54,17 +67,17 @@ export default function PlayOnline() {
   }
 
   return (
-    <div className="w-full text-foreground">
+    <div className="w-full h-auto text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
-        <div className="hidden p-4 mt-10 min-h-screen lg:block bg-background">
+        <div className="hidden p-4 mt-10 h-auto lg:block bg-background">
           <div className="flex flex-wrap justify-center space-x-2">
             <span>
               <CircleUser size={30} />
             </span>
-
             <span>{opponent}</span>
-          </div>{' '}
+          </div>
+          {' '}
           <div className="flex justify-center p-3">
             <div className="border-2">
               <SelfPlayBoard
@@ -80,9 +93,9 @@ export default function PlayOnline() {
             </div>
           </div>
           <div className="flex flex-wrap justify-center space-x-2">
-            <span>
-              <CircleUser size={30} />
-            </span>
+                  <span>
+                    <CircleUser size={30} />
+                  </span>
             <span>Me</span>
           </div>
           <div className="p-3 mx-5">
@@ -94,68 +107,88 @@ export default function PlayOnline() {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 h-165 bg-muted shadow-lg shadow-ring select-none">
-          <div className="min-h-screen flex flex-col items-center p-6 space-y-6">
-            <div>
-              <h1 className="justify-center text-4xl font-bold tracking-tight">
+        <div className="rounded-4xl my-5 h-auto bg-muted shadow-lg shadow-ring select-none">
+          <div className="flex flex-col p-6 space-y-6">
+            <div className="flex flex-col space-y-5">
+              <h1 className="justify-center text-4xl font-bold tracking-tight self-center">
                 Play Online
               </h1>
-            </div>
-            <div className="flex items-center hover:cursor-pointer">
-              <Combobox
-                gameType={gameTypes}
-                onSelect={setSelectedGameType}
-                defaultSelected={gameTypes?.[4]}
-              />
-            </div>
-            <div>
-              <Button
-                className="text-3xl font-bold hovegr:text-4xl h-13 w-2xs"
-                onClick={handleCreateGame}
-              >
-                <div>
-                  {loading ? (
-                    <div className="flex items-center">
-                      <Loader2 className="!w-7 !h-auto mr-1 animate-spin"></Loader2>
-                      START
-                    </div>
-                  ) : (
-                    <div className="flex items-center">
-                      <Play className="!w-7 !h-auto mr-1"></Play>
-                      START
-                    </div>
-                  )}
+
+              </div>
+              <div className="flex items-center hover:cursor-pointer self-center">
+                <Combobox
+                  gameType={gameTypes}
+                  onSelect={setSelectedGameType}
+                  defaultSelected={gameTypes?.[4]}
+                />
+              </div>
+            {
+              !isOnline &&
+              (
+                <div className="flex w-full h-full items-center justify-center space-x-8">
+                  <div className="flex items-center space-x-1">
+                    <span className="">Level</span>
+                    <span className="w-2"> {strength}: </span>
+                  </div>
+                  <Slider className="size-1/2 mt-1"
+                          onValueChange={(e) => setStrength(e[0])}
+                          max={20}
+                          min={-20}
+                          step={1}
+                          defaultValue={[0]}
+                  />
                 </div>
-              </Button>
-            </div>{' '}
-            <div className="bg-background rounded-2xl w-full">
-              <MovePosition
-                moves={history}
-                setRestoreHistory={getRestoreGame}
-                isViewingHistory={isViewingHistory}
-                onReturnToCurrentGame={handleReturnToCurrentGame}
-              />
-            </div>
-            <div className="flex space-x-3">
-              <Button className="group">
-                <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
-              </Button>
-              <Button className="group">
-                <Flag className="transition-transform group-hover:scale-150"></Flag>
-              </Button>
-              <Button className="group">
-                <ChevronLeft className="text-gray-400 transition-transform group-hover:scale-150" />
-              </Button>
-              <Button className="group">
-                <ChevronRight className="text-gray-400 transition-transform group-hover:scale-150" />
-              </Button>
-              <Button className="group" onClick={togglePlayer}>
-                <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
-              </Button>
+              )
+            }
+              <div className="flex self-center">
+                <Button
+                  className="text-3xl font-bold hovegr:text-4xl h-13 w-2xs"
+                  onClick={handleCreateGame}
+                >
+                  <div>
+                    {loading ? (
+                      <div className="flex items-center">
+                        <Loader2 className="!w-7 !h-auto mr-1 animate-spin"></Loader2>
+                        START
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <Play className="!w-7 !h-auto mr-1"></Play>
+                        START
+                      </div>
+                    )}
+                  </div>
+                </Button>
+              </div>
+              {' '}
+              <div className="bg-background rounded-2xl w-full">
+                <MovePosition
+                  moves={history}
+                  setRestoreHistory={getRestoreGame}
+                  isViewingHistory={isViewingHistory}
+                  onReturnToCurrentGame={handleReturnToCurrentGame}
+                />
+              </div>
+              <div className="flex space-x-3 self-center">
+                <Button className="group">
+                  <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
+                </Button>
+                <Button className="group">
+                  <Flag className="transition-transform group-hover:scale-150"></Flag>
+                </Button>
+                <Button className="group">
+                  <ChevronLeft className="text-gray-400 transition-transform group-hover:scale-150" />
+                </Button>
+                <Button className="group">
+                  <ChevronRight className="text-gray-400 transition-transform group-hover:scale-150" />
+                </Button>
+                <Button className="group" onClick={togglePlayer}>
+                  <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+      );
+      }

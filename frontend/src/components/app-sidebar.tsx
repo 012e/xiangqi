@@ -11,9 +11,9 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { useAuth0 } from '@auth0/auth0-react';
-import { NavHeader } from './nav-header';
-import { NavContent, NavItem } from './nav-content';
-import { NavUser } from './nav-user';
+import { NavHeader } from './navbar/nav-header.tsx';
+import { NavContent, NavItem } from './navbar/nav-content.tsx';
+import { NavUser } from './navbar/nav-user.tsx';
 import { Button } from './ui/button';
 
 const teams = {

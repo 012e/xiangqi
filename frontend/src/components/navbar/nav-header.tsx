@@ -5,12 +5,12 @@ import * as React from 'react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu.tsx';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from '@/components/ui/sidebar.tsx';
 import { Link } from 'react-router';
 
 export function NavHeader({
@@ -32,7 +32,7 @@ export function NavHeader({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Link className="flex space-x-2 w-full" to="/">
+              <Link className="flex space-x-2 w-full" to="/frontend/public">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <teams.logo className="size-4" />
                 </div>

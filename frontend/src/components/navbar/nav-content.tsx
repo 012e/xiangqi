@@ -5,7 +5,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+} from '@/components/ui/collapsible.tsx';
 import {
   SidebarGroup,
   SidebarMenu,
@@ -14,9 +14,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@/components/ui/sidebar';
+} from '@/components/ui/sidebar.tsx';
 import { NavLink } from 'react-router';
-import { ModeToggle } from './mode-toggle';
+import { ModeToggle } from '../mode-toggle.tsx';
 
 export type NavSubItem = {
   title: string;
