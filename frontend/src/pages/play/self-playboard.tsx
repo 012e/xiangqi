@@ -4,6 +4,7 @@ import Xiangqi from '@/lib/xiangqi';
 import { useCallback, useState } from 'react';
 import { HistoryMove } from '@/components/move-position';
 import { useEffect } from 'react';
+import useSettingStore from '@/stores/setting-store';
 
 type MoveEvent = {
   from: string;
@@ -32,6 +33,7 @@ export default function SelfPlayBoard({
   ...chessboardProps
 }: SelfPlayBoardProps = DEFAULT_PROPS) {
   const [game, setGame] = useState(new Xiangqi());
+  const customPieces = useSettingStore(state => state.pieceTheme);
   const [currentGame, setCurrentGame] = useState(new Xiangqi()); // Lưu trạng thái game hiện tại
   const handleMoveInternal = useCallback(
     (from: string, to: string, piece: string) => {
@@ -138,6 +140,7 @@ export default function SelfPlayBoard({
       onPieceDrop={handleMoveInternal}
       position={game.exportUciFen()}
       areArrowsAllowed={true}
+      customPieces={customPieces}
       arePiecesDraggable={true}
     />
   );
