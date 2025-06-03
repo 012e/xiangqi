@@ -19,19 +19,21 @@ import SettingProfile from '@/pages/profile/profile-page.tsx';
 import Friends from './pages/social/friends.tsx';
 import Demo from './pages/test/test.tsx';
 
-import useSettingStore, { useBackendUrl, useTheme } from './stores/setting-store.ts';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import useSettingStore, {
+  useBackendUrl,
+  useTheme,
+} from './stores/setting-store.ts';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient();
 
-
-function AccessTokenProvider({children}: { children: React.ReactNode}) {
+function AccessTokenProvider({ children }: { children: React.ReactNode }) {
   const { getAccessTokenSilently, user } = useAuth0();
   useEffect(() => {
     if (user?.sub) {
-      getAccessTokenSilently().then(token => {
+      getAccessTokenSilently().then((token) => {
         useSettingStore.getState().actions.setToken(token);
-      })
+      });
     }
   }, [user?.sub, getAccessTokenSilently]);
 
@@ -64,12 +66,11 @@ function Providers({ children }: { children: React.ReactNode }) {
         }}
         cacheLocation="localstorage"
       >
-
         <AccessTokenProvider>
-        <StompSessionProvider url={stompUrl} key={stompUrl}>
-          {children}
-          <Toaster />
-        </StompSessionProvider>
+          <StompSessionProvider url={stompUrl} key={stompUrl}>
+            {children}
+            <Toaster />
+          </StompSessionProvider>
         </AccessTokenProvider>
       </Auth0Provider>
       <ReactQueryDevtools initialIsOpen={false} />
@@ -94,9 +95,10 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
-              <Route path="/play/demo" element={<Demo />} />
-              <Route path="/demo" element={<Demo />} />
+              {/* <Route path="/play/demo" element={<Demo />} /> */}
             </Route>
+            <Route path="/test" element={<Demo />} />
+            {/* Fallback route */}
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

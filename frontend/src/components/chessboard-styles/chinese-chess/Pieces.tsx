@@ -1,0 +1,37 @@
+import {
+  FrameBlack,
+  FrameRed,
+  IconAdvisorBlack,
+  IconAdvisorRed,
+  IconBishopBlack,
+  IconBishopRed,
+  IconCannonBlack,
+  IconCannonRed,
+  IconKingBlack,
+  IconKingRed,
+  IconKnightBlack,
+  IconKnightRed,
+  IconPawnBlack,
+  IconPawnRed,
+  IconRookBlack,
+  IconRookRed,
+  PieceChineseChess,
+} from './componentPieces';
+
+export const PiecesChineseChess = {
+  wP: () => <PieceChineseChess Frame={FrameRed} Icon={IconPawnRed} />,
+  wC: () => <PieceChineseChess Frame={FrameRed} Icon={IconCannonRed} />,
+  wB: () => <PieceChineseChess Frame={FrameRed} Icon={IconBishopRed} />,
+  wN: () => <PieceChineseChess Frame={FrameRed} Icon={IconKnightRed} />,
+  wR: () => <PieceChineseChess Frame={FrameRed} Icon={IconRookRed} />,
+  wA: () => <PieceChineseChess Frame={FrameRed} Icon={IconAdvisorRed} />,
+  wK: () => <PieceChineseChess Frame={FrameRed} Icon={IconKingRed} />,
+
+  bP: () => <PieceChineseChess Frame={FrameBlack} Icon={IconPawnBlack} />,
+  bC: () => <PieceChineseChess Frame={FrameBlack} Icon={IconCannonBlack} />,
+  bB: () => <PieceChineseChess Frame={FrameBlack} Icon={IconBishopBlack} />,
+  bN: () => <PieceChineseChess Frame={FrameBlack} Icon={IconKnightBlack} />,
+  bR: () => <PieceChineseChess Frame={FrameBlack} Icon={IconRookBlack} />,
+  bA: () => <PieceChineseChess Frame={FrameBlack} Icon={IconAdvisorBlack} />,
+  bK: () => <PieceChineseChess Frame={FrameBlack} Icon={IconKingBlack} />,
+};

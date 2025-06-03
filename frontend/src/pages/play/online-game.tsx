@@ -85,6 +85,9 @@ export default function OnlineGame() {
                       isDraggablePiece={(piece) =>
                         isPlayerTurn(piece) && !gameEnded
                       }
+                      customPieces={{
+                        wA: () => <img src="" alt="wA" />,
+                      }}
                       boardOrientation={selfPlayer?.color}
                       position={fen}
                       animationDuration={200}
