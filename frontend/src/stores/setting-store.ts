@@ -1,4 +1,5 @@
-import { PiecesChineseChess } from '@/components/chessboard-styles/chinese-chess/Pieces';
+import { PicesPlayOkXiangqi, PiecesChineseChess, PiecesClubXiangqi } from '@/components/chessboard-styles/Pieces.tsx';
+import { Club } from 'lucide-react';
 import { CustomPieces } from 'react-xiangqiboard/dist/chessboard/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -53,11 +54,13 @@ function merge(target: any, source: any): any {
 
 export type SettingStore = SettingState & SettingActions;
 
-export type ThemeNames = "chinese"; 
+export type ThemeNames = "chinese" | "club" | "playok";
 
 const THEME_DATA: Record<ThemeNames, CustomPieces> = {
-  chinese: PiecesChineseChess
-}
+  chinese: PiecesChineseChess,
+  club: PiecesClubXiangqi,
+  playok: PicesPlayOkXiangqi,
+};
 
 const BACKEND_URL =
   process.env.NODE_ENV === 'development'

@@ -71,7 +71,9 @@ export default function SettingForm() {
           )}
         />
         <Button type="submit">Submit</Button>
-        <Button onClick={() => setPieceTheme && setPieceTheme('chinese')}>Set Piece Theme</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('chinese')}>PiecesChineseChess</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('club')}>club</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('playok')}>ok</Button>
       </form>
     </Form>
   );
