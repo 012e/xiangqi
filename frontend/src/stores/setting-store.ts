@@ -4,7 +4,6 @@ import {
   PiecesClubXiangqi,
   PiecesXahlee, PiecesXboard,
 } from '@/components/chessboard-styles/Pieces.tsx';
-import { Club } from 'lucide-react';
 import { CustomPieces } from 'react-xiangqiboard/dist/chessboard/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';

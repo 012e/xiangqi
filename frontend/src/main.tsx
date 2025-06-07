@@ -15,7 +15,6 @@ import PlayBot from './pages/play/play-bot.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
-import SettingProfile from '@/pages/profile/profile-page.tsx';
 import Friends from './pages/social/friends.tsx';
 import Demo from './pages/test/test.tsx';
 
@@ -24,6 +23,8 @@ import useSettingStore, {
   useTheme,
 } from './stores/setting-store.ts';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import SettingsPage from '@/pages/settings/settings-page.tsx';
+import ProfilePage from '@/pages/profile/profile-page.tsx';
 
 const queryClient = new QueryClient();
 
@@ -91,11 +92,11 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
 
-              <Route path="/profile" element={<SettingProfile />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
-              {/* <Route path="/play/demo" element={<Demo />} /> */}
             </Route>
             <Route path="/test" element={<Demo />} />
             {/* Fallback route */}
