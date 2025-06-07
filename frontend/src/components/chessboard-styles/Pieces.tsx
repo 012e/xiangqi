@@ -2,7 +2,35 @@ import { CustomPieces } from "react-xiangqiboard/dist/chessboard/types";
 import { IconAdvisorBlack, IconAdvisorRed, IconBishopBlack, IconBishopRed, IconCannonBlack, IconCannonRed, IconKingBlack, IconKingRed, IconKnightBlack, IconKnightRed, IconPawnBlack, IconPawnRed, IconRookBlack, IconRookRed } from "./pieces-styles/chinese-pieces.tsx";
 import { BlackAdvisorPiece, BlackBishopPiece, BlackCannonPiece, BlackKingPiece, BlackKnightPiece, BlackPawnPiece, BlackRookPiece, RedAdvisorPiece, RedBishopPiece, RedCannonPiece, RedKingPiece, RedKnightPiece, RedPawnPiece, RedRookPiece } from "./pieces-styles/clubxiangqi-pieces.tsx";
 import { BlackAdvisorPieceOk, BlackBishopPieceOk, BlackCannonPieceOk, BlackKingPieceOk, BlackKnightPieceOk, BlackPawnPieceOk, BlackRookPieceOk, RedAdvisorPieceOk, RedBishopPieceOk, RedCannonPieceOk, RedKingPieceOk, RedKnightPieceOk, RedPawnPieceOk, RedRookPieceOk } from "./pieces-styles/playok-pieces.tsx";
-
+import {
+  BlackAdvisorPiecexahlee,
+  BlackBishopPiecexahlee,
+  BlackCannonPiecexahlee,
+  BlackKingPiecexahlee,
+  BlackKnightPiecexahlee,
+  BlackPawnPiecexahlee,
+  BlackRookPiecexahlee,
+  RedAdvisorPiecexahlee,
+  RedBishopPiecexahlee,
+  RedCannonPiecexahlee,
+  RedKingPiecexahlee,
+  RedKnightPiecexahlee,
+  RedPawnPiecexahlee,
+  RedRookPiecexahlee,
+} from './pieces-styles/xahlee-pieces.tsx';
+import {
+  BlackAdvisorPieceXboard,
+  BlackBishopPieceXboard, BlackCannonPieceXboard, BlackKingPieceXboard, BlackKnightPieceXboard,
+  BlackPawnPieceXboard,
+  BlackRookPieceXboard,
+  RedAdvisorPieceXboard,
+  RedBishopPieceXboard,
+  RedCannonPieceXboard,
+  RedKingPieceXboard,
+  RedKnightPieceXboard,
+  RedPawnPieceXboard,
+  RedRookPieceXboard,
+} from '@/components/chessboard-styles/pieces-styles/xboard-pieces.tsx';
 
 // theme 1 chinese chess
 export const PiecesChineseChess: CustomPieces = {
@@ -61,21 +89,40 @@ export const PicesPlayOkXiangqi: CustomPieces = {
   bK: BlackKingPieceOk,
 };
 
-//theme 4 zigavn
-export const PiecesZigavn: CustomPieces = {
-  wP: RedPawnPieceOk,
-  wC: RedCannonPieceOk,
-  wB: RedBishopPieceOk,
-  wN: RedKnightPieceOk,
-  wR: RedRookPieceOk,
-  wA: RedAdvisorPieceOk,
-  wK: RedKingPieceOk,
+//theme 4 xahlee
+export const PiecesXahlee: CustomPieces = {
+  wP: RedPawnPiecexahlee,
+  wC: RedCannonPiecexahlee,
+  wB: RedBishopPiecexahlee,
+  wN: RedKnightPiecexahlee,
+  wR: RedRookPiecexahlee,
+  wA: RedAdvisorPiecexahlee,
+  wK: RedKingPiecexahlee,
 
-  bP: BlackPawnPieceOk,
-  bC: BlackCannonPieceOk,
-  bB: BlackBishopPieceOk,
-  bN: BlackKnightPieceOk,
-  bR: BlackRookPieceOk,
-  bA: BlackAdvisorPieceOk,
-  bK: BlackKingPieceOk,
+  bP: BlackPawnPiecexahlee,
+  bC: BlackCannonPiecexahlee,
+  bB: BlackBishopPiecexahlee,
+  bN: BlackKnightPiecexahlee,
+  bR: BlackRookPiecexahlee,
+  bA: BlackAdvisorPiecexahlee,
+  bK: BlackKingPiecexahlee,
+};
+
+// theme 5 xboard
+export const PiecesXboard: CustomPieces = {
+  wP: RedPawnPieceXboard,
+  wC: RedCannonPieceXboard,
+  wB: RedBishopPieceXboard,
+  wN: RedKnightPieceXboard,
+  wR: RedRookPieceXboard,
+  wA: RedAdvisorPieceXboard,
+  wK: RedKingPieceXboard,
+
+  bP: BlackPawnPieceXboard,
+  bC: BlackCannonPieceXboard,
+  bB: BlackBishopPieceXboard,
+  bN: BlackKnightPieceXboard,
+  bR: BlackRookPieceXboard,
+  bA: BlackAdvisorPieceXboard,
+  bK: BlackKingPieceXboard,
 };

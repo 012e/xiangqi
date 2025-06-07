@@ -141,6 +141,7 @@ export default function SelfPlayBoard({
       position={game.exportUciFen()}
       areArrowsAllowed={true}
       customPieces={customPieces}
+      // customBoardStyle={}
       arePiecesDraggable={true}
     />
   );

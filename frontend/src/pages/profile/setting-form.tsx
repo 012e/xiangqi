@@ -74,6 +74,8 @@ export default function SettingForm() {
         <Button onClick={() => setPieceTheme && setPieceTheme('chinese')}>PiecesChineseChess</Button>
         <Button onClick={() => setPieceTheme && setPieceTheme('club')}>club</Button>
         <Button onClick={() => setPieceTheme && setPieceTheme('playok')}>ok</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('xahlee')}>xahlee</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('xboard')}>xboard</Button>
       </form>
     </Form>
   );
