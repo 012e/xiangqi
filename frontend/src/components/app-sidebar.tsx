@@ -1,7 +1,7 @@
 'use client';
 
 import type * as React from 'react';
-import { Bomb, BookOpen, Globe, Settings2, SquareTerminal } from 'lucide-react';
+import { Bomb, BookOpen, Globe, Settings2, SquareTerminal, SquareUser } from 'lucide-react';
 
 import {
   Sidebar,
@@ -81,6 +81,11 @@ const navItems: NavItem[] = [
   {
     title: 'Profile',
     url: '/profile',
+    icon: SquareUser,
+  },
+  {
+    title: 'Settings',
+    url: '/settings',
     icon: Settings2,
   },
 ];

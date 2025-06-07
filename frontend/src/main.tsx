@@ -14,23 +14,26 @@ import Layout from './components/layout.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
-import SettingProfile from '@/pages/profile/profile-page.tsx';
 import Friends from './pages/social/friends.tsx';
 import Demo from './pages/test/test.tsx';
 
-import useSettingStore, { useBackendUrl, useTheme } from './stores/setting-store.ts';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import useSettingStore, {
+  useBackendUrl,
+  useTheme,
+} from './stores/setting-store.ts';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import SettingsPage from '@/pages/settings/settings-page.tsx';
+import ProfilePage from '@/pages/profile/profile-page.tsx';
 
 const queryClient = new QueryClient();
 
-
-function AccessTokenProvider({children}: { children: React.ReactNode}) {
+function AccessTokenProvider({ children }: { children: React.ReactNode }) {
   const { getAccessTokenSilently, user } = useAuth0();
   useEffect(() => {
     if (user?.sub) {
-      getAccessTokenSilently().then(token => {
+      getAccessTokenSilently().then((token) => {
         useSettingStore.getState().actions.setToken(token);
-      })
+      });
     }
   }, [user?.sub, getAccessTokenSilently]);
 
@@ -63,12 +66,11 @@ function Providers({ children }: { children: React.ReactNode }) {
         }}
         cacheLocation="localstorage"
       >
-
         <AccessTokenProvider>
-        <StompSessionProvider url={stompUrl} key={stompUrl}>
-          {children}
-          <Toaster />
-        </StompSessionProvider>
+          <StompSessionProvider url={stompUrl} key={stompUrl}>
+            {children}
+            <Toaster />
+          </StompSessionProvider>
         </AccessTokenProvider>
       </Auth0Provider>
       <ReactQueryDevtools initialIsOpen={false} />
@@ -89,12 +91,15 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
 
-              <Route path="/profile" element={<SettingProfile />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
               <Route path="/demo" element={<Demo />} />
             </Route>
+            <Route path="/test" element={<Demo />} />
+            {/* Fallback route */}
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

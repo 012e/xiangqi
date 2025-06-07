@@ -15,6 +15,7 @@ import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
+import useSettingStore from '@/stores/setting-store';
 import { MyHoverCard } from '@/components/play/my-hover-card.tsx';
 
 export default function OnlineGame() {
@@ -27,6 +28,7 @@ export default function OnlineGame() {
   const enemyPlayer = useGameStore((state) => state.enemyPlayer);
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
+  const pieceTheme = useSettingStore(state => state.pieceTheme);
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
@@ -85,6 +87,7 @@ export default function OnlineGame() {
                       isDraggablePiece={(piece) =>
                         isPlayerTurn(piece) && !gameEnded
                       }
+                      customPieces={pieceTheme}
                       boardOrientation={selfPlayer?.color}
                       position={fen}
                       animationDuration={200}

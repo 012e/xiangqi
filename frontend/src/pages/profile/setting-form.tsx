@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { set, z } from 'zod';
 import { Button } from '@/components/ui/button.tsx';
 
 import {
@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import { useBackendUrl, useSettingActions } from '@/stores/setting-store.ts';
+import useSettingStore, { useBackendUrl, useSettingActions } from '@/stores/setting-store.ts';
 import { toast } from 'sonner';
 
 const formSchema = z.object({
@@ -40,7 +40,7 @@ const formSchema = z.object({
 export default function SettingForm() {
   const { setBackendUrl } = useSettingActions();
   const backendUrl = useBackendUrl();
-
+  const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -71,6 +71,11 @@ export default function SettingForm() {
           )}
         />
         <Button type="submit">Submit</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('chinese')}>PiecesChineseChess</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('club')}>club</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('playok')}>ok</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('xahlee')}>xahlee</Button>
+        <Button onClick={() => setPieceTheme && setPieceTheme('xboard')}>xboard</Button>
       </form>
     </Form>
   );
