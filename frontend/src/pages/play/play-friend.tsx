@@ -1,4 +1,4 @@
-import { ArrowLeft, CircleUser, Search } from 'lucide-react';
+import { ArrowLeft, Search, SquareUser } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import React from 'react';
 import { Button } from '@/components/ui/button';
@@ -70,10 +70,10 @@ export default function PlayFriend() {
     <div className="w-full text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
         {/* Left */}
-        <div className="p-4 lg:block hidden mt-10">
+        <div className="p-4 lg:block hidden mt-15">
           <div className="flex flex-wrap space-x-2 justify-center">
             <span>
-              <CircleUser size={30} />
+              <SquareUser size={30} />
             </span>
             <span>{opponent}</span>
           </div>
@@ -84,7 +84,7 @@ export default function PlayFriend() {
           </div>
           <div className="flex flex-wrap space-x-2 justify-center ">
             <span>
-              <CircleUser size={30} />
+              <SquareUser size={30} />
             </span>
             <span>Me</span>
           </div>
