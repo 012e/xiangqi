@@ -2,9 +2,10 @@ import { Tabs, TabsTrigger } from '@/components/ui/tabs';
 import SelfPlayBoard from '../play/self-playboard';
 import { TabsContent, TabsList } from '@radix-ui/react-tabs';
 import { PieceStyleSelector } from '@/components/chessboard-styles/piece-setting';
+import useSettingStore from '@/stores/setting-store';
 
 export default function SettingStylesChessboard() {
-  // const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
+  const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
   return (
     <div className="flex gap-5">
       <div className="flex w-1/3">
@@ -19,7 +20,7 @@ export default function SettingStylesChessboard() {
           </TabsList>
           <TabsContent value="pieces">
             <div className="flex justify-center items-center self-center">
-              <PieceStyleSelector/>
+              <PieceStyleSelector pieceTheme={setPieceTheme ?? (() => {})}/>
             </div>
           </TabsContent>
           <TabsContent value="boards">

@@ -2,9 +2,10 @@ import SettingForm from '@/pages/settings/setting-form.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { useTheme } from '@/styles/ThemeContext.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Archive, Command, Palette, Settings } from 'lucide-react';
+import { Archive, Palette, Settings } from 'lucide-react';
 import SettingStylesChessboard from './setting-styles-chessboard';
 import useSettingStore from '@/stores/setting-store';
+import { FaChessBoard } from "react-icons/fa";
 type TabType = {
   name: string;
   value: string;
@@ -28,7 +29,7 @@ const tabs: TabType[] = [
   {
     name: 'Chessboard Styles',
     value: 'chessboard',
-    icon: Command,
+    icon: FaChessBoard,
     element: <SettingChessboard />,
     choosePieceTheme: () => {
       const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
