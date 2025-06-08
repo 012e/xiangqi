@@ -17,7 +17,8 @@ import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
 import { Slider } from '@/components/ui/slider.tsx';
-
+import { RiBaseStationLine } from "react-icons/ri";
+import { FaRobot } from "react-icons/fa";
 export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
   const { createGame, loading } = useCreateGame();
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
@@ -111,7 +112,16 @@ export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
           <div className="flex flex-col p-6 space-y-6 w-auto">
             <div className="flex flex-col space-y-5 w-auto">
               
-              <h1 className="justify-center text-4xl font-bold tracking-tight self-center w-auto">
+              <h1 className="flex justify-center text-4xl gap-1 font-bold tracking-tight self-center w-auto">
+                <span>
+                  {
+                    isOnline ? (
+                      <RiBaseStationLine />
+                    ) : (
+                      <FaRobot />
+                    )
+                  }
+              </span>
                 {isOnline ? 'Play Online' : 'Play with Bot'}
               </h1>
 

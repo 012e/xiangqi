@@ -47,7 +47,7 @@ const ProfilePage: React.FC = () => {
         <header>
           <div className='flex items-center jsutify-start gap-1'>
             <span>
-              <UserPen className='w-6 h-auto'></UserPen>
+              <UserPen className='w-7 h-auto'></UserPen>
             </span>
             <h1 className="text-2xl font-bold">Profile</h1>
           </div>

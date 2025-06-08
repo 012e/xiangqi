@@ -4,11 +4,13 @@ import { useTheme } from '@/styles/ThemeContext.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Archive, Command, Palette, Settings } from 'lucide-react';
 import SettingStylesChessboard from './setting-styles-chessboard';
+import useSettingStore from '@/stores/setting-store';
 type TabType = {
   name: string;
   value: string;
   icon: React.ElementType;
   element?: React.ReactNode;
+  choosePieceTheme?: () => void;
 };
 const tabs: TabType[] = [
   {
@@ -28,6 +30,10 @@ const tabs: TabType[] = [
     value: 'chessboard',
     icon: Command,
     element: <SettingChessboard />,
+    choosePieceTheme: () => {
+      const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
+      setPieceTheme?.('chinese');
+    }
   },
 ];
 function SettingTheme() {
@@ -67,7 +73,7 @@ export default function SettingsPage() {
     <div className="flex flex-col border border-border rounded-lg p-7 bg-background text-foreground m-6">
       <div className="mb-10 flex justify-start items-center gap-1">
         <span>
-          <Settings className="w-6"></Settings>
+          <Settings className="w-7 h-auto"></Settings>
         </span>
         <h1 className="text-2xl font-bold">Settings</h1>
       </div>

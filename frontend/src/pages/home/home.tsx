@@ -1,5 +1,4 @@
 import {
-  CircleUser,
   Clock,
   Handshake,
   Medal,
@@ -7,7 +6,9 @@ import {
   Trophy,
   Bot,
   Signal,
+  SquareUser,
 } from 'lucide-react';
+import { SiLichess } from "react-icons/si";
 import SelfPlayBoard from '../play/self-playboard.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { useNavigate } from 'react-router';
@@ -54,8 +55,8 @@ export default function Home() {
         {/* Left */}
         <div className="p-4 lg:block hidden mt-30">
           <div className="text-foreground flex flex-wrap space-x-2 justify-center">
-            <span>
-              <CircleUser size={30} />
+            <span className=''>
+              <SquareUser size={30} />
             </span>
             <span>Opponent</span>
           </div>
@@ -66,7 +67,7 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap space-x-2 justify-center ">
             <span>
-              <CircleUser size={30} />
+              <SquareUser size={30} />
             </span>
             <span>Me</span>
           </div>
@@ -74,7 +75,10 @@ export default function Home() {
         {/* Right */}
         <div className="rounded-4xl my-5 h-auto bg-muted shadow-lg shadow-ring">
           <div className="h-auto flex flex-col items-center p-6 space-y-6">
-            <div className="h-auto">
+            <div className="h-auto flex gap-1">
+              <span className=''>
+                <SiLichess className='font-bold w-10 h-auto'/>
+              </span>
               <h1 className="text-4xl font-bold justify-center text-foreground tracking-tight">
                 Play Chess
               </h1>

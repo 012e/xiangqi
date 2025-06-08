@@ -1,19 +1,10 @@
 import { Tabs, TabsTrigger } from '@/components/ui/tabs';
 import SelfPlayBoard from '../play/self-playboard';
 import { TabsContent, TabsList } from '@radix-ui/react-tabs';
-import { Button } from '@/components/ui/button';
-import useSettingStore, { ThemeNames } from '@/stores/setting-store';
 import { PieceStyleSelector } from '@/components/chessboard-styles/piece-setting';
 
 export default function SettingStylesChessboard() {
-  const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
-  const themePieces: ThemeNames[] = [
-    'chinese',
-    'club',
-    'playok',
-    'xahlee',
-    'xboard',
-  ];
+  // const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
   return (
     <div className="flex gap-5">
       <div className="flex w-1/3">

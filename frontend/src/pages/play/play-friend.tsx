@@ -1,7 +1,7 @@
-import { ArrowLeft, Search, SquareUser } from 'lucide-react';
+import {  Search, SquareUser } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { FaUserFriends } from "react-icons/fa";
 import {
   CommandEmpty,
   CommandGroup,
@@ -65,7 +65,6 @@ const listFriend = [
 ];
 export default function PlayFriend() {
   const [opponent] = React.useState('Opponent');
-  // const [listMove, setListMove] = React.useState([]);
   return (
     <div className="w-full text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
@@ -93,12 +92,14 @@ export default function PlayFriend() {
         <div className="rounded-4xl my-5 bg-secondary shadow-lg shadow-ring">
           <div className="flex flex-col items-center p-6 space-y-6 ">
             <div className="flex space-x-3">
-              <Button className="group mt-1">
-                <ArrowLeft className="scale-200 " />
-              </Button>
-              <h1 className="text-4xl font-bold justify-center tracking-tight">
-                Play a Friend
-              </h1>
+              <div className='flex items-center justify-center gap-1'>
+                  <span>
+                    <FaUserFriends className='text-4xl'/>
+                  </span>
+                <h1 className=" text-4xl font-bold justify-center tracking-tight">
+                  Play a Friend
+                </h1>
+              </div>
             </div>
             <div className="w-full shadow-2xl">
               <Command className="border shadow">

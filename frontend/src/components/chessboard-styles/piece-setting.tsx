@@ -19,6 +19,7 @@ import {
   RedKingPieceXboard,
 } from './pieces-styles/xboard-pieces';
 import { CircleCheck } from 'lucide-react';
+import useSettingStore from '@/stores/setting-store';
 
 export default function ChoosePieceSetting() {
   return (
@@ -149,20 +150,24 @@ const radioOptions = [
   },
 ];
 
+
 export const PieceStyleSelector = () => {
   return (
-    <RadioGroup.Root defaultValue="chinese" className="flex items-center flex-col gap-3">
+    <RadioGroup.Root
+      defaultValue="chinese"
+      className="flex items-center flex-col gap-3"
+    >
       {radioOptions.map((option) => (
         <RadioGroup.Item
           key={option.value}
           value={option.value}
           className={cn(
             'relative group ring-[1px] ring-border rounded p-4',
-            'data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500',
+            'data-[state=checked]:ring-2 data-[state=checked]:ring-gray-500',
             'flex items-center justify-center',
           )}
         >
-          <CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-5 w-5 text-primary fill-blue-500 stroke-white group-data-[state=unchecked]:hidden" />
+          <CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-5 w-5 text-primary fill-gray-500 stroke-white group-data-[state=unchecked]:hidden" />
           <div className="flex justify-center items-center w-25 h-13">{option.content}</div>
         </RadioGroup.Item>
       ))}

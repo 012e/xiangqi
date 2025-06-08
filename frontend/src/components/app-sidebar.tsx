@@ -15,10 +15,11 @@ import { NavHeader } from './navbar/nav-header.tsx';
 import { NavContent, NavItem } from './navbar/nav-content.tsx';
 import { NavUser } from './navbar/nav-user.tsx';
 import { Button } from './ui/button';
+import { SiLichess } from 'react-icons/si';
 
 const teams = {
-  name: 'Chess',
-  logo: Bomb,
+  name: 'Chinese Chess',
+  logo: SiLichess,
   plan: 'Xiangqi',
   url: '/play',
 };
