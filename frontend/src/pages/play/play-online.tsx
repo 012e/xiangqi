@@ -2,11 +2,11 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  CircleUser,
   Flag,
   Handshake,
   Loader2,
   Play,
+  SquareUser,
 } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
@@ -17,7 +17,8 @@ import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
 import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
 import { Slider } from '@/components/ui/slider.tsx';
-
+import { RiBaseStationLine } from "react-icons/ri";
+import { FaRobot } from "react-icons/fa";
 export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
   const { createGame, loading } = useCreateGame();
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
@@ -70,16 +71,16 @@ export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
     <div className="w-full h-auto text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
-        <div className="hidden p-4 mt-10 h-auto lg:block bg-background">
+        <div className="hidden p-4 mt-25 h-auto lg:block bg-background">
           <div className="flex flex-wrap justify-center space-x-2">
             <span>
-              <CircleUser size={30} />
+              <SquareUser size={30} />
             </span>
             <span>{opponent}</span>
           </div>
           {' '}
           <div className="flex justify-center p-3">
-            <div className="border-2">
+            <div className="border-2 ">
               <SelfPlayBoard
                 boardOrientation={player}
                 onMove={({ newBoard }) => {
@@ -94,7 +95,7 @@ export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
           </div>
           <div className="flex flex-wrap justify-center space-x-2">
                   <span>
-                    <CircleUser size={30} />
+                    <SquareUser size={30} />
                   </span>
             <span>Me</span>
           </div>
@@ -107,11 +108,21 @@ export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 h-auto bg-muted shadow-lg shadow-ring select-none">
-          <div className="flex flex-col p-6 space-y-6">
-            <div className="flex flex-col space-y-5">
-              <h1 className="justify-center text-4xl font-bold tracking-tight self-center">
-                Play Online
+        <div className="rounded-4xl my-5 h-auto bg-muted shadow-lg shadow-ring select-none w-auto">
+          <div className="flex flex-col p-6 space-y-6 w-auto">
+            <div className="flex flex-col space-y-5 w-auto">
+              
+              <h1 className="flex justify-center text-4xl gap-1 font-bold tracking-tight self-center w-auto">
+                <span>
+                  {
+                    isOnline ? (
+                      <RiBaseStationLine />
+                    ) : (
+                      <FaRobot />
+                    )
+                  }
+              </span>
+                {isOnline ? 'Play Online' : 'Play with Bot'}
               </h1>
 
               </div>

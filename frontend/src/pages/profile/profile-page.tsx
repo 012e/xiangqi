@@ -4,9 +4,14 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
 import { getProfileMe } from '@/stores/profile-me.ts';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
-
-
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar.tsx';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { UserPen } from 'lucide-react';
 
 const ProfilePage: React.FC = () => {
   const [shortBio, setShortBio] = useState('');
@@ -15,7 +20,7 @@ const ProfilePage: React.FC = () => {
     queryKey: ['profile'],
     queryFn: getProfileMe,
   });
-  console.log(myProfile)
+  console.log(myProfile);
   const maxBioLength = 50;
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -25,7 +30,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleSave = () => {
-    toast.success("Saved successfully!" ,{})
+    toast.success('Saved successfully!', {});
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,17 +45,20 @@ const ProfilePage: React.FC = () => {
       <main className="p-8 m-4 min-w-[600px] bg-card text-card-foreground rounded-lg border border-border">
         {/* Header */}
         <header>
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Profile</h1>
+          <div className='flex items-center jsutify-start gap-1'>
+            <span>
+              <UserPen className='w-7 h-auto'></UserPen>
+            </span>
+            <h1 className="text-2xl font-bold">Profile</h1>
           </div>
         </header>
 
         {/* Avatar & Bio */}
         <section className="mb-8">
           <div className="flex flex-wrap items-center justify-between gap-5">
-            <div className="flex-1 max-w-[150px] text-center p-4 rounded-lg">
+            <div className="flex-1 max-w-[150px] text-center p-4 rounded-lg pt-13">
               <div
-                className="relative cursor-pointer inline-block"
+                className="relative cursor-pointer inline-block border border-muted "
                 onClick={() => document.getElementById('avatarInput')?.click()}
               >
                 <Avatar className="size-full">
@@ -74,7 +82,7 @@ const ProfilePage: React.FC = () => {
               >
                 Introduction ({shortBio.length}/{maxBioLength})
               </label>
-              <textarea
+              <Textarea
                 id="shortBio"
                 value={shortBio}
                 onChange={handleBioChange}
@@ -87,19 +95,37 @@ const ProfilePage: React.FC = () => {
         {/* Detail info */}
         <section className="mb-8">
           <h3 className="text-lg font-bold mb-4">Information</h3>
-          <div className="w-1/4">
+          <div className="w-1/2">
             {/*content*/}
             <div className="grid grid-cols-2 gap-2">
               <div>Username</div>
-              <div>{myProfile?.username ?? "Null"}</div>
+              <div>
+                <Input
+                  value={myProfile?.username ?? 'None'}
+                  readOnly
+                  className="w-full bg-muted text-foreground"
+                ></Input>
+              </div>
 
               <div>Name</div>
-              <div>{myProfile?.displayName ?? "Null"}</div>
+              <div>
+                <Input
+                  value={myProfile?.displayName ?? 'None'}
+                  readOnly
+                  className="w-full bg-muted text-foreground"
+                ></Input>
+              </div>
 
               <div>Email</div>
-              <div>{myProfile?.email}</div>
+              <div className="w-auto">
+                <Input
+                  value={myProfile?.email ?? 'None'}
+                  readOnly
+                  className="w-full bg-muted text-foreground"
+                ></Input>
+              </div>
             </div>
-           </div>
+          </div>
         </section>
         {/* Button Save & Cancel */}
         <div className="flex justify-end gap-4">

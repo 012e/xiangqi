@@ -32,8 +32,8 @@ export function NavHeader({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Link className="flex space-x-2 w-full" to="/frontend/public">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+              <Link className="flex space-x-2 w-full" to="/">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-ring text-sidebar-primary-foreground">
                   <teams.logo className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
