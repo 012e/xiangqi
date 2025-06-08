@@ -3,6 +3,7 @@ import SelfPlayBoard from '../play/self-playboard';
 import { TabsContent, TabsList } from '@radix-ui/react-tabs';
 import { Button } from '@/components/ui/button';
 import useSettingStore, { ThemeNames } from '@/stores/setting-store';
+import { PieceStyleSelector } from '@/components/chessboard-styles/piece-setting';
 
 export default function SettingStylesChessboard() {
   const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
@@ -14,8 +15,8 @@ export default function SettingStylesChessboard() {
     'xboard',
   ];
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="flex">
+    <div className="flex gap-5">
+      <div className="flex w-1/3">
         <Tabs defaultValue="pieces" className="w-full">
           <TabsList>
             <TabsTrigger value="pieces" className=" font-semibold">
@@ -26,12 +27,8 @@ export default function SettingStylesChessboard() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="pieces">
-            <div className="flex flex-wrap gap-2">
-              {themePieces.map((theme) => (
-                <Button key={theme} onClick={() => setPieceTheme?.(theme)}>
-                  {theme}
-                </Button>
-              ))}
+            <div className="flex justify-center items-center self-center">
+              <PieceStyleSelector/>
             </div>
           </TabsContent>
           <TabsContent value="boards">
@@ -39,7 +36,7 @@ export default function SettingStylesChessboard() {
           </TabsContent>
         </Tabs>
       </div>
-      <div className="p-5 border-2 border-dashed rounded-lg flex items-center justify-center">
+      <div className="py-15 px-10 border-2 border-dashed rounded-lg flex items-center justify-center">
         <SelfPlayBoard isDraggablePiece={() => false} />
       </div>
     </div>
