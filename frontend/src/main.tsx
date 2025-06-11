@@ -24,6 +24,10 @@ import useSettingStore, {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import SettingsPage from '@/pages/settings/settings-page.tsx';
 import ProfilePage from '@/pages/profile/profile-page.tsx';
+import Chat from './pages/social/chat.tsx';
+import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
+import Guide from './pages/document/Guide.tsx';
+import Rule from './pages/document/Rule.tsx';
 
 const queryClient = new QueryClient();
 
@@ -93,8 +97,15 @@ createRoot(document.getElementById('root')!).render(
 
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
+
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
+              <Route path="/social/friend/findByUsername" element={<FindFriendsByUsername />} />
+              <Route path="/social/chat" element={<Chat />} />
+
+              <Route path="/document" element={<Guide />}/>
+              <Route path="/document/guide" element={<Guide />} />
+              <Route path="/document/rule" element={<Rule />} />
 
               <Route path="/demo" element={<Demo />} />
             </Route>

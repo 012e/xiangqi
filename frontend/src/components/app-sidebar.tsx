@@ -1,7 +1,7 @@
 'use client';
 
 import type * as React from 'react';
-import { Bomb, BookOpen, Globe, Settings2, SquareTerminal, SquareUser } from 'lucide-react';
+import { Bomb, BookOpen, Globe, Settings2, SquareTerminal, SquareUser, UserRoundSearch } from 'lucide-react';
 
 import {
   Sidebar,
@@ -47,37 +47,23 @@ const navItems: NavItem[] = [
   },
   {
     title: 'Document',
-    url: '#',
+    url: '/document',
     icon: BookOpen,
     items: [
       {
         title: 'Guide',
-        url: '#',
+        url: '/document/guide',
       },
       {
         title: 'Rule',
-        url: '#',
-      },
-      {
-        title: 'Tip and trick',
-        url: '#',
+        url: '/document/rule',
       },
     ],
   },
   {
-    title: 'Social',
-    url: '#',
-    icon: Globe,
-    items: [
-      {
-        title: 'Chat',
-        url: '/social/friend',
-      },
-      {
-        title: 'Friends',
-        url: '#',
-      },
-    ],
+    title: 'Friends',
+    url: '/social/friend',
+    icon: UserRoundSearch,
   },
   {
     title: 'Profile',
