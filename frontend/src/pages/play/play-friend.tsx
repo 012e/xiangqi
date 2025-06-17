@@ -11,60 +11,16 @@ import {
 } from 'cmdk';
 import { Command } from '@/components/ui/command';
 import ChallengeOptions from '@/components/challenge-options';
-const listFriend = [
-  {
-    name: 'teo',
-    avatar: null,
-  },
-  {
-    name: 'ti',
-  },
-  {
-    name: 'baby',
-  },
-  {
-    name: 'teo',
-    avatar: null,
-  },
-  {
-    name: 'ti',
-  },
-  {
-    name: 'baby',
-  },
-  {
-    name: 'teo',
-    avatar: null,
-  },
-  {
-    name: 'ti',
-  },
-  {
-    name: 'baby',
-  },
-  {
-    name: 'teo',
-    avatar: null,
-  },
-  {
-    name: 'ti',
-  },
-  {
-    name: 'baby',
-  },
-  {
-    name: 'teo',
-    avatar: null,
-  },
-  {
-    name: 'ti',
-  },
-  {
-    name: 'baby',
-  },
-];
+import { useQuery } from '@tanstack/react-query';
+import { getFriendList } from '@/lib/friend/list-friend.ts';
 export default function PlayFriend() {
   const [opponent] = React.useState('Opponent');
+  const {data: listFriend} = useQuery(
+    {
+      queryKey: ['listFriends'],
+      queryFn: getFriendList
+    }
+  )
   return (
     <div className="w-full text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
@@ -107,25 +63,24 @@ export default function PlayFriend() {
                   <Search className="pt-1 " size={20}></Search>
                   <CommandInput
                     placeholder="Type a command or search..."
-                    className="focus:border-none w-full "
+                    className="focus:border-none w-full focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-transparent"
                   />
                 </div>
                 <CommandList className="p-2">
-                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandEmpty className="p-3">No results found.</CommandEmpty>
                   <CommandGroup
-                    heading="Suggestions:"
                     className="font-bold overflow-auto h-50"
                   >
-                    {listFriend.map((fr, index) => {
-                      return (
-                        <CommandItem
-                          className="!text-2 !pl-2 font-normal hover:bg-muted hover:cursor-pointer"
-                          key={index}
-                        >
-                          {fr.name}
-                        </CommandItem>
-                      );
-                    })}
+                      {listFriend?.map((fr, index) => {
+                        return (
+                          <CommandItem
+                            className="!text-2 !pl-2 font-normal hover:bg-muted hover:cursor-pointer"
+                            key={index}
+                          >
+                            {fr.username}
+                          </CommandItem>
+                        );
+                      })}
                   </CommandGroup>
                 </CommandList>
               </Command>

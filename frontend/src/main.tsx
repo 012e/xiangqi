@@ -96,7 +96,6 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
 
-              <Route path="/demo" element={<Demo />} />
             </Route>
             <Route path="/test" element={<Demo />} />
             {/* Fallback route */}

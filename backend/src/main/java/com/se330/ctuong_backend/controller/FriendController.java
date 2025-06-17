@@ -4,6 +4,9 @@ import com.se330.ctuong_backend.dto.rest.UserDto;
 import com.se330.ctuong_backend.service.FriendService;
 import com.se330.ctuong_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,8 @@ public class FriendController {
     @PostMapping("/request/{friendId}")
     @Operation(summary = "Send a friend request")
     @ApiResponse(responseCode = "204", description = "Friend request sent successfully")
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<?> sendFriendRequest(@NotNull Principal principal, @PathVariable Long friendId) {
         var currentUser = userService.getUserBySub(principal.getName());
         if (currentUser.isEmpty()) {
@@ -42,7 +47,8 @@ public class FriendController {
     @PostMapping("/accept/{friendId}")
     @Operation(summary = "Accept a friend request")
     @ApiResponse(responseCode = "204", description = "Friend request accepted successfully")
-    @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<?> acceptFriendRequest(@NotNull Principal principal, @PathVariable Long friendId) {
         var currentUser = userService.getUserBySub(principal.getName());
         if (currentUser.isEmpty()) {
@@ -58,6 +64,8 @@ public class FriendController {
     @PostMapping("/reject/{friendId}")
     @Operation(summary = "Reject a friend request")
     @ApiResponse(responseCode = "204", description = "Friend request rejected successfully")
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<?> rejectFriendRequest(@NotNull Principal principal, @PathVariable Long friendId) {
         var currentUser = userService.getUserBySub(principal.getName());
         if (currentUser.isEmpty()) {
@@ -73,6 +81,8 @@ public class FriendController {
     @DeleteMapping("/{friendId}")
     @Operation(summary = "Remove a friend")
     @ApiResponse(responseCode = "204", description = "Friend removed successfully")
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<?> removeFriend(@NotNull Principal principal, @PathVariable Long friendId) {
         var currentUser = userService.getUserBySub(principal.getName());
         if (currentUser.isEmpty()) {
@@ -87,7 +97,10 @@ public class FriendController {
 
     @GetMapping
     @Operation(summary = "Get list of friends")
-    @ApiResponse(responseCode = "200", description = "Friends list retrieved successfully")
+    @ApiResponse(responseCode = "200", description = "Friends list retrieved successfully",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))))
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<?> getFriends(@NotNull Principal principal) {
         var currentUser = userService.getUserBySub(principal.getName());
         if (currentUser.isEmpty()) {
@@ -102,7 +115,10 @@ public class FriendController {
 
     @GetMapping("/requests/pending")
     @Operation(summary = "Get pending friend requests received")
-    @ApiResponse(responseCode = "200", description = "Pending friend requests retrieved successfully")
+    @ApiResponse(responseCode = "200", description = "Pending friend requests retrieved successfully",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))))
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<?> getPendingRequests(@NotNull Principal principal) {
         var currentUser = userService.getUserBySub(principal.getName());
         if (currentUser.isEmpty()) {
@@ -117,7 +133,10 @@ public class FriendController {
 
     @GetMapping("/requests/sent")
     @Operation(summary = "Get sent friend requests")
-    @ApiResponse(responseCode = "200", description = "Sent friend requests retrieved successfully")
+    @ApiResponse(responseCode = "200", description = "Sent friend requests retrieved successfully",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))))
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<?> getSentRequests(@NotNull Principal principal) {
         var currentUser = userService.getUserBySub(principal.getName());
         if (currentUser.isEmpty()) {
