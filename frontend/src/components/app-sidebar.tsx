@@ -1,7 +1,7 @@
 'use client';
 
 import type * as React from 'react';
-import { Bomb, BookOpen, Globe, Settings2, SquareTerminal, SquareUser, UserRoundSearch } from 'lucide-react';
+import { BookOpen, Settings2, SquareTerminal, SquareUser, UserRoundSearch } from 'lucide-react';
 
 import {
   Sidebar,

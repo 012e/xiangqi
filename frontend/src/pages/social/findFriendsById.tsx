@@ -3,8 +3,10 @@ import { FaSearch } from 'react-icons/fa';
 
 import friendsData from '@/dummyData/friends.json';
 import AddFriendRow from '@/components/addFriendRow';
+import { ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
-const FindFriendsByUsername: React.FC = () => {
+const FindFriendsById: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredFriends = searchTerm
@@ -14,18 +16,26 @@ const FindFriendsByUsername: React.FC = () => {
         ),
       )
     : [];
-
+  const navigate = useNavigate();
   return (
     <div className="w-full text-foreground">
       <main className="p-8 m-4 bg-card text-card-foreground rounded-lg border border-border">
-        <h1 className="text-2xl font-bold mb-4">Tìm bạn bè bằng Username</h1>
+        <div className="flex gap-2">
+          <div className="hover:cursor-pointer hover:opacity-80"
+                onClick={() => navigate('/social/friend')}>
+            <span>
+              <ChevronLeft className="w-8 h-auto"/>
+            </span>
+          </div>
+        <h1 className="text-2xl font-bold mb-4">Add friend by id</h1>
+        </div>
         <div className="grid grid-cols-1 gap-4 mb-6">
           {/* Ô tìm kiếm */}
           <div className="bg-accent rounded hover:bg-ring border border-ring flex items-center px-3 py-2 w-full">
             <FaSearch className="text-accent-foreground mr-2" />
             <input
               type="text"
-              placeholder="Nhập username cần tìm"
+              placeholder="Enter Id"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-transparent outline-none text-accent-foreground placeholder-accent-foreground w-full"
@@ -60,4 +70,4 @@ const FindFriendsByUsername: React.FC = () => {
   );
 };
 
-export default FindFriendsByUsername;
+export default FindFriendsById;

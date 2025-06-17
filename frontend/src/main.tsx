@@ -25,7 +25,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import SettingsPage from '@/pages/settings/settings-page.tsx';
 import ProfilePage from '@/pages/profile/profile-page.tsx';
 import Chat from './pages/social/chat.tsx';
-import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
+import FindFriendsById from './pages/social/findFriendsById.tsx';
 import Guide from './pages/document/Guide.tsx';
 import Rule from './pages/document/Rule.tsx';
 
@@ -100,7 +100,7 @@ createRoot(document.getElementById('root')!).render(
 
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
-              <Route path="/social/friend/findByUsername" element={<FindFriendsByUsername />} />
+              <Route path="/social/friend/findById" element={<FindFriendsById />} />
               <Route path="/social/chat" element={<Chat />} />
 
               <Route path="/document" element={<Guide />}/>

@@ -1,4 +1,4 @@
-import {  Search, SquareUser } from 'lucide-react';
+import { Search, SquareUser, UserPlus } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import React from 'react';
 import { FaUserFriends } from "react-icons/fa";
@@ -10,10 +10,11 @@ import {
   CommandList,
 } from 'cmdk';
 import { Command } from '@/components/ui/command';
-import ChallengeOptions from '@/components/challenge-options';
 import { useQuery } from '@tanstack/react-query';
 
 import { getFriendList } from '@/lib/friend/friend-request-list.ts';
+import { Button } from '@/components/ui/button.tsx';
+import { useNavigate } from 'react-router';
 export default function PlayFriend() {
   const [opponent] = React.useState('Opponent');
   const {data: listFriend} = useQuery(
@@ -22,11 +23,12 @@ export default function PlayFriend() {
       queryFn: getFriendList
     }
   )
+  const navigate = useNavigate();
   return (
-    <div className="w-full text-foreground">
+    <div className="w-full h-full text-foreground flex justify-center items-center">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
         {/* Left */}
-        <div className="p-4 lg:block hidden mt-15">
+        <div className="p-4 lg:block hidden mt-5">
           <div className="flex flex-wrap space-x-2 justify-center">
             <span>
               <SquareUser size={30} />
@@ -46,7 +48,7 @@ export default function PlayFriend() {
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 bg-secondary shadow-lg shadow-ring">
+        <div className="h-auto rounded-4xl my-5 bg-secondary shadow-lg shadow-ring">
           <div className="flex flex-col items-center p-6 space-y-6 ">
             <div className="flex space-x-3">
               <div className='flex items-center justify-center gap-1'>
@@ -59,16 +61,18 @@ export default function PlayFriend() {
               </div>
             </div>
             <div className="w-full shadow-2xl">
-              <Command className="border shadow">
+              <Command className="border shadow h-70">
                 <div className="flex group p-2 space-x-2">
-                  <Search className="pt-1 " size={20}></Search>
+                  <span>
+                    <Search className="pt-0.5 w-5 h-auto"></Search>
+                  </span>
                   <CommandInput
                     placeholder="Type a command or search..."
                     className="focus:border-none w-full focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-transparent"
                   />
                 </div>
                 <CommandList className="p-2">
-                  <CommandEmpty className="p-3">No results found.</CommandEmpty>
+                  <CommandEmpty className="p-3 flex items-center justify-center">No results found.</CommandEmpty>
                   <CommandGroup
                     className="font-bold overflow-auto h-50"
                   >
@@ -86,8 +90,14 @@ export default function PlayFriend() {
                 </CommandList>
               </Command>
             </div>
-            <div>
-              <ChallengeOptions />
+            <div className="w-full">
+              <Button className="w-full flex items-center justify-center px-4 py-3 rounded-md transition"
+              onClick={() => navigate('/social/friend')}>
+                <span className="flex items-center space-x-3">
+                  <UserPlus size={18} />
+                  <span className="font-semibold">Add friends</span>
+                </span>
+              </Button>
             </div>
           </div>
         </div>
