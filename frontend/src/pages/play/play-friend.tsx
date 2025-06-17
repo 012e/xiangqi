@@ -12,7 +12,8 @@ import {
 import { Command } from '@/components/ui/command';
 import ChallengeOptions from '@/components/challenge-options';
 import { useQuery } from '@tanstack/react-query';
-import { getFriendList } from '@/lib/friend/list-friend.ts';
+
+import { getFriendList } from '@/lib/friend/friend-request-list.ts';
 export default function PlayFriend() {
   const [opponent] = React.useState('Opponent');
   const {data: listFriend} = useQuery(

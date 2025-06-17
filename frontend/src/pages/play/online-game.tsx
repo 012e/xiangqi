@@ -17,11 +17,42 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
 import useSettingStore from '@/stores/setting-store';
 import { MyHoverCard } from '@/components/play/my-hover-card.tsx';
+import { useMutation } from '@tanstack/react-query';
+import { postAcceptFriend, postAddFriend, postRejectFriend } from '@/lib/friend/useFriendRequestActions.ts';
+import { toast } from 'sonner';
 
 export default function OnlineGame() {
   const { id } = useParams();
   const { game, onMove, isLoading } = useOnlineGame(id);
-
+  const addFriend = useMutation({
+    mutationFn: postAddFriend,
+    onSuccess: () => {
+      toast('Successfully added friend!');
+      console.log('Successfully')
+    },
+    onError: () => {
+      toast('Fail add friend!');
+      console.log('fail')
+    },
+  });
+  const rejectFriend = useMutation({
+    mutationFn: postRejectFriend,
+    onSuccess: () => {
+      toast('Successfully rejected friend!');
+    },
+    onError: () => {
+      toast('Fail reject friend!');
+    },
+  });
+  const acceptFriend = useMutation({
+    mutationFn: postAcceptFriend,
+    onSuccess: () => {
+      toast('Successfully accepted friend!');
+    },
+    onError: () => {
+      toast('Fail accept friend!');
+    },
+  });
   // Get the time from the store
 
   const selfPlayer = useGameStore((state) => state.selfPlayer);
@@ -47,14 +78,13 @@ export default function OnlineGame() {
   }
 
   function isPlayerTurn({
-    piece,
-  }: {
+                          piece,
+                        }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
     return getPieceColor(piece) === selfPlayer?.color;
   }
-
   return (
     <div className="w-full text-foreground">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] items-start">
@@ -66,7 +96,9 @@ export default function OnlineGame() {
               score: 0,
               image: enemyPlayer.picture,
               isMe: false,
-            }}/>
+              userId: selfPlayer.id, // Add user ID for friend request
+              btnAddFriend: addFriend,
+            }} />
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(enemyPlayer?.time)}
             </div>
@@ -103,7 +135,7 @@ export default function OnlineGame() {
               score: 0,
               image: selfPlayer.picture,
               isMe: true,
-            }}/>
+            }} />
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(selfPlayer?.time)}
             </div>

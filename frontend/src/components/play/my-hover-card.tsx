@@ -12,15 +12,25 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
+import { UseMutationResult } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 
 export type HoverCardType = {
   name: string;
   image: string;
   score: number;
   isMe: boolean;
+  userId?: number; // Added to store the user ID for friend requests
+  btnAddFriend?: UseMutationResult<AxiosResponse, Error, number>;
 }
 
 export function MyHoverCard({ props }: { props: HoverCardType }) {
+  const handleAddFriend = () => {
+    if (props.btnAddFriend && props.userId) {
+      props.btnAddFriend.mutate(props.userId);
+      console.log(props.userId)
+    }
+  }
   return (
     <div className="w-full">
       <HoverCard>
@@ -104,7 +114,9 @@ export function MyHoverCard({ props }: { props: HoverCardType }) {
                   </PopoverContent>
                 </Popover>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button className=" tracking-tight w-auto flex font-semibold hover:text-muted-foreground items-center gap-2">
+                  <Button
+                    onClick={handleAddFriend}
+                    className=" tracking-tight w-auto flex font-semibold hover:text-muted-foreground items-center gap-2">
                     <Handshake></Handshake>
                     <div>Add Friend</div>
                   </Button>
