@@ -33,8 +33,10 @@ const tabs = [
     value: "suggestions",
   },
 ];
-
-export default function TabsFriend() {
+type TabsFriendProps = {
+  searchText: string;
+};
+export default function TabsFriend({ searchText }: TabsFriendProps) {
   const {data: friendList} = useQuery(
     {
       queryKey: ['listFriends'],
@@ -104,25 +106,31 @@ export default function TabsFriend() {
         { value: 'pending', list: friendPending },
         { value: 'sent', list: friendSent },
         { value: 'friend', list: friendList },
-      ].map(({ value, list }) => (
-        <TabsContent value={value} key={value}>
-          {list?.map((item, index) => (
-            <div className="flex gap-2" key={index}>
-              <UserRow
-                userId={item.id}
-                typeTab={value}
-                username={item.username}
-                displayName={item.name}
-                avatarUrl={item.picture}
-                onAddFriendClick={addFriend}
-                onAccept={acceptFriend}
-                onDecline={rejectFriend}
-                onRemove={removeFriend}
-              />
-            </div>
-          ))}
-        </TabsContent>
-      ))}
+      ].map(({ value, list }) =>{
+        const filteredList = list?.filter(user =>
+          user.username.toLowerCase().includes(searchText.toLowerCase())
+        );
+
+        return (
+          <TabsContent value={value} key={value}>
+            {filteredList?.map((item, index) => (
+              <div className="flex gap-2" key={index}>
+                <UserRow
+                  userId={item.id}
+                  typeTab={value}
+                  username={item.username}
+                  displayName={item.name}
+                  avatarUrl={item.picture}
+                  onAddFriendClick={addFriend}
+                  onAccept={acceptFriend}
+                  onDecline={rejectFriend}
+                  onRemove={removeFriend}
+                />
+              </div>
+            ))}
+          </TabsContent>
+        );
+      })}
 
     </Tabs>
   );
