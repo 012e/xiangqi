@@ -18,12 +18,12 @@ import GameEndedDialog from '@/components/game-ended-dialog.tsx';
 import useSettingStore from '@/stores/setting-store';
 import { MyHoverCard } from '@/components/play/my-hover-card.tsx';
 import { useMutation } from '@tanstack/react-query';
-import { postAcceptFriend, postAddFriend, postRejectFriend } from '@/lib/friend/useFriendRequestActions.ts';
+import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const { game, onMove, isLoading } = useOnlineGame(id);
+  const { onMove, isLoading } = useOnlineGame(id);
   const addFriend = useMutation({
     mutationFn: postAddFriend,
     onSuccess: () => {
@@ -33,24 +33,6 @@ export default function OnlineGame() {
     onError: () => {
       toast('Fail add friend!');
       console.log('fail')
-    },
-  });
-  const rejectFriend = useMutation({
-    mutationFn: postRejectFriend,
-    onSuccess: () => {
-      toast('Successfully rejected friend!');
-    },
-    onError: () => {
-      toast('Fail reject friend!');
-    },
-  });
-  const acceptFriend = useMutation({
-    mutationFn: postAcceptFriend,
-    onSuccess: () => {
-      toast('Successfully accepted friend!');
-    },
-    onError: () => {
-      toast('Fail accept friend!');
     },
   });
   // Get the time from the store
@@ -90,13 +72,13 @@ export default function OnlineGame() {
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] items-start">
         {/* Left */}
         <div className="p-4 lg:block hidden mt-10 bg-background">
-          <div className="flex items-center px-8 w-full">
+          <div className="flex items-center px-6 w-full">
             <MyHoverCard props={{
               name: enemyPlayer.username,
               score: 0,
               image: enemyPlayer.picture,
               isMe: false,
-              userId: selfPlayer.id, // Add user ID for friend request
+              userId: enemyPlayer.id, // Add user ID for friend request
               btnAddFriend: addFriend,
             }} />
             <div className={`text-xl font-bold ml-auto`}>
@@ -129,7 +111,7 @@ export default function OnlineGame() {
               </div>
             </div>
           </div>
-          <div className="flex items-center px-8 w-full">
+          <div className="flex items-center px-6 w-full">
             <MyHoverCard props={{
               name: selfPlayer.username,
               score: 0,

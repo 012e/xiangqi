@@ -1,8 +1,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReactElement } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { getFriendList, getRequestPending, getRequestSent } from '@/lib/friend/friend-request-list.ts';
 import UserRow from '@/components/userRow.tsx';
+import {
+  friendDelete,
+  postAcceptFriend,
+  postAddFriend,
+  postRejectFriend,
+} from '@/lib/friend/useFriendRequestActions.ts';
+import { toast } from 'sonner';
 export type TabFriend = {
   name: string;
   value: string;
@@ -42,6 +49,43 @@ export default function TabsFriend() {
     queryKey: ['listPending'],
     queryFn: getRequestPending
   })
+
+  const addFriend = useMutation({
+    mutationFn: postAddFriend,
+    onSuccess: () => {
+      toast('Successfully added friend!');
+    },
+    onError: () => {
+      toast('Fail add friend!');
+    },
+  });
+  const rejectFriend = useMutation({
+    mutationFn: postRejectFriend,
+    onSuccess: () => {
+      toast('Successfully rejected friend!');
+    },
+    onError: () => {
+      toast('Fail reject friend!');
+    },
+  });
+  const acceptFriend = useMutation({
+    mutationFn: postAcceptFriend,
+    onSuccess: () => {
+      toast('Successfully accepted friend!');
+    },
+    onError: () => {
+      toast('Fail accept friend!');
+    },
+  });
+  const removeFriend = useMutation({
+    mutationFn: friendDelete,
+    onSuccess: () => {
+      toast('Successfully removed friend!');
+    },
+    onError: () => {
+      toast('Fail remove friend!');
+    },
+  })
   return (
     <Tabs defaultValue={tabs[0].value} className="w-full">
       <TabsList className="w-full h-auto p-0 bg-background justify-start border-b rounded-none">
@@ -56,29 +100,29 @@ export default function TabsFriend() {
         ))}
       </TabsList>
 
-      <TabsContent value={'pending'}>
-        {friendPending?.map((pending, index) => {
-          return <div className="flex gap-2" key={index}>
-            <UserRow typeTab={'pending'} username={pending.username} key={index} displayName={pending.name} avatarUrl={pending.picture}></UserRow>
-          </div>
-        })}
-      </TabsContent>
-
-      <TabsContent value={'sent'}>
-        {friendSent?.map((sent, index) => {
-          return <div className="flex gap-2" key={index}>
-            <UserRow typeTab={'sent'} username={sent.username} key={index} displayName={sent.name} avatarUrl={sent.picture}></UserRow>
-          </div>
-        })}
-      </TabsContent>
-
-      <TabsContent value={'friend'}>
-        {friendList?.map((friend, index) => {
-          return <div className="flex gap-2" key={index}>
-            <UserRow typeTab={'friend'} username={friend.username} key={index} displayName={friend.name} avatarUrl={friend.picture}></UserRow>
-          </div>
-        })}
-      </TabsContent>
+      {[
+        { value: 'pending', list: friendPending },
+        { value: 'sent', list: friendSent },
+        { value: 'friend', list: friendList },
+      ].map(({ value, list }) => (
+        <TabsContent value={value} key={value}>
+          {list?.map((item, index) => (
+            <div className="flex gap-2" key={index}>
+              <UserRow
+                userId={item.id}
+                typeTab={value}
+                username={item.username}
+                displayName={item.name}
+                avatarUrl={item.picture}
+                onAddFriendClick={addFriend}
+                onAccept={acceptFriend}
+                onDecline={rejectFriend}
+                onRemove={removeFriend}
+              />
+            </div>
+          ))}
+        </TabsContent>
+      ))}
 
     </Tabs>
   );

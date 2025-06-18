@@ -1,36 +1,36 @@
 import React from 'react';
 import {
   FaGamepad,
-  FaEnvelope,
-  FaUserPlus,
-  FaUser,
-  FaGift,
 } from 'react-icons/fa';
 import { Check, CircleX, Trash2, UserPlus, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
+import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 
 type UserRowProps = {
+  userId: number;
   avatarUrl: string;
   username: string;
   displayName: string;
   //friend
-  onPlayClick?: () => void;
-  onRemove?: () => void;
+  onPlayClick?: UseMutationResult<AxiosResponse, Error, number>;
+  onRemove?: UseMutationResult<AxiosResponse, Error, number>;
 
   //sent
-  onCancel?: () => void;
+  onCancel?: UseMutationResult<AxiosResponse, Error, number>;
 
   //pending
-  onAccept?: () => void;
-  onDecline?: () => void;
+  onAccept?: UseMutationResult<AxiosResponse, Error, number>;
+  onDecline?: UseMutationResult<AxiosResponse, Error, number>;
 
   //suggestions
-  onAddFriendClick?: () => void;
+  onAddFriendClick?: UseMutationResult<AxiosResponse, Error, number>;
 
   typeTab: string;
 };
 
 const UserRow: React.FC<UserRowProps> = ({
+                                           userId,
                                            avatarUrl,
                                            username,
                                            displayName,
@@ -42,6 +42,58 @@ const UserRow: React.FC<UserRowProps> = ({
                                            onAddFriendClick,
                                            typeTab,
                                          }) => {
+  const queryClient = useQueryClient();
+  const handlePlay = () => {
+    if(onPlayClick) {
+      onPlayClick.mutate(userId,{})
+    }
+  }
+  const handleRemove = () => {
+    if(onRemove) {
+      onRemove.mutate(userId,{
+        onSuccess:  () => {
+          queryClient.invalidateQueries({ queryKey: ['listFriends'] })
+        }
+      });
+    }
+  }
+  const handleCancel = () => {
+    if(onCancel) {
+      onCancel.mutate(userId,{
+        onSuccess:  () => {
+          queryClient.invalidateQueries({ queryKey: ['listSent'] })
+        }
+      });
+    }
+  }
+  const handleAccept = () => {
+    if (onAccept) {
+      onAccept.mutate(userId, {
+        onSuccess:  () => {
+          queryClient.invalidateQueries({ queryKey: ['listPending'] })
+          queryClient.invalidateQueries({ queryKey: ['listFriends'] })
+        }
+      })
+    }
+  }
+  const handleDecline = () => {
+    if (onDecline) {
+      onDecline.mutate(userId, {
+        onSuccess:  () => {
+          queryClient.invalidateQueries({ queryKey: ['listPending'] })
+        }
+      })
+    }
+  }
+  const handleAddFriend = () => {
+    if (onAddFriendClick) {
+      onAddFriendClick.mutate(userId, {
+        onSuccess:  () => {
+          queryClient.invalidateQueries({ queryKey: ['listSuggestions'] })
+        }
+      })
+    }
+  }
   return (
     <div className="bg-accent rounded hover:cursor-pointer hover:opacity-85 flex items-center justify-between p-3 w-full">
       {/* Avatar + Info */}
@@ -60,18 +112,18 @@ const UserRow: React.FC<UserRowProps> = ({
       <div className="flex space-x-4 text-foreground text-sm">
         {
           typeTab === 'friend' ? <div className="flex gap-2">
-              <FaGamepad className="hover:opacity-70 cursor-pointer" onClick={onPlayClick} />
-              <Trash2 className="hover:opacity-70 cursor-pointer" onClick={onRemove} />
+              <FaGamepad className="hover:opacity-70 cursor-pointer" onClick={handlePlay} />
+              <Trash2 className="hover:opacity-70 cursor-pointer" onClick={handleRemove} />
             </div> :
             typeTab === 'sent' ? <div>
-              <CircleX className="hover:opacity-70 cursor-pointer" onClick={onCancel} />
+              <CircleX className="hover:opacity-70 cursor-pointer" onClick={handleCancel} />
               </div> :
               typeTab === 'pending' ? <div className="flex gap-2">
-                <Check className="hover:opacity-70 cursor-pointer" onClick={onAccept} />
-                <X className="hover:opacity-70 cursor-pointer" onClick={onDecline} />
+                <Check className="hover:opacity-70 cursor-pointer" onClick={handleAccept} />
+                <X className="hover:opacity-70 cursor-pointer" onClick={handleDecline} />
                 </div> :
                 typeTab === 'suggestions' ? <div>
-                  <UserPlus className="hover:opacity-70 cursor-pointer" onClick={onAddFriendClick} />
+                  <UserPlus className="hover:opacity-70 cursor-pointer" onClick={handleAddFriend} />
                 </div> : "Not found"
         }
       </div>
