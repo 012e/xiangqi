@@ -28,7 +28,6 @@ export function MyHoverCard({ props }: { props: HoverCardType }) {
   const handleAddFriend = () => {
     if (props.btnAddFriend && props.userId) {
       props.btnAddFriend.mutate(props.userId);
-      console.log(props.userId)
     }
   }
   return (
