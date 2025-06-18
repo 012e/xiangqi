@@ -1,4 +1,4 @@
-import { Search, SquareUser, UserPlus } from 'lucide-react';
+import { Search, Send, SquareUser, UserPlus } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
 import React from 'react';
 import { FaUserFriends } from "react-icons/fa";
@@ -15,6 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getFriendList } from '@/lib/friend/friend-request-list.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { useNavigate } from 'react-router';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 export default function PlayFriend() {
   const [opponent] = React.useState('Opponent');
   const {data: listFriend} = useQuery(
@@ -71,7 +72,7 @@ export default function PlayFriend() {
                     className="focus:border-none w-full focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-transparent"
                   />
                 </div>
-                <CommandList className="p-2">
+                <CommandList className="">
                   <CommandEmpty className="p-3 flex items-center justify-center">No results found.</CommandEmpty>
                   <CommandGroup
                     className="font-bold overflow-auto h-50"
@@ -79,10 +80,17 @@ export default function PlayFriend() {
                       {listFriend?.map((fr, index) => {
                         return (
                           <CommandItem
-                            className="!text-2 !pl-2 font-normal hover:bg-muted hover:cursor-pointer"
+                            className="flex gap-3 justify-start items-center !text-2 !pl-2 font-normal hover:bg-muted  p-3"
                             key={index}
                           >
+                            <Avatar>
+                              <AvatarImage src={fr.picture} ></AvatarImage>
+                              <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
                             {fr.username}
+                            <span className="ml-auto ">
+                              <Send className="hover:cursor-pointer hover:opacity-70 font-semibold" ></Send>
+                            </span>
                           </CommandItem>
                         );
                       })}

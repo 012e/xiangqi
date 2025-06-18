@@ -28,11 +28,9 @@ export default function OnlineGame() {
     mutationFn: postAddFriend,
     onSuccess: () => {
       toast('Successfully added friend!');
-      console.log('Successfully')
     },
     onError: () => {
       toast('Fail add friend!');
-      console.log('fail')
     },
   });
   // Get the time from the store
@@ -134,7 +132,7 @@ export default function OnlineGame() {
             </div>
             {/*broad move*/}
             <div className="bg-background rounded-2xl w-full">
-              {/* <MovePosition moves={[]}></MovePosition> */}
+              {/* <MovePosition ></MovePosition> */}
             </div>
             {/*tools*/}
             <div className="flex space-x-3">
@@ -142,7 +140,7 @@ export default function OnlineGame() {
                 <Handshake className="transition-transform group-hover:scale-150 text-green-500" />
               </Button>
               <Button className="group">
-                <Flag className="transition-transform group-hover:scale-150 "></Flag>
+                <Flag className="transition-transform group-hover:scale-150 "/>
               </Button>
               <Button className="group">
                 <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400" />
