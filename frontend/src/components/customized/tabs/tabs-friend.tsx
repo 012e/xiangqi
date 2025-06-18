@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReactElement } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getFriendList, getRequestPending, getRequestSent } from '@/lib/friend/friend-request-list.ts';
+import UserRow from '@/components/userRow.tsx';
 export type TabFriend = {
   name: string;
   value: string;
@@ -58,22 +59,23 @@ export default function TabsFriend() {
       <TabsContent value={'pending'}>
         {friendPending?.map((pending, index) => {
           return <div className="flex gap-2" key={index}>
-            {pending.username}
+            <UserRow typeTab={'pending'} username={pending.username} key={index} displayName={pending.name} avatarUrl={pending.picture}></UserRow>
           </div>
         })}
       </TabsContent>
+
       <TabsContent value={'sent'}>
-        {friendSent?.map((pending, index) => {
+        {friendSent?.map((sent, index) => {
           return <div className="flex gap-2" key={index}>
-            {pending.username}
+            <UserRow typeTab={'sent'} username={sent.username} key={index} displayName={sent.name} avatarUrl={sent.picture}></UserRow>
           </div>
         })}
       </TabsContent>
 
       <TabsContent value={'friend'}>
-        {friendList?.map((pending, index) => {
+        {friendList?.map((friend, index) => {
           return <div className="flex gap-2" key={index}>
-            {pending.username}
+            <UserRow typeTab={'friend'} username={friend.username} key={index} displayName={friend.name} avatarUrl={friend.picture}></UserRow>
           </div>
         })}
       </TabsContent>
