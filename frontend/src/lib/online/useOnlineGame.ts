@@ -139,6 +139,6 @@ export function useOnlineGame(gameId: string | undefined) {
     onMove,
     playingColor,
     isLoading,
-    isPlayWithBot: data?.isPlayWithBot ?? false,
+    isPlayWithBot: data?.isGameWithBot ?? false,
   };
 }

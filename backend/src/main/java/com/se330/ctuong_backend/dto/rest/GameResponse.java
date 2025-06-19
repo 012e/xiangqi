@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.dto.rest;
 
+import com.se330.ctuong_backend.config.ApplicationConfiguration;
 import com.se330.xiangqi.Xiangqi;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
@@ -38,7 +39,11 @@ public class    GameResponse {
 
     private String result;
     private String resultDetail;
-    private Boolean isGameWithBot;
+
+    public boolean getIsGameWithBot() {
+        return whitePlayer != null && whitePlayer.getId().equals(ApplicationConfiguration.getBotId()) ||
+               blackPlayer != null && blackPlayer.getId().equals(ApplicationConfiguration.getBotId());
+    }
 
     @Data
     @Builder

@@ -70,17 +70,37 @@ export default function OnlineGame() {
         {/* Left */}
         <div className="p-4 lg:block hidden mt-10 bg-background">
           <div className="flex items-center px-6 w-full">
-            <MyHoverCard props={{
-              name: enemyPlayer.username,
-              score: 0,
-              image: enemyPlayer.picture,
-              isMe: false,
-              userId: enemyPlayer.id, // Add user ID for friend request
-              btnAddFriend: addFriend,
-            }} />
-            <div className={`text-xl font-bold ml-auto`}>
-              {formatTime(enemyPlayer?.time)}
-            </div>
+            {
+              isPlayWithBot ? (
+                <div className="flex flex-row items-center w-full">
+                  <MyHoverCard props={{
+                    name: enemyPlayer.username,
+                    score: 3,
+                    image: "https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg",
+                    isMe: false,
+                    userId: enemyPlayer.id, // Add user ID for friend request
+                    btnAddFriend: addFriend,
+                  }} />
+                  <div className={`text-xl font-bold ml-auto`}>
+                    {formatTime(enemyPlayer?.time)}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-row items-center w-full">
+                  <MyHoverCard props={{
+                    name: enemyPlayer.username,
+                    score: 0,
+                    image: enemyPlayer.picture,
+                    isMe: false,
+                    userId: enemyPlayer.id, // Add user ID for friend request
+                    btnAddFriend: addFriend,
+                  }} />
+                  <div className={`text-xl font-bold ml-auto`}>
+                    {formatTime(enemyPlayer?.time)}
+                  </div>
+                </div>
+              )
+            }
           </div>
           <div className="flex justify-center items-center px-3 bg-background ">
             <div className="flex flex-col items-center">
@@ -126,7 +146,7 @@ export default function OnlineGame() {
             {/*h1*/}
             <div>
               <h1 className="text-4xl font-bold justify-center tracking-tight">
-                {isPlayWithBot ? 'Play with Bot' : 'Play Online'}
+                {isPlayWithBot ? 'Game with Bot' : 'Play Online'}
               </h1>
             </div>
             {/*broad move*/}
@@ -152,15 +172,19 @@ export default function OnlineGame() {
               </Button>
             </div>
             <div className="grid gap-2 w-full">
-              <Textarea
-                placeholder="Your Message"
-                className="resize-none read-only:opacity-80 pointer-events-none h-30 "
-                readOnly
-              ></Textarea>
-              <Textarea
-                placeholder="Type your message here."
-                className="resize-none "
-              />
+              {
+                !isPlayWithBot && <div>
+                  <Textarea
+                    placeholder="Your Message"
+                    className="resize-none read-only:opacity-80 pointer-events-none h-30 "
+                    readOnly
+                  ></Textarea>
+                  <Textarea
+                    placeholder="Type your message here."
+                    className="resize-none "
+                  />
+                </div>
+              }
             </div>
           </div>
         </div>
