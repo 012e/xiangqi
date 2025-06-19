@@ -38,6 +38,7 @@ public class    GameResponse {
 
     private String result;
     private String resultDetail;
+    private Boolean isGameWithBot;
 
     @Data
     @Builder

@@ -21,4 +21,5 @@ export type GameResponse = {
   whiteTimeLeft: number,
   result: string,
   resultDetail: string
+  isPlayWithBot: boolean
 };

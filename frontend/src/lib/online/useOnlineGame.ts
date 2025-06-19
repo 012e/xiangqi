@@ -81,7 +81,7 @@ export function useOnlineGame(gameId: string | undefined) {
       return;
     }
     initialData.current = data as GameResponse;
-    
+
     const fen = data.uciFen?.substring(0, data.uciFen?.indexOf('|')).trim();
     
     const ourPlayer: Player = getOurPlayer(data, user?.sub ?? '');
@@ -132,12 +132,13 @@ export function useOnlineGame(gameId: string | undefined) {
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
     },
   );
-
+  console.log("data",data);
   return {
     game: gameState,
     fen: useGameStore((state) => state.fen),
     onMove,
     playingColor,
     isLoading,
+    isPlayWithBot: data?.isPlayWithBot ?? false,
   };
 }

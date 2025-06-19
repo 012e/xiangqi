@@ -11,7 +11,6 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
-// import MovePosition from '@/components/move-position.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
@@ -23,7 +22,7 @@ import { toast } from 'sonner';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const { onMove, isLoading } = useOnlineGame(id);
+  const { onMove, isLoading, isPlayWithBot} = useOnlineGame(id);
   const addFriend = useMutation({
     mutationFn: postAddFriend,
     onSuccess: () => {
@@ -127,7 +126,7 @@ export default function OnlineGame() {
             {/*h1*/}
             <div>
               <h1 className="text-4xl font-bold justify-center tracking-tight">
-                Play Online
+                {isPlayWithBot ? 'Play with Bot' : 'Play Online'}
               </h1>
             </div>
             {/*broad move*/}
