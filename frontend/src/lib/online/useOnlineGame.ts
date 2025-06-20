@@ -132,7 +132,6 @@ export function useOnlineGame(gameId: string | undefined) {
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
     },
   );
-  console.log("data",data);
   return {
     game: gameState,
     fen: useGameStore((state) => state.fen),
