@@ -73,7 +73,6 @@ export default function SelfPlayBoard({
         });
         return true;
       }
-      console.log('false');
       return false;
     },
     [game, onMove, isViewingHistory, onReturnToCurrentGame, currentGame],
@@ -90,6 +89,7 @@ export default function SelfPlayBoard({
 
     return [part1, part2];
   }
+
   useEffect(() => {
     if (restoreGameState) {
       const newGame = new Xiangqi();

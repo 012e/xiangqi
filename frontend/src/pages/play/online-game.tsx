@@ -11,7 +11,6 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
-// import MovePosition from '@/components/move-position.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
@@ -20,10 +19,13 @@ import { MyHoverCard } from '@/components/play/my-hover-card.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import MovePosition, { HistoryMove } from '@/components/move-position';
+import Xiangqi from '@/lib/xiangqi';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const { onMove, isLoading } = useOnlineGame(id);
+  const { onMove, isLoading, isPlayWithBot} = useOnlineGame(id);
   const addFriend = useMutation({
     mutationFn: postAddFriend,
     onSuccess: () => {
@@ -33,13 +35,97 @@ export default function OnlineGame() {
       toast('Fail add friend!');
     },
   });
+
+  // History state management
+  const [selectHistory, setSelectHistory] = useState<HistoryMove>();
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
+  const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
+  const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
+
   // Get the time from the store
 
   const selfPlayer = useGameStore((state) => state.selfPlayer);
   const enemyPlayer = useGameStore((state) => state.enemyPlayer);
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
+  const gameState = useGameStore((state) => state.gameState);
   const pieceTheme = useSettingStore(state => state.pieceTheme);
+
+  // Get game history from gameState
+  const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);
+
+  // History navigation functions
+  function getRestoreGame(state: HistoryMove) {
+    setSelectHistory(state);
+    setIsViewingHistory(true);
+  }
+
+  function handleReturnToCurrentGame() {
+    setSelectHistory(undefined);
+    setIsViewingHistory(false);
+  }
+
+  function splitTwoParts(input: string): [string, string] | null {
+    const regex = /^([a-i])(10|[1-9])([a-i])(10|[1-9])$/;
+    const match = input.match(regex);
+
+    if (!match) return null;
+
+    const part1 = match[1] + match[2];
+    const part2 = match[3] + match[4];
+
+    return [part1, part2];
+  }
+
+  // Update current game when gameState changes
+  useEffect(() => {
+    if (gameState && !isViewingHistory) {
+      setCurrentGame(gameState);
+    }
+  }, [gameState, isViewingHistory]);
+
+  // Handle history restoration
+  useEffect(() => {
+    if (selectHistory && gameHistory.length > 0) {
+      const newGame = new Xiangqi();
+      if (selectHistory.color === 'white') {
+        for (let i = 1; i <= selectHistory.index * 2 - 1; ++i) {
+          const moveStr = gameHistory[i - 1];
+          const parts = moveStr ? splitTwoParts(moveStr) : null;
+          if (parts) {
+            newGame.move({ from: parts[0], to: parts[1] });
+          }
+        }
+      } else {
+        for (let i = 1; i <= selectHistory.index * 2; ++i) {
+          const moveStr = gameHistory[i - 1];
+          const parts = moveStr ? splitTwoParts(moveStr) : null;
+          if (parts) {
+            newGame.move({ from: parts[0], to: parts[1] });
+          }
+        }
+      }
+      setHistoricalGame(newGame);
+    } else if (!isViewingHistory) {
+      setHistoricalGame(currentGame);
+    }
+  }, [selectHistory, gameHistory, currentGame, isViewingHistory]);
+
+  // Enhanced onMove function that handles history viewing
+  const handleMove = useCallback((from: string, to: string, piece: string): boolean => {
+    // If viewing history, return to current game first
+    if (isViewingHistory) {
+      handleReturnToCurrentGame();
+      // Don't make the move immediately, let user try again
+      return false;
+    }
+    
+    return onMove(from, to, piece);
+  }, [onMove, isViewingHistory]);
+
+  // Get the appropriate game state for display
+  const displayGame = isViewingHistory ? historicalGame : currentGame;
+  const displayFen = displayGame?.exportFen() || fen;
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
@@ -71,17 +157,37 @@ export default function OnlineGame() {
         {/* Left */}
         <div className="p-4 lg:block hidden mt-10 bg-background">
           <div className="flex items-center px-6 w-full">
-            <MyHoverCard props={{
-              name: enemyPlayer.username,
-              score: 0,
-              image: enemyPlayer.picture,
-              isMe: false,
-              userId: enemyPlayer.id, // Add user ID for friend request
-              btnAddFriend: addFriend,
-            }} />
-            <div className={`text-xl font-bold ml-auto`}>
-              {formatTime(enemyPlayer?.time)}
-            </div>
+            {
+              isPlayWithBot ? (
+                <div className="flex flex-row items-center w-full">
+                  <MyHoverCard props={{
+                    name: enemyPlayer.username,
+                    score: 3,
+                    image: "https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg",
+                    isMe: false,
+                    userId: enemyPlayer.id, // Add user ID for friend request
+                    btnAddFriend: addFriend,
+                  }} />
+                  <div className={`text-xl font-bold ml-auto`}>
+                    {formatTime(enemyPlayer?.time)}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-row items-center w-full">
+                  <MyHoverCard props={{
+                    name: enemyPlayer.username,
+                    score: 0,
+                    image: enemyPlayer.picture,
+                    isMe: false,
+                    userId: enemyPlayer.id, // Add user ID for friend request
+                    btnAddFriend: addFriend,
+                  }} />
+                  <div className={`text-xl font-bold ml-auto`}>
+                    {formatTime(enemyPlayer?.time)}
+                  </div>
+                </div>
+              )
+            }
           </div>
           <div className="flex justify-center items-center px-3 bg-background ">
             <div className="flex flex-col items-center">
@@ -95,13 +201,13 @@ export default function OnlineGame() {
                     <Chessboard
                       boardWidth={400}
                       id="online-xiangqi-board"
-                      onPieceDrop={onMove}
+                      onPieceDrop={handleMove}
                       isDraggablePiece={(piece) =>
-                        isPlayerTurn(piece) && !gameEnded
+                        isPlayerTurn(piece) && !gameEnded && !isViewingHistory
                       }
                       customPieces={pieceTheme}
                       boardOrientation={selfPlayer?.color}
-                      position={fen}
+                      position={displayFen}
                       animationDuration={200}
                     />
                   </div>
@@ -120,6 +226,13 @@ export default function OnlineGame() {
               {formatTime(selfPlayer?.time)}
             </div>
           </div>
+          <div className="p-3 mx-5">
+            {isViewingHistory && (
+              <div className=" bg-yellow-500 text-black text-center py-1 text-sm font-bold z-10">
+                Watching history
+              </div>
+            )}
+          </div>
         </div>
         {/* Right */}
         <div className="rounded-4xl my-5 bg-muted shadow-lg shadow-ring">
@@ -127,12 +240,17 @@ export default function OnlineGame() {
             {/*h1*/}
             <div>
               <h1 className="text-4xl font-bold justify-center tracking-tight">
-                Play Online
+                {isPlayWithBot ? 'Game with Bot' : 'Play Online'}
               </h1>
             </div>
             {/*broad move*/}
             <div className="bg-background rounded-2xl w-full">
-              {/* <MovePosition ></MovePosition> */}
+              <MovePosition
+                moves={gameHistory}
+                setRestoreHistory={getRestoreGame}
+                isViewingHistory={isViewingHistory}
+                onReturnToCurrentGame={handleReturnToCurrentGame}
+              />
             </div>
             {/*tools*/}
             <div className="flex space-x-3">
@@ -153,15 +271,19 @@ export default function OnlineGame() {
               </Button>
             </div>
             <div className="grid gap-2 w-full">
-              <Textarea
-                placeholder="Your Message"
-                className="resize-none read-only:opacity-80 pointer-events-none h-30 "
-                readOnly
-              ></Textarea>
-              <Textarea
-                placeholder="Type your message here."
-                className="resize-none "
-              />
+              {
+                !isPlayWithBot && <div>
+                  <Textarea
+                    placeholder="Your Message"
+                    className="resize-none read-only:opacity-80 pointer-events-none h-30 "
+                    readOnly
+                  ></Textarea>
+                  <Textarea
+                    placeholder="Type your message here."
+                    className="resize-none "
+                  />
+                </div>
+              }
             </div>
           </div>
         </div>

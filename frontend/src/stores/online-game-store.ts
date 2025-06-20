@@ -131,10 +131,13 @@ export const useGameStore = create<GameStore>()(
             const interval = get().interval;
 
             // handle game state
-            const gameState = new Xiangqi(get().gameState.exportFen());
-            if (!gameState.isLegalMove(move).ok) {
+            const currentGameState = get().gameState;
+            if (!currentGameState.isLegalMove(move).ok) {
               return false;
             }
+            
+            // Create a copy of the current game state to preserve history
+            const gameState = new Xiangqi(currentGameState.exportUciFen());
             gameState.move(move);
 
             // begin a new interval for the other player

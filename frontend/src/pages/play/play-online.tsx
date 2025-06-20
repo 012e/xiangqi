@@ -11,7 +11,7 @@ import {
 import SelfPlayBoard from './self-playboard';
 import Combobox from '@/components/combobox';
 import { Button } from '@/components/ui/button';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import MovePosition, { HistoryMove } from '@/components/move-position';
 import { useCreateGame } from '@/stores/useCreateGame.ts';
 import { useQuery } from '@tanstack/react-query';
@@ -21,11 +21,12 @@ import { RiBaseStationLine } from "react-icons/ri";
 import { FaRobot } from "react-icons/fa";
 export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
   const { createGame, loading } = useCreateGame();
+
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);
-  const [opponent] = React.useState('Opponent');
-  const [player, setPlayer] = useState<'white' | 'black'>('white');
   const [isViewingHistory, setIsViewingHistory] = useState(false);
+
+  const [player, setPlayer] = useState<'white' | 'black'>('white');
   const { data: gameTypes } = useQuery({
     queryKey: ['gameTypes'],
     queryFn: getGameTypes,
@@ -76,7 +77,7 @@ export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
             <span>
               <SquareUser size={30} />
             </span>
-            <span>{opponent}</span>
+            <span>Opponent</span>
           </div>
           {' '}
           <div className="flex justify-center p-3">

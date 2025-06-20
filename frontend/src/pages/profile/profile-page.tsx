@@ -20,7 +20,6 @@ const ProfilePage: React.FC = () => {
     queryKey: ['profile'],
     queryFn: getProfileMe,
   });
-  console.log(myProfile);
   const maxBioLength = 50;
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
