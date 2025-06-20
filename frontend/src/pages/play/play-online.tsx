@@ -77,7 +77,7 @@ export default function PlayOnline({ isOnline }: { isOnline: boolean }) {
             <span>
               <SquareUser size={30} />
             </span>
-            <span>"Opponent"</span>
+            <span>Opponent</span>
           </div>
           {' '}
           <div className="flex justify-center p-3">

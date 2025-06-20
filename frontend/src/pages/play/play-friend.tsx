@@ -1,6 +1,6 @@
 import { Search, Send, SquareUser, UserPlus } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
-import React from 'react';
+import React, { useState } from 'react';
 import { FaUserFriends } from "react-icons/fa";
 import {
   CommandEmpty,
@@ -16,8 +16,14 @@ import { getFriendList } from '@/lib/friend/friend-request-list.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { useNavigate } from 'react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
+import MovePosition, { HistoryMove } from '@/components/move-position';
 export default function PlayFriend() {
-  const [opponent] = React.useState('Opponent');
+  const [player, setPlayer] = useState<'white' | 'black'>('white');
+  const [selectHistory, setSelectHistory] = useState<HistoryMove>();
+  const [history, setHistory] = useState<string[]>([]);
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
+
+
   const {data: listFriend} = useQuery(
     {
       queryKey: ['listFriends'],
@@ -25,6 +31,18 @@ export default function PlayFriend() {
     }
   )
   const navigate = useNavigate();
+  function updateHistory(history: string[]) {
+    setHistory([...history]);
+  }
+  function getRestoreGame(state: HistoryMove) {
+    setSelectHistory(state);
+    setIsViewingHistory(true);
+  }
+
+  function handleReturnToCurrentGame() {
+    setSelectHistory(undefined);
+    setIsViewingHistory(false);
+  }
   return (
     <div className="w-full h-full text-foreground flex justify-center items-center">
       <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
@@ -34,12 +52,21 @@ export default function PlayFriend() {
             <span>
               <SquareUser size={30} />
             </span>
-            <span>{opponent}</span>
+            <span>opponent</span>
           </div>
-          <div className="flex justify-center p-3">
+          <div className="flex justify-center p-3 items-center">
             <div className="border-2">
-              <SelfPlayBoard boardOrientation="white" />
-            </div>
+              <SelfPlayBoard
+                              boardOrientation={player}
+                              onMove={({ newBoard }) => {
+                                updateHistory(newBoard.getHistory());
+                              }}
+                              currentHistory={history}
+                              restoreGameState={selectHistory}
+                              isViewingHistory={isViewingHistory}
+                              onReturnToCurrentGame={handleReturnToCurrentGame}
+                            />
+            </div> 
           </div>
           <div className="flex flex-wrap space-x-2 justify-center ">
             <span>
@@ -61,6 +88,14 @@ export default function PlayFriend() {
                 </h1>
               </div>
             </div>
+            <div className="bg-background rounded-2xl w-full">
+                <MovePosition
+                  moves={history}
+                  setRestoreHistory={getRestoreGame}
+                  isViewingHistory={isViewingHistory}
+                  onReturnToCurrentGame={handleReturnToCurrentGame}
+                />
+              </div>
             <div className="w-full shadow-2xl">
               <Command className="border shadow h-70">
                 <div className="flex group p-2 space-x-2">
