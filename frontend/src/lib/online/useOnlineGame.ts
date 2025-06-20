@@ -94,7 +94,7 @@ export function useOnlineGame(gameId: string | undefined) {
       playingColor: playingColor,
       selfPlayer: ourPlayer,
       enemyPlayer: enemyPlayer,
-      initialFen: fen,
+      initialFen: data.uciFen, // Pass the full UCI FEN with history
 
       isEnded: !!data.result,
     });

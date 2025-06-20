@@ -19,6 +19,9 @@ import { MyHoverCard } from '@/components/play/my-hover-card.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import MovePosition, { HistoryMove } from '@/components/move-position';
+import Xiangqi from '@/lib/xiangqi';
 
 export default function OnlineGame() {
   const { id } = useParams();
@@ -32,13 +35,97 @@ export default function OnlineGame() {
       toast('Fail add friend!');
     },
   });
+
+  // History state management
+  const [selectHistory, setSelectHistory] = useState<HistoryMove>();
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
+  const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
+  const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
+
   // Get the time from the store
 
   const selfPlayer = useGameStore((state) => state.selfPlayer);
   const enemyPlayer = useGameStore((state) => state.enemyPlayer);
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
+  const gameState = useGameStore((state) => state.gameState);
   const pieceTheme = useSettingStore(state => state.pieceTheme);
+
+  // Get game history from gameState
+  const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);
+
+  // History navigation functions
+  function getRestoreGame(state: HistoryMove) {
+    setSelectHistory(state);
+    setIsViewingHistory(true);
+  }
+
+  function handleReturnToCurrentGame() {
+    setSelectHistory(undefined);
+    setIsViewingHistory(false);
+  }
+
+  function splitTwoParts(input: string): [string, string] | null {
+    const regex = /^([a-i])(10|[1-9])([a-i])(10|[1-9])$/;
+    const match = input.match(regex);
+
+    if (!match) return null;
+
+    const part1 = match[1] + match[2];
+    const part2 = match[3] + match[4];
+
+    return [part1, part2];
+  }
+
+  // Update current game when gameState changes
+  useEffect(() => {
+    if (gameState && !isViewingHistory) {
+      setCurrentGame(gameState);
+    }
+  }, [gameState, isViewingHistory]);
+
+  // Handle history restoration
+  useEffect(() => {
+    if (selectHistory && gameHistory.length > 0) {
+      const newGame = new Xiangqi();
+      if (selectHistory.color === 'white') {
+        for (let i = 1; i <= selectHistory.index * 2 - 1; ++i) {
+          const moveStr = gameHistory[i - 1];
+          const parts = moveStr ? splitTwoParts(moveStr) : null;
+          if (parts) {
+            newGame.move({ from: parts[0], to: parts[1] });
+          }
+        }
+      } else {
+        for (let i = 1; i <= selectHistory.index * 2; ++i) {
+          const moveStr = gameHistory[i - 1];
+          const parts = moveStr ? splitTwoParts(moveStr) : null;
+          if (parts) {
+            newGame.move({ from: parts[0], to: parts[1] });
+          }
+        }
+      }
+      setHistoricalGame(newGame);
+    } else if (!isViewingHistory) {
+      setHistoricalGame(currentGame);
+    }
+  }, [selectHistory, gameHistory, currentGame, isViewingHistory]);
+
+  // Enhanced onMove function that handles history viewing
+  const handleMove = useCallback((from: string, to: string, piece: string): boolean => {
+    // If viewing history, return to current game first
+    if (isViewingHistory) {
+      handleReturnToCurrentGame();
+      // Don't make the move immediately, let user try again
+      return false;
+    }
+    
+    return onMove(from, to, piece);
+  }, [onMove, isViewingHistory]);
+
+  // Get the appropriate game state for display
+  const displayGame = isViewingHistory ? historicalGame : currentGame;
+  const displayFen = displayGame?.exportFen() || fen;
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
@@ -114,13 +201,13 @@ export default function OnlineGame() {
                     <Chessboard
                       boardWidth={400}
                       id="online-xiangqi-board"
-                      onPieceDrop={onMove}
+                      onPieceDrop={handleMove}
                       isDraggablePiece={(piece) =>
-                        isPlayerTurn(piece) && !gameEnded
+                        isPlayerTurn(piece) && !gameEnded && !isViewingHistory
                       }
                       customPieces={pieceTheme}
                       boardOrientation={selfPlayer?.color}
-                      position={fen}
+                      position={displayFen}
                       animationDuration={200}
                     />
                   </div>
@@ -139,6 +226,13 @@ export default function OnlineGame() {
               {formatTime(selfPlayer?.time)}
             </div>
           </div>
+          <div className="p-3 mx-5">
+            {isViewingHistory && (
+              <div className=" bg-yellow-500 text-black text-center py-1 text-sm font-bold z-10">
+                Watching history
+              </div>
+            )}
+          </div>
         </div>
         {/* Right */}
         <div className="rounded-4xl my-5 bg-muted shadow-lg shadow-ring">
@@ -151,7 +245,12 @@ export default function OnlineGame() {
             </div>
             {/*broad move*/}
             <div className="bg-background rounded-2xl w-full">
-              {/* <MovePosition ></MovePosition> */}
+              <MovePosition
+                moves={gameHistory}
+                setRestoreHistory={getRestoreGame}
+                isViewingHistory={isViewingHistory}
+                onReturnToCurrentGame={handleReturnToCurrentGame}
+              />
             </div>
             {/*tools*/}
             <div className="flex space-x-3">

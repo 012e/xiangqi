@@ -94,8 +94,6 @@ const useSettingStore = create<SettingStore>()(
           set({ accessToken: token });
         },
         setPieceTheme(pieceTheme: ThemeNames): void {
-          console.log(pieceTheme);
-          console.log(THEME_DATA[pieceTheme]);
           set({
              pieceTheme: THEME_DATA[pieceTheme] || THEME_DATA.chinese,
           });
