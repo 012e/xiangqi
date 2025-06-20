@@ -1,6 +1,6 @@
 import { Search, Send, SquareUser, UserPlus } from 'lucide-react';
 import SelfPlayBoard from './self-playboard';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FaUserFriends } from "react-icons/fa";
 import {
   CommandEmpty,
