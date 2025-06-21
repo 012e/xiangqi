@@ -11,8 +11,8 @@ export interface GameResponse {
   uciFen?: string;
   whitePlayer?: User;
   blackPlayer?: User;
-  whitePlayerRating?: number;
-  blackPlayerRating?: number;
+  whiteElo?: number;
+  blackElo?: number;
   whiteEloChange?: number;
   blackEloChange?: number;
   startTime?: string;

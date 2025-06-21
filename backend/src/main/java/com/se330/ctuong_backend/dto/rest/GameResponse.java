@@ -22,8 +22,8 @@ public class    GameResponse {
     private User whitePlayer;
     private User blackPlayer;
 
-    private Float whitePlayerRating;
-    private Float blackPlayerRating;
+    private Float blackElo;
+    private Float whiteElo;
 
     private Float whiteEloChange;
     private Float blackEloChange;
