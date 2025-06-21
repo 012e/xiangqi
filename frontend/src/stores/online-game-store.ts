@@ -205,18 +205,20 @@ export const useGameStore = create<GameStore>()(
                 console.error('Error from server:', message.data.message);
                 break;
               case 'State.GameEnd': {
-                const gameResult = (message as StateGameEnd).data;
+                const gameEndData = (message as StateGameEnd).data;
+                const gameResult = gameEndData.result;
+
                 set(
                   (state) => {
                     if (state.selfPlayer.color === 'white') {
-                      state.selfPlayer.eloChange = gameResult.whiteEloChange;
-                      state.enemyPlayer.eloChange = gameResult.blackEloChange;
+                      state.selfPlayer.eloChange = gameEndData.whiteEloChange;
+                      state.enemyPlayer.eloChange = gameEndData.blackEloChange;
                     } else {
-                      state.enemyPlayer.eloChange = gameResult.whiteEloChange;
-                      state.selfPlayer.eloChange = gameResult.blackEloChange;
+                      state.enemyPlayer.eloChange = gameEndData.whiteEloChange;
+                      state.selfPlayer.eloChange = gameEndData.blackEloChange;
                     }
-                    state.gameResult = gameResult.result.result;
-                    state.gameResultDetail = gameResult.result.detail;
+                    state.gameResult = gameResult.result;
+                    state.gameResultDetail = gameResult.detail;
 
                     state.showGameEndedDialog = true;
                     state.isEnded = true;
@@ -291,10 +293,6 @@ export const useGameStore = create<GameStore>()(
             selfPlayer,
             enemyPlayer,
             playingColor,
-            whiteElo,
-            blackElo,
-            whiteEloChange,
-            blackEloChange,
 
             initialFen,
             isStarted = false,
@@ -318,10 +316,6 @@ export const useGameStore = create<GameStore>()(
               () => ({
                 id: gameId,
 
-                blackElo,
-                whiteElo,
-                whiteEloChange,
-                blackEloChange,
                 enemyPlayer,
                 fen: gameState.exportFen(),
                 gameState,

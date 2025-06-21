@@ -39,6 +39,7 @@ export default function OnlineGame() {
   // History state management
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [isViewingHistory, setIsViewingHistory] = useState(false);
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
   const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
   const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
 
@@ -58,11 +59,65 @@ export default function OnlineGame() {
   function getRestoreGame(state: HistoryMove) {
     setSelectHistory(state);
     setIsViewingHistory(true);
+    // Calculate the current index based on the move and color
+    const moveIndex = state.index;
+    if (state.color === 'white') {
+      setCurrentHistoryIndex(moveIndex * 2 - 2); // White moves are at even indices (0, 2, 4...)
+    } else {
+      setCurrentHistoryIndex(moveIndex * 2 - 1); // Black moves are at odd indices (1, 3, 5...)
+    }
   }
 
   function handleReturnToCurrentGame() {
     setSelectHistory(undefined);
     setIsViewingHistory(false);
+    setCurrentHistoryIndex(-1);
+  }
+
+  function navigateToHistoryMove(historyIndex: number) {
+    if (historyIndex < 0 || historyIndex >= gameHistory.length) {
+      return; // Out of bounds
+    }
+
+    const moveNumber = Math.floor(historyIndex / 2) + 1;
+    const isWhiteMove = historyIndex % 2 === 0;
+    
+    const historyMove: HistoryMove = {
+      index: moveNumber,
+      moves: [
+        gameHistory[moveNumber * 2 - 2] || '', // White move
+        gameHistory[moveNumber * 2 - 1] || ''  // Black move
+      ].filter(move => move !== ''),
+      color: isWhiteMove ? 'white' : 'black'
+    };
+
+    setSelectHistory(historyMove);
+    setIsViewingHistory(true);
+    setCurrentHistoryIndex(historyIndex);
+  }
+
+  function handlePreviousMove() {
+    if (isViewingHistory && currentHistoryIndex > 0) {
+      navigateToHistoryMove(currentHistoryIndex - 1);
+    } else if (!isViewingHistory && gameHistory.length > 0) {
+      // If not viewing history, start from the last move
+      navigateToHistoryMove(gameHistory.length - 1);
+    }
+  }
+
+  function handleNextMove() {
+    if (isViewingHistory && currentHistoryIndex < gameHistory.length - 1) {
+      navigateToHistoryMove(currentHistoryIndex + 1);
+    } else if (isViewingHistory && currentHistoryIndex === gameHistory.length - 1) {
+      // If at the end of history, return to current game
+      handleReturnToCurrentGame();
+    }
+  }
+
+  function togglePlayer() {
+    // This function might not be as relevant for online games since orientation is fixed
+    // but keeping it for consistency
+    console.log('Toggle player orientation');
   }
 
   function splitTwoParts(input: string): [string, string] | null {
@@ -164,7 +219,7 @@ export default function OnlineGame() {
                 <PlayerCard
                   props={{
                     name: enemyPlayer.username,
-                    elo: 0,
+                    elo: enemyPlayer.elo,
                     image:
                       'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg',
                     isMe: false,
@@ -269,13 +324,29 @@ export default function OnlineGame() {
               <Button className="group">
                 <Flag className="transition-transform group-hover:scale-150" />
               </Button>
-              <Button className="group">
-                <ChevronLeft className="text-gray-400 transition-transform group-hover:scale-150" />
+              <Button 
+                className="group" 
+                onClick={handlePreviousMove}
+                disabled={isViewingHistory && currentHistoryIndex <= 0}
+              >
+                <ChevronLeft className={`transition-transform group-hover:scale-150 ${
+                  isViewingHistory && currentHistoryIndex <= 0 
+                    ? 'text-gray-600' 
+                    : 'text-gray-400'
+                }`} />
               </Button>
-              <Button className="group">
-                <ChevronRight className="text-gray-400 transition-transform group-hover:scale-150" />
+              <Button 
+                className="group" 
+                onClick={handleNextMove}
+                disabled={isViewingHistory && currentHistoryIndex >= gameHistory.length - 1}
+              >
+                <ChevronRight className={`transition-transform group-hover:scale-150 ${
+                  isViewingHistory && currentHistoryIndex >= gameHistory.length - 1 
+                    ? 'text-gray-600' 
+                    : 'text-gray-400'
+                }`} />
               </Button>
-              <Button className="group">
+              <Button className="group" onClick={togglePlayer}>
                 <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
               </Button>
             </div>

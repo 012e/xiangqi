@@ -109,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavHeader teams={teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavContent items={navItems} />
+        <NavContent items={navItems}/>
       </SidebarContent>
       <SidebarFooter>
         {!isAuthenticated ? <LoginRegister /> : <NavUser user={usr} />}
