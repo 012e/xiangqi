@@ -30,6 +30,7 @@ export default function PlayOnline({
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);
   const [isViewingHistory, setIsViewingHistory] = useState(false);
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
 
   const [player, setPlayer] = useState<'white' | 'black'>('white');
   const { data: gameTypes } = useQuery({
@@ -47,6 +48,10 @@ export default function PlayOnline({
 
   function updateHistory(history: string[]) {
     setHistory([...history]);
+    // Reset history navigation when new moves are made
+    if (!isViewingHistory) {
+      setCurrentHistoryIndex(-1);
+    }
   }
 
   function handleCreateGame() {
@@ -66,11 +71,59 @@ export default function PlayOnline({
   function getRestoreGame(state: HistoryMove) {
     setSelectHistory(state);
     setIsViewingHistory(true);
+    // Calculate the current index based on the move and color
+    const moveIndex = state.index;
+    if (state.color === 'white') {
+      setCurrentHistoryIndex(moveIndex * 2 - 2); // White moves are at even indices (0, 2, 4...)
+    } else {
+      setCurrentHistoryIndex(moveIndex * 2 - 1); // Black moves are at odd indices (1, 3, 5...)
+    }
   }
 
   function handleReturnToCurrentGame() {
     setSelectHistory(undefined);
     setIsViewingHistory(false);
+    setCurrentHistoryIndex(-1);
+  }
+
+  function navigateToHistoryMove(historyIndex: number) {
+    if (historyIndex < 0 || historyIndex >= history.length) {
+      return; // Out of bounds
+    }
+
+    const moveNumber = Math.floor(historyIndex / 2) + 1;
+    const isWhiteMove = historyIndex % 2 === 0;
+    
+    const historyMove: HistoryMove = {
+      index: moveNumber,
+      moves: [
+        history[moveNumber * 2 - 2] || '', // White move
+        history[moveNumber * 2 - 1] || ''  // Black move
+      ].filter(move => move !== ''),
+      color: isWhiteMove ? 'white' : 'black'
+    };
+
+    setSelectHistory(historyMove);
+    setIsViewingHistory(true);
+    setCurrentHistoryIndex(historyIndex);
+  }
+
+  function handlePreviousMove() {
+    if (isViewingHistory && currentHistoryIndex > 0) {
+      navigateToHistoryMove(currentHistoryIndex - 1);
+    } else if (!isViewingHistory && history.length > 0) {
+      // If not viewing history, start from the last move
+      navigateToHistoryMove(history.length - 1);
+    }
+  }
+
+  function handleNextMove() {
+    if (isViewingHistory && currentHistoryIndex < history.length - 1) {
+      navigateToHistoryMove(currentHistoryIndex + 1);
+    } else if (isViewingHistory && currentHistoryIndex === history.length - 1) {
+      // If at the end of history, return to current game
+      handleReturnToCurrentGame();
+    }
   }
 
   return (
@@ -179,11 +232,27 @@ export default function PlayOnline({
               <Button className="group">
                 <Flag className="transition-transform group-hover:scale-150"></Flag>
               </Button>
-              <Button className="group">
-                <ChevronLeft className="text-gray-400 transition-transform group-hover:scale-150" />
+              <Button 
+                className="group" 
+                onClick={handlePreviousMove}
+                disabled={isViewingHistory && currentHistoryIndex <= 0}
+              >
+                <ChevronLeft className={`transition-transform group-hover:scale-150 ${
+                  isViewingHistory && currentHistoryIndex <= 0 
+                    ? 'text-gray-600' 
+                    : 'text-gray-400'
+                }`} />
               </Button>
-              <Button className="group">
-                <ChevronRight className="text-gray-400 transition-transform group-hover:scale-150" />
+              <Button 
+                className="group" 
+                onClick={handleNextMove}
+                disabled={isViewingHistory && currentHistoryIndex >= history.length - 1}
+              >
+                <ChevronRight className={`transition-transform group-hover:scale-150 ${
+                  isViewingHistory && currentHistoryIndex >= history.length - 1 
+                    ? 'text-gray-600' 
+                    : 'text-gray-400'
+                }`} />
               </Button>
               <Button className="group" onClick={togglePlayer}>
                 <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
