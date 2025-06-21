@@ -106,7 +106,7 @@ const FindFriendsByUsername: React.FC = () => {
                   onDeclineClick={() => console.log(`Cancel ${user.username}`)}
                 />
               ))}
-              
+
               {usersList && usersList.content.length === 0 && !isLoading && (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   No users found matching "{debouncedSearchTerm}".
@@ -114,14 +114,11 @@ const FindFriendsByUsername: React.FC = () => {
               )}
             </div>
           )}
-          
           {!searchTerm && (
             <div className="text-center py-8">
               <p className="text-muted-foreground">Enter a username to search for friends</p>
             </div>
           )}
-
-
         </div>
       </main>
     </div>
