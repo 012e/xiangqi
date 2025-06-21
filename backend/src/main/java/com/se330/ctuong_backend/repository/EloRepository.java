@@ -15,5 +15,7 @@ public interface EloRepository extends JpaRepository<Elo, Long> {
             nativeQuery = true)
     void updateEloByUserId(@Param("user_id") Long userId, @Param("game_type_id") Long gameTypeId, @Param("new_elo") Double newElo);
 
-    boolean existsByUserIdAndGameTypeId(Long userId, Long gameTypeId);
+    @Query(value = "select exists(select * from elo e where e.user_id = :user_id and e.game_type_id = :game_type_id)",
+            nativeQuery = true)
+    boolean existsByUserIdAndGameTypeId(@Param("user_id") Long userId, @Param("game_type_id") Long gameTypeId);
 }

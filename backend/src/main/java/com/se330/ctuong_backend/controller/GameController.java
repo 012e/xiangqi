@@ -1,9 +1,8 @@
 package com.se330.ctuong_backend.controller;
 
 import com.se330.ctuong_backend.dto.rest.GameResponse;
-import com.se330.ctuong_backend.model.Game;
 import com.se330.ctuong_backend.repository.GameRepository;
-import com.se330.ctuong_backend.service.GameService;
+import com.se330.ctuong_backend.service.game.GameService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.quartz.SchedulerException;

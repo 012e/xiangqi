@@ -2,9 +2,8 @@ package com.se330.ctuong_backend.controller;
 
 import com.auth0.exception.Auth0Exception;
 import com.se330.ctuong_backend.dto.message.CreateGameMessage;
-import com.se330.ctuong_backend.dto.message.Game;
 import com.se330.ctuong_backend.repository.UserRepository;
-import com.se330.ctuong_backend.service.GameService;
+import com.se330.ctuong_backend.service.game.GameService;
 import com.se330.ctuong_backend.service.MatchMaker;
 import com.se330.ctuong_backend.service.UserService;
 import com.se330.xiangqi.Move;

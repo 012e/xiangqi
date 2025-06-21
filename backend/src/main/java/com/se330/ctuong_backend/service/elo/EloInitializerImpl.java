@@ -5,10 +5,12 @@ import com.se330.ctuong_backend.model.GameTypeRepository;
 import com.se330.ctuong_backend.repository.EloRepository;
 import com.se330.ctuong_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class EloInitializerImpl implements EloInitializer {
     private final EloRepository eloRepository;
@@ -30,11 +32,12 @@ public class EloInitializerImpl implements EloInitializer {
         final var user = userRepository
                 .findById(playerId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + playerId));
-        Elo elo = new Elo();
-        elo.setId(key);
-        elo.setCurrentElo(INITIAL_ELO);
-        elo.setGameType(gameType);
-        elo.setUser(user);
-        eloRepository.save(elo);
+        final var elo = Elo.builder()
+                .id(key)
+                .currentElo(INITIAL_ELO)
+                .gameType(gameType)
+                .user(user)
+                .build();
+        eloRepository.saveAndFlush(elo);
     }
 }

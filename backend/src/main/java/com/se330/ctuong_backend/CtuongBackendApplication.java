@@ -15,11 +15,6 @@ public class CtuongBackendApplication {
 	@Value("${spring.datasource.url}")
 	private String dbUrl;
 
-	@PostConstruct
-	public void doSomethingAfterStartup() {
-		log.info("database {}", dbUrl);
-	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(CtuongBackendApplication.class, args);
 	}

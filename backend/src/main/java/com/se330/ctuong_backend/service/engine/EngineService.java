@@ -1,16 +1,12 @@
 package com.se330.ctuong_backend.service.engine;
 
-import com.se330.ctuong_backend.config.ApplicationConfiguration;
-import com.se330.ctuong_backend.dto.GameDto;
 import com.se330.ctuong_backend.repository.GameRepository;
-import com.se330.ctuong_backend.service.GameService;
+import com.se330.ctuong_backend.service.game.GameService;
 import com.se330.xiangqi.Xiangqi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
