@@ -11,6 +11,8 @@ import com.se330.ctuong_backend.model.Game;
 import com.se330.ctuong_backend.model.GameTypeRepository;
 import com.se330.ctuong_backend.repository.GameRepository;
 import com.se330.ctuong_backend.repository.UserRepository;
+import com.se330.ctuong_backend.service.elo.EloInitializer;
+import com.se330.ctuong_backend.service.elo.EloService;
 import com.se330.xiangqi.Move;
 import com.se330.xiangqi.Xiangqi;
 import jakarta.validation.Valid;
@@ -20,11 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+
+import static com.se330.xiangqi.GameResult.BLACK_WIN;
+import static com.se330.xiangqi.GameResult.WHITE_WIN;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +43,10 @@ public class GameService {
     private final GameMessageService gameMessageService;
     private final ModelMapper mapper;
     private final BotMessageService botMessageService;
+    private final EloService eloService;
+    private final EloInitializer eloInitializer;
 
+    @Transactional
     public GameDto createGame(@Valid CreateGameDto dto) {
         final var white = userRepository
                 .getUserById(dto.getWhiteId())
@@ -49,11 +58,20 @@ public class GameService {
         final var gameType = gameTypeRepository
                 .findById(dto.getGameTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid game type"));
+        eloInitializer.initializeEloIfNotExists(black.getId(), gameType.getId());
+        eloInitializer.initializeEloIfNotExists(white.getId(), gameType.getId());
 
+        final var blackStats = userRepository.getGameStatByUserId(white.getId(), gameType.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Black player stats not found"));
+
+        final var whiteStats = userRepository.getGameStatByUserId(black.getId(), gameType.getId())
+                .orElseThrow(() -> new IllegalArgumentException("White player stats not found"));
 
         final var newGameBuilder = Game.builder()
                 .gameType(gameType)
                 .blackPlayer(black)
+                .blackElo(blackStats.getElo())
+                .whiteElo(whiteStats.getElo())
                 .whitePlayer(white)
                 .blackTimeLeft(gameType.getTimeControl())
                 .whiteTimeLeft(gameType.getTimeControl())
@@ -77,6 +95,7 @@ public class GameService {
         game.setStartTime(Timestamp.from(Instant.now()));
     }
 
+    // TODO: handle insufficient material
     public void markTimeout(@NotNull String gameId) throws SchedulerException {
         var game = gameRepository.getGameById(gameId);
         if (game == null) {
@@ -103,6 +122,12 @@ public class GameService {
 
         gameRepository.save(game);
         gameTimeoutService.removeTimerIfExists(gameId);
+        final var resultDto = switch (result.getResult()) {
+            case "black_win" -> BLACK_WIN;
+            case "white_win" -> WHITE_WIN;
+            default -> throw new IllegalStateException("Unexpected value: " + result.getResult());
+        };
+        eloService.updateElo(game.getId(), resultDto);
 
         gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(result));
     }
@@ -212,6 +237,7 @@ public class GameService {
         game.setResultDetail(gameResult.getDetail());
         game.setIsEnded(true);
         gameRepository.save(game);
+        eloService.updateElo(game.getId(), result);
 
         gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(gameResult));
     }
