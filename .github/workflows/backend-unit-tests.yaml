@@ -1,15 +1,12 @@
 name: Spring Boot Unit Tests
 
-on: push
-# on:
-#   push:
-#     paths:
-#       - 'backend/**'
-#   pull_request:
-#     branches:
-#       - main
-#     paths:
-#       - 'backend/**'
+on:
+  push:
+    paths:
+      - 'backend/**'
+  pull_request:
+    paths:
+      - 'backend/**'
 
 jobs:
   unit-test:
