@@ -20,7 +20,7 @@ const Friends: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Friends</h1>
         <div className="gap-4">
           <div className="grid gap-4 mb-6">
-            <ActionCard icon={<FaLink />} label="Add Friend By Id" onClick={handleFindById}/>
+            <ActionCard icon={<FaLink />} label="Add Friend By Username" onClick={handleFindById}/>
           </div>
 
           <div className="grid grid-cols-1 gap-4 mb-6">

@@ -9,6 +9,9 @@ import com.se330.ctuong_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -68,6 +71,12 @@ public class UserService {
     public Optional<UserDto> getUserBySub(String sub) {
         return userRepository.getUserBySub(sub)
                 .map(user -> modelMapper.map(user, UserDto.class));
+    }
+    public Page<UserDto> searchUsersByUsername(String username, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<com.se330.ctuong_backend.model.User> users = userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+
+        return users.map(user -> modelMapper.map(user, UserDto.class));
     }
 
 //    public void updateUser(Principal principal, UpdateUserRequest updateUserRequest) {

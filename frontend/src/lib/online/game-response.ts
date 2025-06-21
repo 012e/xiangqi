@@ -6,6 +6,7 @@ export type Player = {
   username: string,
   picture: string
 };
+
 export type GameResponse = {
   id: string,
   uciFen: string,
