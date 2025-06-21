@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.service.game;
 
+import com.se330.ctuong_backend.dto.message.game.state.GameEndData;
 import com.se330.ctuong_backend.dto.message.game.state.GameEndMessage;
 import com.se330.ctuong_backend.dto.message.game.state.GameResult;
 import com.se330.ctuong_backend.model.Game;
@@ -55,8 +56,14 @@ public class GameEndService {
         game.setResultDetail(gameResult.getDetail());
         game.setIsEnded(true);
         gameRepository.save(game);
-        eloService.updateElo(game.getId(), result);
+        final var updatedElo = eloService.updateElo(game.getId(), result);
 
-        gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(gameResult));
+        final var gameEndData = GameEndData.builder()
+                .result(gameResult)
+                .blackEloChange(updatedElo.getBlackEloChange().longValue())
+                .whiteEloChange(updatedElo.getWhiteEloChange().longValue())
+                .build();
+
+        gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(gameEndData));
     }
 }

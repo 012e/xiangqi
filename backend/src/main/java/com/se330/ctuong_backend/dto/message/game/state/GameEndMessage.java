@@ -6,11 +6,11 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class GameEndMessage extends GameMessage<GameResult> {
+public class GameEndMessage extends GameMessage<GameEndData> {
     protected BoardState type = BoardState.GameEnd;
-    private GameResult data;
+    private GameEndData data;
 
-    public GameEndMessage(GameResult data) {
+    public GameEndMessage(GameEndData data) {
         this.data = data;
     }
 }

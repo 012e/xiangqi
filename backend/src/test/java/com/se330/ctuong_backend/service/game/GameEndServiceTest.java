@@ -6,6 +6,7 @@ import com.se330.ctuong_backend.model.Game;
 import com.se330.ctuong_backend.repository.GameRepository;
 import com.se330.ctuong_backend.service.GameMessageService;
 import com.se330.ctuong_backend.service.elo.EloService;
+import com.se330.ctuong_backend.service.elo.UpdateEloResult;
 import com.se330.xiangqi.Xiangqi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,6 +58,10 @@ class GameEndServiceTest {
     void shouldHandleBlackWinByCheckmate() {
         // Given
         when(gameLogic.getResult()).thenReturn(BLACK_WIN);
+        when(eloService.updateElo("game-123", BLACK_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
 
         // When
         gameEndService.handleGameEnd("game-123", gameLogic, game);
@@ -76,6 +81,10 @@ class GameEndServiceTest {
     void shouldHandleWhiteWinByCheckmate() {
         // Given
         when(gameLogic.getResult()).thenReturn(WHITE_WIN);
+        when(eloService.updateElo("game-123", WHITE_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
 
         // When
         gameEndService.handleGameEnd("game-123", gameLogic, game);
@@ -96,6 +105,10 @@ class GameEndServiceTest {
         // Given
         when(gameLogic.getResult()).thenReturn(DRAW);
         when(gameLogic.isInsufficientMaterial()).thenReturn(false);
+        when(eloService.updateElo("game-123", DRAW)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
 
         // When
         gameEndService.handleGameEnd("game-123", gameLogic, game);
@@ -116,6 +129,10 @@ class GameEndServiceTest {
         // Given
         when(gameLogic.getResult()).thenReturn(DRAW);
         when(gameLogic.isInsufficientMaterial()).thenReturn(true);
+        when(eloService.updateElo("game-123", DRAW)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
 
         // When
         gameEndService.handleGameEnd("game-123", gameLogic, game);
@@ -135,6 +152,10 @@ class GameEndServiceTest {
     void shouldSendCorrectGameEndMessage() {
         // Given
         when(gameLogic.getResult()).thenReturn(BLACK_WIN);
+        when(eloService.updateElo("game-123", BLACK_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
 
         // When
         gameEndService.handleGameEnd("game-123", gameLogic, game);
@@ -142,8 +163,8 @@ class GameEndServiceTest {
         // Then
         verify(gameMessageService).sendMessageGameTopic(eq("game-123"), argThat(message -> {
             if (message instanceof GameEndMessage gameEndMessage) {
-                GameResult result = gameEndMessage.getData();
-                return "black_win".equals(result.getResult()) && 
+                GameResult result = gameEndMessage.getData().getResult();
+                return "black_win".equals(result.getResult()) &&
                        "white_checkmate".equals(result.getDetail());
             }
             return false;
@@ -159,14 +180,22 @@ class GameEndServiceTest {
         Game game1 = Game.builder().id("game-1").isEnded(false).build();
         Xiangqi logic1 = mock(Xiangqi.class);
         when(logic1.getResult()).thenReturn(WHITE_WIN);
-        
+        when(eloService.updateElo("game-1", WHITE_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
+
         gameEndService.handleGameEnd("game-1", logic1, game1);
         
         // Second game - black wins
         Game game2 = Game.builder().id("game-2").isEnded(false).build();
         Xiangqi logic2 = mock(Xiangqi.class);
         when(logic2.getResult()).thenReturn(BLACK_WIN);
-        
+        when(eloService.updateElo("game-2", BLACK_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
+
         gameEndService.handleGameEnd("game-2", logic2, game2);
         
         // Third game - draw
@@ -174,7 +203,11 @@ class GameEndServiceTest {
         Xiangqi logic3 = mock(Xiangqi.class);
         when(logic3.getResult()).thenReturn(DRAW);
         when(logic3.isInsufficientMaterial()).thenReturn(false);
-        
+        when(eloService.updateElo("game-3", DRAW)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
+
         gameEndService.handleGameEnd("game-3", logic3, game3);
 
         // Verify all games were processed correctly
@@ -191,7 +224,10 @@ class GameEndServiceTest {
         // Given
         game.setIsEnded(true);
         when(gameLogic.getResult()).thenReturn(WHITE_WIN);
-
+        when(eloService.updateElo("game-123", WHITE_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(0d)
+                .whiteEloChange(0d)
+                .build());
         // When
         gameEndService.handleGameEnd("game-123", gameLogic, game);
 

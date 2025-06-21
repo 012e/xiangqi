@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.service.game;
 
+import com.se330.ctuong_backend.dto.message.game.state.GameEndData;
 import com.se330.ctuong_backend.dto.message.game.state.GameEndMessage;
 import com.se330.ctuong_backend.dto.message.game.state.GameResult;
 import com.se330.ctuong_backend.model.Game;
@@ -61,8 +62,15 @@ public class GameTimeoutHandlerService {
             case "white_win" -> WHITE_WIN;
             default -> throw new IllegalStateException("Unexpected value: " + result.getResult());
         };
-        eloService.updateElo(game.getId(), resultDto);
 
-        gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(result));
+        final var updatedElo = eloService.updateElo(game.getId(), resultDto);
+
+        final var gameEndData = GameEndData.builder()
+                .result(result)
+                .blackEloChange(updatedElo.getBlackEloChange().longValue())
+                .whiteEloChange(updatedElo.getWhiteEloChange().longValue())
+                .build();
+
+        gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(gameEndData));
     }
 }

@@ -68,6 +68,8 @@ export type Player = {
   name: string;
   sub: string;
   email: string;
+  elo: number;
+  eloChange?: number;
 };
 
 const DEFAULT_STATE: Partial<Data> = {
@@ -81,6 +83,7 @@ const DEFAULT_STATE: Partial<Data> = {
     name: '',
     sub: '',
     email: '',
+    elo: 0,
   },
   enemyPlayer: {
     id: 0,
@@ -91,6 +94,7 @@ const DEFAULT_STATE: Partial<Data> = {
     name: '',
     sub: '',
     email: '',
+    elo: 0,
   },
   playingColor: 'white',
   interval: null,
@@ -135,7 +139,7 @@ export const useGameStore = create<GameStore>()(
             if (!currentGameState.isLegalMove(move).ok) {
               return false;
             }
-            
+
             // Create a copy of the current game state to preserve history
             const gameState = new Xiangqi(currentGameState.exportUciFen());
             gameState.move(move);
@@ -181,16 +185,20 @@ export const useGameStore = create<GameStore>()(
                   moveHandler(move);
                 }
                 // Sync the board (mostly for spectator mode)
-                set(state => {
-                  state.fen = play.data.fen;
-                  if (state.selfPlayer.color === 'black') {
-                    state.selfPlayer.time = play.data.blackTime;
-                    state.enemyPlayer.time = play.data.whiteTime;
-                  } else {
-                    state.selfPlayer.time = play.data.whiteTime;
-                    state.enemyPlayer.time = play.data.blackTime;
-                  }
-                }, undefined, 'game.sync');
+                set(
+                  (state) => {
+                    state.fen = play.data.fen;
+                    if (state.selfPlayer.color === 'black') {
+                      state.selfPlayer.time = play.data.blackTime;
+                      state.enemyPlayer.time = play.data.whiteTime;
+                    } else {
+                      state.selfPlayer.time = play.data.whiteTime;
+                      state.enemyPlayer.time = play.data.blackTime;
+                    }
+                  },
+                  undefined,
+                  'game.sync',
+                );
                 break;
               }
               case 'State.Error':
@@ -199,13 +207,20 @@ export const useGameStore = create<GameStore>()(
               case 'State.GameEnd': {
                 const gameResult = (message as StateGameEnd).data;
                 set(
-                  () => ({
-                    gameResult: gameResult.result,
-                    gameResultDetail: gameResult.detail,
+                  (state) => {
+                    if (state.selfPlayer.color === 'white') {
+                      state.selfPlayer.eloChange = gameResult.whiteEloChange;
+                      state.enemyPlayer.eloChange = gameResult.blackEloChange;
+                    } else {
+                      state.enemyPlayer.eloChange = gameResult.whiteEloChange;
+                      state.selfPlayer.eloChange = gameResult.blackEloChange;
+                    }
+                    state.gameResult = gameResult.result.result;
+                    state.gameResultDetail = gameResult.result.detail;
 
-                    showGameEndedDialog: true,
-                    isEnded: true,
-                  }),
+                    state.showGameEndedDialog = true;
+                    state.isEnded = true;
+                  },
                   undefined,
                   'game.end',
                 );
@@ -272,16 +287,22 @@ export const useGameStore = create<GameStore>()(
             );
           },
           init({
-                 gameId,
-                 selfPlayer,
-                 enemyPlayer,
-                 playingColor,
+            gameId,
+            selfPlayer,
+            enemyPlayer,
+            playingColor,
+            whiteElo,
+            blackElo,
+            whiteEloChange,
+            blackEloChange,
 
-                 initialFen,
-                 isStarted = false,
-                 isEnded = false,
-               }) {
-            const gameState = initialFen ? new Xiangqi(initialFen) : new Xiangqi();
+            initialFen,
+            isStarted = false,
+            isEnded = false,
+          }) {
+            const gameState = initialFen
+              ? new Xiangqi(initialFen)
+              : new Xiangqi();
 
             const oldInterval = get().interval;
             if (oldInterval) {
@@ -296,15 +317,20 @@ export const useGameStore = create<GameStore>()(
             set(
               () => ({
                 id: gameId,
-                selfPlayer,
+
+                blackElo,
+                whiteElo,
+                whiteEloChange,
+                blackEloChange,
                 enemyPlayer,
-                playingColor,
-                gameState,
                 fen: gameState.exportFen(),
-                showGameEndedDialog: false,
-                isStarted,
+                gameState,
                 interval,
                 isEnded,
+                isStarted,
+                playingColor,
+                selfPlayer,
+                showGameEndedDialog: false,
               }),
               false,
               {
@@ -318,38 +344,49 @@ export const useGameStore = create<GameStore>()(
         actionsDenylist: ['game.updatePlayerTime'],
       },
     ),
-  ));
+  ),
+);
 
 type GetType = typeof useGameStore.getState; // typeof get
 type SetType = typeof useGameStore.setState; // typeof get
 
-function beginInterval(set: SetType, playingColor: Color | 'w' | 'b'): NodeJS.Timeout {
+function beginInterval(
+  set: SetType,
+  playingColor: Color | 'w' | 'b',
+): NodeJS.Timeout {
   return setInterval(() => {
-    set((state) => {
-      const self = state.selfPlayer;
-      const enemy = state.enemyPlayer;
+    set(
+      (state) => {
+        const self = state.selfPlayer;
+        const enemy = state.enemyPlayer;
 
-      if (!self || !enemy) return {};
+        if (!self || !enemy) return {};
 
-      if (isEqualColor(self.color, playingColor)) {
-        state.selfPlayer.time -= 1000;
-        return;
-      }
-      state.enemyPlayer.time -= 1000;
-    }, undefined, {
-      type: 'game.updatePlayerTime',
-    });
+        if (isEqualColor(self.color, playingColor)) {
+          state.selfPlayer.time -= 1000;
+          return;
+        }
+        state.enemyPlayer.time -= 1000;
+      },
+      undefined,
+      {
+        type: 'game.updatePlayerTime',
+      },
+    );
   }, 1000);
 }
 
 export const useGameId = () => useGameStore((state) => state.id);
 export const useSelfPlayer = () => useGameStore((state) => state.selfPlayer);
 export const useEnemyPlayer = () => useGameStore((state) => state.enemyPlayer);
-export const usePlayerColor = () => useGameStore((state) => state.selfPlayer?.color);
+export const usePlayerColor = () =>
+  useGameStore((state) => state.selfPlayer?.color);
 export const usePlayingColor = () =>
   useGameStore((state) => state.playingColor);
-export const useSelfPlayerTime = () => useGameStore((state) => state.selfPlayer?.time);
-export const useEnemyPlayerTime = () => useGameStore((state) => state.enemyPlayer?.time);
+export const useSelfPlayerTime = () =>
+  useGameStore((state) => state.selfPlayer?.time);
+export const useEnemyPlayerTime = () =>
+  useGameStore((state) => state.enemyPlayer?.time);
 export const useGameState = () => useGameStore((state) => state.gameState);
 export const useIsStarted = () => useGameStore((state) => state.isStarted);
 

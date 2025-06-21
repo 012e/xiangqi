@@ -16,17 +16,17 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class    GameResponse {
+public class GameResponse {
     private String id;
-    private String uciFen;;
+    private String uciFen;
     private User whitePlayer;
     private User blackPlayer;
 
-    private Float blackElo;
-    private Float whiteElo;
+    private Long blackElo;
+    private Long whiteElo;
 
-    private Float whiteEloChange;
-    private Float blackEloChange;
+    private Long whiteEloChange;
+    private Long blackEloChange;
 
     private Timestamp startTime;
     private Instant endTime;
@@ -42,7 +42,7 @@ public class    GameResponse {
 
     public boolean getIsGameWithBot() {
         return whitePlayer != null && whitePlayer.getId().equals(ApplicationConfiguration.getBotId()) ||
-               blackPlayer != null && blackPlayer.getId().equals(ApplicationConfiguration.getBotId());
+                blackPlayer != null && blackPlayer.getId().equals(ApplicationConfiguration.getBotId());
     }
 
     @Data

@@ -19,7 +19,7 @@ public class EloServiceImpl implements EloService {
 
     @Override
     @Transactional
-    public void updateElo(String gameId, GameResult gameResult) {
+    public UpdateEloResult updateElo(String gameId, GameResult gameResult) {
         final var game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new IllegalArgumentException("Game not found with id: " + gameId));
 
@@ -70,5 +70,12 @@ public class EloServiceImpl implements EloService {
         eloRepository.updateEloByUserId(game.getWhitePlayer().getId(), gameTypeId, newWhiteElo);
 
         gameRepository.save(game);
+
+        return UpdateEloResult.builder()
+                .blackEloChange(blackEloChange)
+                .whiteEloChange(whiteEloChange)
+                .whiteNewElo(newWhiteElo)
+                .blackNewElo(newBlackElo)
+                .build();
     }
 }
