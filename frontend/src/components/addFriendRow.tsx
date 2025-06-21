@@ -7,7 +7,7 @@ import { Player } from '@/lib/online/game-response.ts';
 type AddFriendRowProps = {
   avatarUrl: string;
   username: string;
-  gmail: string;
+  email: string;
   onAcceptClick?: () => void;
   onDeclineClick?: () => void;
   isFriend?: boolean;
@@ -17,7 +17,7 @@ type AddFriendRowProps = {
 const AddFriendRow: React.FC<AddFriendRowProps> = ({
   avatarUrl,
   username,
-  gmail,
+  email,
   onAcceptClick,
   listFriend,
 }) => {
@@ -39,7 +39,7 @@ const AddFriendRow: React.FC<AddFriendRowProps> = ({
         </Avatar>
         <div className="flex flex-col gap-1.5">
           <p className="text-foreground font-semibold leading-none">{username}</p>
-          <p className="text-sm text-foreground leading-none">{gmail}</p>
+          <p className="text-sm text-foreground leading-none">{email}</p>
         </div>
       </div>
 

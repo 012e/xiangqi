@@ -45,7 +45,7 @@ export default function MovePosition({
   return (
     <div className="border-2 rounded-2xl">
       <div className="p-3 font-bold text-2xl flex justify-center items-center">
-        <span>Positions Board</span>
+        <span>Board Positions</span>
         {isViewingHistory && (
           <Button
             onClick={onReturnToCurrentGame}
