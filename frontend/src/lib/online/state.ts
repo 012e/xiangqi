@@ -42,12 +42,20 @@ export const StateErrorSchema = z.object({
   }),
 });
 
+export const GameEndResult = z.object({
+  result: GameResultSchema,
+  detail: GameResultDetailSchema,
+});
+
+export const GameEndData = z.object({
+  result: GameEndResult,
+  whiteEloChange: z.number(),
+  blackEloChange: z.number(),
+});
+
 export const StateGameEndSchema = z.object({
   type: z.literal('State.GameEnd'),
-  data: z.object({
-    result: GameResultSchema,
-    detail: GameResultDetailSchema,
-  }),
+  data: GameEndData,
 });
 
 export const ChessStateSchema = z.discriminatedUnion('type', [
@@ -107,4 +115,3 @@ export function deserializeState(json: unknown): ChessState {
       throw new Error(`Unknown state type: ${(parsed as any).type}`);
   }
 }
-

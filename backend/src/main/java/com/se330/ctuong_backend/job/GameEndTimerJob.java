@@ -1,6 +1,6 @@
 package com.se330.ctuong_backend.job;
 
-import com.se330.ctuong_backend.service.GameService;
+import com.se330.ctuong_backend.service.game.GameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;

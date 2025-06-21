@@ -1,5 +1,9 @@
 import { useStompClient, useSubscription } from 'react-stomp-hooks';
-import { Player, useGameActions, useGameStore } from '@/stores/online-game-store';
+import {
+  Player,
+  useGameActions,
+  useGameStore,
+} from '@/stores/online-game-store';
 import { deserializeState } from './state';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useMemo, useRef } from 'react';
@@ -11,12 +15,16 @@ function getOurPlayer(data: GameResponse, ourUserId: string): Player {
   if (data.whitePlayer?.sub === ourUserId) {
     return {
       ...data.whitePlayer,
+      elo: data.whiteElo,
+      eloChange: data.whiteEloChange,
       color: 'white',
       time: data.whiteTimeLeft,
     };
   } else {
     return {
       ...data.blackPlayer,
+      elo: data.blackElo,
+      eloChange: data.blackEloChange,
       color: 'black',
       time: data.blackTimeLeft,
     };
@@ -27,12 +35,16 @@ function getEnemyPlayer(data: GameResponse, ourUserId: string): Player {
   if (data.whitePlayer?.sub !== ourUserId) {
     return {
       ...data.whitePlayer,
+      elo: data.whiteElo,
+      eloChange: data.whiteEloChange,
       color: 'white',
       time: data.whiteTimeLeft,
     };
   } else {
     return {
       ...data.blackPlayer,
+      elo: data.blackElo,
+      eloChange: data.blackEloChange,
       color: 'black',
       time: data.blackTimeLeft,
     };
@@ -47,7 +59,6 @@ export function useOnlineGame(gameId: string | undefined) {
   const { user } = useAuth0();
 
   const initialData = useRef<GameResponse>(null);
-
 
   const { init } = useGameActions();
 
@@ -82,11 +93,9 @@ export function useOnlineGame(gameId: string | undefined) {
     }
     initialData.current = data as GameResponse;
 
-    const fen = data.uciFen?.substring(0, data.uciFen?.indexOf('|')).trim();
-    
     const ourPlayer: Player = getOurPlayer(data, user?.sub ?? '');
     const enemyPlayer: Player = getEnemyPlayer(data, user?.sub ?? '');
-    
+
     const playingColor = data.uciFen?.includes('w') ? 'white' : 'black';
     init({
       gameId: gameId,
@@ -94,7 +103,7 @@ export function useOnlineGame(gameId: string | undefined) {
       playingColor: playingColor,
       selfPlayer: ourPlayer,
       enemyPlayer: enemyPlayer,
-      initialFen: data.uciFen, // Pass the full UCI FEN with history
+      initialFen: data.uciFen,
 
       isEnded: !!data.result,
     });
@@ -132,6 +141,7 @@ export function useOnlineGame(gameId: string | undefined) {
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
     },
   );
+
   return {
     game: gameState,
     fen: useGameStore((state) => state.fen),

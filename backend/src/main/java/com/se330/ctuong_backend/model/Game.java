@@ -37,17 +37,17 @@ public class Game {
     @JoinColumn(name = "black_player_id")
     private User blackPlayer;
 
-    @Column(name = "white_player_rating")
-    private Float whitePlayerRating;
+    @Column(name = "white_elo")
+    private Double whiteElo;
 
-    @Column(name = "black_player_rating")
-    private Float blackPlayerRating;
+    @Column(name = "black_elo")
+    private Double blackElo;
 
     @Column(name = "white_elo_change")
-    private Float whiteEloChange;
+    private Double whiteEloChange;
 
     @Column(name = "black_elo_change")
-    private Float blackEloChange;
+    private Double blackEloChange;
 
     @Column(name = "start_time")
     private Timestamp startTime = new Timestamp(System.currentTimeMillis());

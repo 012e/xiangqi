@@ -100,7 +100,7 @@ const FindFriendsByUsername: React.FC = () => {
                   key={user.id}
                   avatarUrl={user.picture || 'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740'}
                   username={user.username}
-                  gmail={user.email}
+                  email={user.email}
                   listFriend={listFriend}
                   onAcceptClick={() => handleAddFriend(user.id)}
                   onDeclineClick={() => console.log(`Cancel ${user.username}`)}

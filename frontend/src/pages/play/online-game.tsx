@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
 import useSettingStore from '@/stores/setting-store';
-import { MyHoverCard } from '@/components/play/my-hover-card.tsx';
+import { PlayerCard } from '@/components/play/my-hover-card.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
@@ -25,7 +25,7 @@ import Xiangqi from '@/lib/xiangqi';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const { onMove, isLoading, isPlayWithBot} = useOnlineGame(id);
+  const { onMove, isLoading, isPlayWithBot } = useOnlineGame(id);
   const addFriend = useMutation({
     mutationFn: postAddFriend,
     onSuccess: () => {
@@ -49,7 +49,7 @@ export default function OnlineGame() {
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
   const gameState = useGameStore((state) => state.gameState);
-  const pieceTheme = useSettingStore(state => state.pieceTheme);
+  const pieceTheme = useSettingStore((state) => state.pieceTheme);
 
   // Get game history from gameState
   const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);
@@ -111,17 +111,19 @@ export default function OnlineGame() {
     }
   }, [selectHistory, gameHistory, currentGame, isViewingHistory]);
 
-  // Enhanced onMove function that handles history viewing
-  const handleMove = useCallback((from: string, to: string, piece: string): boolean => {
-    // If viewing history, return to current game first
-    if (isViewingHistory) {
-      handleReturnToCurrentGame();
-      // Don't make the move immediately, let user try again
-      return false;
-    }
-    
-    return onMove(from, to, piece);
-  }, [onMove, isViewingHistory]);
+  const handleMove = useCallback(
+    (from: string, to: string, piece: string): boolean => {
+      // If viewing history, return to current game first
+      if (isViewingHistory) {
+        handleReturnToCurrentGame();
+        // Don't make the move immediately, let user try again
+        return false;
+      }
+
+      return onMove(from, to, piece);
+    },
+    [onMove, isViewingHistory],
+  );
 
   // Get the appropriate game state for display
   const displayGame = isViewingHistory ? historicalGame : currentGame;
@@ -144,8 +146,8 @@ export default function OnlineGame() {
   }
 
   function isPlayerTurn({
-                          piece,
-                        }: {
+    piece,
+  }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
@@ -153,43 +155,47 @@ export default function OnlineGame() {
   }
   return (
     <div className="w-full text-foreground">
-      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] items-start">
+      <div className="grid grid-cols-1 items-start lg:grid-cols-[550px_400px]">
         {/* Left */}
-        <div className="p-4 lg:block hidden mt-10 bg-background">
+        <div className="hidden p-4 mt-10 lg:block bg-background">
           <div className="flex items-center px-6 w-full">
-            {
-              isPlayWithBot ? (
-                <div className="flex flex-row items-center w-full">
-                  <MyHoverCard props={{
+            {isPlayWithBot ? (
+              <div className="flex flex-row items-center w-full">
+                <PlayerCard
+                  props={{
                     name: enemyPlayer.username,
-                    score: 3,
-                    image: "https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg",
+                    elo: 0,
+                    image:
+                      'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg',
                     isMe: false,
                     userId: enemyPlayer.id, // Add user ID for friend request
                     btnAddFriend: addFriend,
-                  }} />
-                  <div className={`text-xl font-bold ml-auto`}>
-                    {formatTime(enemyPlayer?.time)}
-                  </div>
+                  }}
+                />
+                <div className={`text-xl font-bold ml-auto`}>
+                  {formatTime(enemyPlayer?.time)}
                 </div>
-              ) : (
-                <div className="flex flex-row items-center w-full">
-                  <MyHoverCard props={{
+              </div>
+            ) : (
+              <div className="flex flex-row items-center w-full">
+                <PlayerCard
+                  props={{
                     name: enemyPlayer.username,
-                    score: 0,
+                    elo: enemyPlayer.elo,
+                    eloChange: enemyPlayer.eloChange,
                     image: enemyPlayer.picture,
                     isMe: false,
                     userId: enemyPlayer.id, // Add user ID for friend request
                     btnAddFriend: addFriend,
-                  }} />
-                  <div className={`text-xl font-bold ml-auto`}>
-                    {formatTime(enemyPlayer?.time)}
-                  </div>
+                  }}
+                />
+                <div className={`text-xl font-bold ml-auto`}>
+                  {formatTime(enemyPlayer?.time)}
                 </div>
-              )
-            }
+              </div>
+            )}
           </div>
-          <div className="flex justify-center items-center px-3 bg-background ">
+          <div className="flex justify-center items-center px-3 bg-background">
             <div className="flex flex-col items-center">
               <div className="flex justify-center items-center w-full">
                 {isLoading ? (
@@ -216,35 +222,38 @@ export default function OnlineGame() {
             </div>
           </div>
           <div className="flex items-center px-6 w-full">
-            <MyHoverCard props={{
-              name: selfPlayer.username,
-              score: 0,
-              image: selfPlayer.picture,
-              isMe: true,
-            }} />
+            <PlayerCard
+              props={{
+                name: selfPlayer.username,
+                elo: selfPlayer.elo,
+                eloChange: selfPlayer.eloChange,
+                image: selfPlayer.picture,
+                isMe: true,
+              }}
+            />
             <div className={`text-xl font-bold ml-auto`}>
               {formatTime(selfPlayer?.time)}
             </div>
           </div>
           <div className="p-3 mx-5">
             {isViewingHistory && (
-              <div className=" bg-yellow-500 text-black text-center py-1 text-sm font-bold z-10">
+              <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
                 Watching history
               </div>
             )}
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 bg-muted shadow-lg shadow-ring">
+        <div className="my-5 shadow-lg rounded-4xl bg-muted shadow-ring">
           <div className="flex flex-col items-center p-6 space-y-6">
             {/*h1*/}
             <div>
-              <h1 className="text-4xl font-bold justify-center tracking-tight">
+              <h1 className="justify-center text-4xl font-bold tracking-tight">
                 {isPlayWithBot ? 'Game with Bot' : 'Play Online'}
               </h1>
             </div>
             {/*broad move*/}
-            <div className="bg-background rounded-2xl w-full">
+            <div className="w-full rounded-2xl bg-background">
               <MovePosition
                 moves={gameHistory}
                 setRestoreHistory={getRestoreGame}
@@ -255,35 +264,35 @@ export default function OnlineGame() {
             {/*tools*/}
             <div className="flex space-x-3">
               <Button className="group">
-                <Handshake className="transition-transform group-hover:scale-150 text-green-500" />
+                <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
               </Button>
               <Button className="group">
-                <Flag className="transition-transform group-hover:scale-150 "/>
+                <Flag className="transition-transform group-hover:scale-150" />
               </Button>
               <Button className="group">
-                <ChevronLeft className="transition-transform group-hover:scale-150 text-gray-400" />
+                <ChevronLeft className="text-gray-400 transition-transform group-hover:scale-150" />
               </Button>
               <Button className="group">
-                <ChevronRight className="transition-transform group-hover:scale-150 text-gray-400" />
+                <ChevronRight className="text-gray-400 transition-transform group-hover:scale-150" />
               </Button>
               <Button className="group">
-                <ArrowUpDown className="transition-transform group-hover:scale-150 text-blue-400" />
+                <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
               </Button>
             </div>
             <div className="grid gap-2 w-full">
-              {
-                !isPlayWithBot && <div>
+              {!isPlayWithBot && (
+                <div>
                   <Textarea
                     placeholder="Your Message"
-                    className="resize-none read-only:opacity-80 pointer-events-none h-30 "
+                    className="pointer-events-none resize-none read-only:opacity-80 h-30"
                     readOnly
                   ></Textarea>
                   <Textarea
                     placeholder="Type your message here."
-                    className="resize-none "
+                    className="resize-none"
                   />
                 </div>
-              }
+              )}
             </div>
           </div>
         </div>

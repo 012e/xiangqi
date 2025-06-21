@@ -10,12 +10,12 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "chess_ratings")
+@Table(name = "elo")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChessRating {
+public class Elo {
     @Embeddable
     @Data
     @Builder
@@ -23,7 +23,7 @@ public class ChessRating {
     @AllArgsConstructor
     public static class Pk implements Serializable {
         private Long userId;
-        private Integer gameTypeId;
+        private Long gameTypeId;
     }
 
     @EmbeddedId
@@ -40,10 +40,7 @@ public class ChessRating {
     private GameType gameType;
 
     @Column(name = "current_elo")
-    private Integer currentElo = 1500;
-
-    @Column(name = "highest_elo")
-    private Integer highestElo = 1500;
+    private Double currentElo = 1500.0d;
 
     @Column(name = "last_updated")
     private Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
