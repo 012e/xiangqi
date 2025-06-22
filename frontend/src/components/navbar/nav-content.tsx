@@ -15,20 +15,12 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar.tsx';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog.tsx';
+
 import { NavLink } from 'react-router';
 import { ModeToggle } from '../mode-toggle.tsx';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useState } from 'react';
+import AlertLogin from '../popups/alert-login.tsx';
 
 
 export type NavSubItem = {
@@ -45,7 +37,7 @@ export type NavItem = {
 };
 
 function NavItemWithSubItems({ item }: { item: NavItem }) {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated } = useAuth0();
   const [showAlert, setShowAlert] = useState(false);
   
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -57,23 +49,7 @@ function NavItemWithSubItems({ item }: { item: NavItem }) {
 
   return (
     <>
-      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Authentication Required</AlertDialogTitle>
-            <AlertDialogDescription>
-              You need to be logged in to access this feature. Would you like to log in now?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => loginWithRedirect()}>
-              Log In
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      
+      <AlertLogin showAlert={showAlert} setShowAlert={setShowAlert} />
       <Collapsible
         asChild
         defaultOpen={item.isActive}
@@ -107,7 +83,7 @@ function NavItemWithSubItems({ item }: { item: NavItem }) {
 }
 
 function NavItemWithoutSubItems({ item }: { item: NavItem }) {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated } = useAuth0();
   const [showAlert, setShowAlert] = useState(false);
   
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -119,23 +95,8 @@ function NavItemWithoutSubItems({ item }: { item: NavItem }) {
 
   return (
     <>
-      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Authentication Required</AlertDialogTitle>
-            <AlertDialogDescription>
-              You need to be logged in to access this feature. Would you like to log in now?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => loginWithRedirect()}>
-              Log In
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      
+     
+      <AlertLogin showAlert={showAlert} setShowAlert={setShowAlert} />
       <SidebarMenuItem>
         <SidebarMenuButton asChild tooltip={item.title}>
           <NavLink to={item.url} onClick={handleClick}>

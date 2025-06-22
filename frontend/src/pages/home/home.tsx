@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog.tsx';
 import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import AlertLogin from '@/components/popups/alert-login.tsx';
 const menuItems = [
   {
     icon: <Signal className="text-yellow-600 w-10 h-10" />,
@@ -48,7 +49,7 @@ const menuItems = [
   },
 ];
 export default function Home() {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated } = useAuth0();
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
 
@@ -62,22 +63,7 @@ export default function Home() {
 
   return (
     <div className="w-full h-fulltext-foreground ">
-      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Authentication Required</AlertDialogTitle>
-            <AlertDialogDescription>
-              You need to be logged in to access this feature. Would you like to log in now?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => loginWithRedirect()}>
-              Log In
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertLogin showAlert={showAlert} setShowAlert={setShowAlert} />
       <div className="bg-background grid grid-cols-1 lg:grid-cols-[550px_400px]">
         {/* Left */}
         <div className="p-4 lg:block hidden mt-30">
