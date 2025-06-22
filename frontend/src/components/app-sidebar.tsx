@@ -1,7 +1,13 @@
 'use client';
 
 import type * as React from 'react';
-import { BookOpen, Settings2, SquareTerminal, SquareUser, UserRoundSearch } from 'lucide-react';
+import {
+  BookOpen,
+  Settings2,
+  SquareTerminal,
+  SquareUser,
+  UserRoundSearch,
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -109,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavHeader teams={teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavContent items={navItems}/>
+        <NavContent items={navItems} />
       </SidebarContent>
       <SidebarFooter>
         {!isAuthenticated ? <LoginRegister /> : <NavUser user={usr} />}

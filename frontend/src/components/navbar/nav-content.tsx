@@ -22,7 +22,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useState } from 'react';
 import AlertLogin from '../popups/alert-login.tsx';
 
-
 export type NavSubItem = {
   title: string;
   url: string;
@@ -39,11 +38,11 @@ export type NavItem = {
 function NavItemWithSubItems({ item }: { item: NavItem }) {
   const { isAuthenticated } = useAuth0();
   const [showAlert, setShowAlert] = useState(false);
-  
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     if (!isAuthenticated) {
-      e.preventDefault(); 
-      setShowAlert(true); 
+      e.preventDefault();
+      setShowAlert(true);
     }
   };
 
@@ -85,7 +84,7 @@ function NavItemWithSubItems({ item }: { item: NavItem }) {
 function NavItemWithoutSubItems({ item }: { item: NavItem }) {
   const { isAuthenticated } = useAuth0();
   const [showAlert, setShowAlert] = useState(false);
-  
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     if (!isAuthenticated) {
       e.preventDefault(); // Prevent navigation
@@ -95,7 +94,6 @@ function NavItemWithoutSubItems({ item }: { item: NavItem }) {
 
   return (
     <>
-     
       <AlertLogin showAlert={showAlert} setShowAlert={setShowAlert} />
       <SidebarMenuItem>
         <SidebarMenuButton asChild tooltip={item.title}>
@@ -119,8 +117,7 @@ function ThemeButton() {
   );
 }
 
-export function NavContent({ items }: { items: NavItem[]}) {
-  
+export function NavContent({ items }: { items: NavItem[] }) {
   return (
     <SidebarGroup>
       <SidebarMenu>
