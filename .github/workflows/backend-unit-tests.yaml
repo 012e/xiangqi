@@ -34,13 +34,3 @@ jobs:
         # which runs in later phases like 'integration-test' or 'verify').
         run: |
           mvn test
-
-      - name: Upload Test Reports (Optional)
-        # This step uploads the generated Surefire reports (test results) as an artifact.
-        # This can be useful for reviewing test failures directly from GitHub.
-        uses: actions/upload-artifact@v4
-        with:
-          name: surefire-reports
-          path: backend/target/surefire-reports
-          if-no-files-found: ignore # Don't fail the workflow if no reports are found
-
