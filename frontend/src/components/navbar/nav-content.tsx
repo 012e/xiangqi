@@ -95,7 +95,6 @@ function NavItemWithoutSubItems({ item }: { item: NavItem }) {
 
   return (
     <>
-     
       <AlertLogin showAlert={showAlert} setShowAlert={setShowAlert} />
       <SidebarMenuItem>
         <SidebarMenuButton asChild tooltip={item.title}>
