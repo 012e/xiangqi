@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.service.game;
 
+import com.se330.ctuong_backend.dto.message.game.state.GameEndData;
 import com.se330.ctuong_backend.dto.message.game.state.GameEndMessage;
 import com.se330.ctuong_backend.dto.message.game.state.GameResult;
 import com.se330.ctuong_backend.model.Game;
@@ -236,5 +237,90 @@ class GameEndServiceTest {
         assertThat(game.getIsEnded()).isTrue();
         verify(gameRepository).save(game);
         verify(eloService).updateElo("game-123", WHITE_WIN);
+    }
+
+    @Test
+    @DisplayName("Should throw exception for invalid game result")
+    void shouldThrowExceptionForInvalidGameResult() {
+        // Given
+        when(gameLogic.getResult()).thenReturn(ONGOING);
+
+        // When & Then
+        assertThatThrownBy(() -> gameEndService.handleGameEnd("game-123", gameLogic, game))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Unexpected value: ONGOING");
+        
+        // Verify no side effects occurred
+        verify(gameRepository, never()).save(any());
+        verify(eloService, never()).updateElo(anyString(), any());
+        verify(gameMessageService, never()).sendMessageGameTopic(anyString(), any());
+    }
+
+    @Test
+    @DisplayName("Should handle elo change with different magnitudes")
+    void shouldHandleEloChangeWithDifferentMagnitudes() {
+        // Given
+        when(gameLogic.getResult()).thenReturn(BLACK_WIN);
+        when(eloService.updateElo("game-123", BLACK_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(25.75)
+                .whiteEloChange(-25.75)
+                .blackNewElo(1525.75)
+                .whiteNewElo(1474.25)
+                .build());
+
+        // When
+        gameEndService.handleGameEnd("game-123", gameLogic, game);
+
+        // Then
+        verify(gameMessageService).sendMessageGameTopic(eq("game-123"), argThat(message -> {
+            if (message instanceof GameEndMessage gameEndMessage) {
+                GameEndData data = gameEndMessage.getData();
+                return data.getBlackEloChange().equals(25L) &&
+                       data.getWhiteEloChange().equals(-25L);
+            }
+            return false;
+        }));
+    }
+
+    @Test
+    @DisplayName("Should handle concurrent game endings properly")
+    void shouldHandleConcurrentGameEndingsProperly() {
+        // Given
+        Game game1 = Game.builder().id("game-1").isEnded(false).build();
+        Game game2 = Game.builder().id("game-2").isEnded(false).build();
+        
+        Xiangqi logic1 = mock(Xiangqi.class);
+        Xiangqi logic2 = mock(Xiangqi.class);
+        
+        when(logic1.getResult()).thenReturn(WHITE_WIN);
+        when(logic2.getResult()).thenReturn(BLACK_WIN);
+        
+        when(eloService.updateElo("game-1", WHITE_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(-10d)
+                .whiteEloChange(10d)
+                .build());
+        when(eloService.updateElo("game-2", BLACK_WIN)).thenReturn(UpdateEloResult.builder()
+                .blackEloChange(15d)
+                .whiteEloChange(-15d)
+                .build());
+
+        // When
+        gameEndService.handleGameEnd("game-1", logic1, game1);
+        gameEndService.handleGameEnd("game-2", logic2, game2);
+
+        // Then
+        assertThat(game1.getResult()).isEqualTo("white_win");
+        assertThat(game1.getResultDetail()).isEqualTo("black_checkmate");
+        assertThat(game1.getIsEnded()).isTrue();
+        
+        assertThat(game2.getResult()).isEqualTo("black_win");
+        assertThat(game2.getResultDetail()).isEqualTo("white_checkmate");
+        assertThat(game2.getIsEnded()).isTrue();
+        
+        verify(gameRepository).save(game1);
+        verify(gameRepository).save(game2);
+        verify(eloService).updateElo("game-1", WHITE_WIN);
+        verify(eloService).updateElo("game-2", BLACK_WIN);
+        verify(gameMessageService, times(2)).sendMessageGameTopic(anyString(), any(GameEndMessage.class));
     }
 }
