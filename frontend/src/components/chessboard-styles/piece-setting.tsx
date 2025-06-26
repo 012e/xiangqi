@@ -17,8 +17,11 @@ import {
 import { CircleCheck } from 'lucide-react';
 import { ThemeNamesPiece } from '@/stores/setting-store';
 import { BlackKingPieceOk, RedKingPieceOk } from '@/components/chessboard-styles/pieces-styles/playok-pieces.tsx';
-import { defaultPieces } from '@/components/chessboard-styles/pieces-styles/xiangqi-default.tsx';
 import useSettingStore, { useSettingActions } from '@/stores/setting-store';
+import {
+  BlackKingPieceDefault,
+  RedKingPieceDefault,
+} from '@/components/chessboard-styles/pieces-styles/default-pieces.tsx';
 
 
 const radioOptions = [
@@ -27,10 +30,10 @@ const radioOptions = [
     content: (
       <div className="flex items-center justify-center scale-[1] origin-center">
         <div className="w-10 h-10">
-          {defaultPieces.wK}
+          <RedKingPieceDefault></RedKingPieceDefault>
         </div>
         <div className="w-10 h-10">
-          {defaultPieces.bK}
+          <BlackKingPieceDefault></BlackKingPieceDefault>
         </div>
       </div>
     ),

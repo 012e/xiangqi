@@ -1,13 +1,12 @@
 import {
   PicesPlayOkXiangqi,
   PiecesChineseChess,
-  PiecesClubXiangqi,
+  PiecesClubXiangqi, PiecesDefault,
   PiecesXahlee, PiecesXboard,
 } from '@/components/chessboard-styles/Pieces.tsx';
 import { CustomPieces } from 'react-xiangqiboard/dist/chessboard/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { defaultPieces } from '@/components/chessboard-styles/pieces-styles/xiangqi-default.tsx';
 import { XiangqiBoard } from '@/components/chessboard-styles/board-styles/xiangqi-board.tsx';
 
 export type Theme = 'dark' | 'light';
@@ -70,7 +69,7 @@ const THEME_DATA: Record<ThemeNamesPiece, CustomPieces> = {
   club: PiecesClubXiangqi,
   xahlee: PiecesXahlee,
   xboard: PiecesXboard,
-  default: defaultPieces,
+  default: PiecesDefault,
   playok: PicesPlayOkXiangqi
 };
 
