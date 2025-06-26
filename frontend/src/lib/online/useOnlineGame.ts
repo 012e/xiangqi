@@ -6,7 +6,7 @@ import {
 } from '@/stores/online-game-store';
 import { deserializeState } from './state';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { appAxios } from '@/services/AxiosClient.ts';
 import { GameResponse } from '@/lib/online/game-response.ts';
@@ -142,12 +142,17 @@ export function useOnlineGame(gameId: string | undefined) {
     },
   );
 
+  const resign = useCallback(async () => {
+    appAxios.post(`/game/${gameId}/resign`);
+  }, [gameId]);
+
   return {
     game: gameState,
     fen: useGameStore((state) => state.fen),
     onMove,
     playingColor,
     isLoading,
+    resign,
     isPlayWithBot: data?.isGameWithBot ?? false,
   };
 }

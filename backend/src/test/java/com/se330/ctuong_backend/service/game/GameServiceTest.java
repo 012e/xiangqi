@@ -3,6 +3,7 @@ package com.se330.ctuong_backend.service.game;
 import com.se330.ctuong_backend.dto.CreateGameDto;
 import com.se330.ctuong_backend.dto.GameDto;
 import com.se330.ctuong_backend.dto.rest.GameResponse;
+import com.se330.ctuong_backend.repository.UserRepository;
 import com.se330.xiangqi.Move;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +37,12 @@ class GameServiceTest {
     
     @Mock
     private GameQueryService gameQueryService;
+    
+    @Mock
+    private GameResignService gameResignService;
+    
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private GameService gameServiceFacade;
@@ -44,6 +51,7 @@ class GameServiceTest {
     private GameDto gameDto;
     private GameResponse gameResponse;
     private Move move;
+    private com.se330.ctuong_backend.model.User user;
 
     @BeforeEach
     void setUp() {
@@ -62,6 +70,14 @@ class GameServiceTest {
                 .build();
 
         move = Move.of("a1", "a2");
+        
+        user = com.se330.ctuong_backend.model.User.builder()
+                .id(1L)
+                .sub("user-sub-123")
+                .email("test@example.com")
+                .name("Test User")
+                .username("testuser")
+                .build();
     }
 
     @Test
@@ -271,5 +287,38 @@ class GameServiceTest {
         // Verify that the calls were made with the correct parameters and not mixed up
         verify(gameMoveService, never()).handleHumanMove(gameId2, move1);
         verify(gameMoveService, never()).handleBotMove(gameId1, move2);
+    }
+
+    @Test
+    @DisplayName("Should delegate resign to GameResignService")
+    void shouldDelegateResignToGameResignService() throws SchedulerException {
+        // Given
+        String gameId = "game-123";
+        String userSub = "user-sub-123";
+        when(userRepository.getUserBySub(userSub)).thenReturn(Optional.of(user));
+
+        // When
+        gameServiceFacade.resign(gameId, userSub);
+
+        // Then
+        verify(userRepository).getUserBySub(userSub);
+        verify(gameResignService).resign(gameId, user.getId());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when user not found during resign")
+    void shouldThrowExceptionWhenUserNotFoundDuringResign() {
+        // Given
+        String gameId = "game-123";
+        String userSub = "unknown-user-sub";
+        when(userRepository.getUserBySub(userSub)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> gameServiceFacade.resign(gameId, userSub))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("User not found");
+        
+        verify(userRepository).getUserBySub(userSub);
+        verify(gameResignService, never()).resign(anyString(), anyLong());
     }
 }

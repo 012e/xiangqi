@@ -3,6 +3,7 @@ package com.se330.ctuong_backend.service.game;
 import com.se330.ctuong_backend.dto.CreateGameDto;
 import com.se330.ctuong_backend.dto.GameDto;
 import com.se330.ctuong_backend.dto.rest.GameResponse;
+import com.se330.ctuong_backend.repository.UserRepository;
 import com.se330.xiangqi.Move;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,8 @@ public class GameService {
     private final GameMoveService gameMoveService;
     private final GameTimeoutHandlerService gameTimeoutHandlerService;
     private final GameQueryService gameQueryService;
+    private final GameResignService gameResignService;
+    private final UserRepository userRepository;
 
     public GameDto createGame(@Valid CreateGameDto dto) {
         return gameCreationService.createGame(dto);
@@ -40,5 +43,11 @@ public class GameService {
 
     public Optional<GameResponse> getGameById(String gameId) throws SchedulerException {
         return gameQueryService.getGameById(gameId);
+    }
+
+    public void resign(String gameId, String sub) throws SchedulerException {
+        final var user = userRepository.getUserBySub(sub)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        gameResignService.resign(gameId, user.getId());
     }
 }

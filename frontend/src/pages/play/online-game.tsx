@@ -22,10 +22,11 @@ import { toast } from 'sonner';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import MovePosition, { HistoryMove } from '@/components/move-position';
 import Xiangqi from '@/lib/xiangqi';
+import ResignButton from '../../components/ui/alert-resign.tsx';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const { onMove, isLoading, isPlayWithBot } = useOnlineGame(id);
+  const { onMove, isLoading, isPlayWithBot, resign } = useOnlineGame(id);
   const addFriend = useMutation({
     mutationFn: postAddFriend,
     onSuccess: () => {
@@ -81,14 +82,14 @@ export default function OnlineGame() {
 
     const moveNumber = Math.floor(historyIndex / 2) + 1;
     const isWhiteMove = historyIndex % 2 === 0;
-    
+
     const historyMove: HistoryMove = {
       index: moveNumber,
       moves: [
         gameHistory[moveNumber * 2 - 2] || '', // White move
-        gameHistory[moveNumber * 2 - 1] || ''  // Black move
-      ].filter(move => move !== ''),
-      color: isWhiteMove ? 'white' : 'black'
+        gameHistory[moveNumber * 2 - 1] || '', // Black move
+      ].filter((move) => move !== ''),
+      color: isWhiteMove ? 'white' : 'black',
     };
 
     setSelectHistory(historyMove);
@@ -108,7 +109,10 @@ export default function OnlineGame() {
   function handleNextMove() {
     if (isViewingHistory && currentHistoryIndex < gameHistory.length - 1) {
       navigateToHistoryMove(currentHistoryIndex + 1);
-    } else if (isViewingHistory && currentHistoryIndex === gameHistory.length - 1) {
+    } else if (
+      isViewingHistory &&
+      currentHistoryIndex === gameHistory.length - 1
+    ) {
       // If at the end of history, return to current game
       handleReturnToCurrentGame();
     }
@@ -321,30 +325,37 @@ export default function OnlineGame() {
               <Button className="group">
                 <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
               </Button>
-              <Button className="group">
-                <Flag className="transition-transform group-hover:scale-150" />
-              </Button>
-              <Button 
-                className="group" 
+              <ResignButton onResign={resign} />
+
+              <Button
+                className="group"
                 onClick={handlePreviousMove}
                 disabled={isViewingHistory && currentHistoryIndex <= 0}
               >
-                <ChevronLeft className={`transition-transform group-hover:scale-150 ${
-                  isViewingHistory && currentHistoryIndex <= 0 
-                    ? 'text-gray-600' 
-                    : 'text-gray-400'
-                }`} />
+                <ChevronLeft
+                  className={`transition-transform group-hover:scale-150 ${
+                    isViewingHistory && currentHistoryIndex <= 0
+                      ? 'text-gray-600'
+                      : 'text-gray-400'
+                  }`}
+                />
               </Button>
-              <Button 
-                className="group" 
+              <Button
+                className="group"
                 onClick={handleNextMove}
-                disabled={isViewingHistory && currentHistoryIndex >= gameHistory.length - 1}
+                disabled={
+                  isViewingHistory &&
+                  currentHistoryIndex >= gameHistory.length - 1
+                }
               >
-                <ChevronRight className={`transition-transform group-hover:scale-150 ${
-                  isViewingHistory && currentHistoryIndex >= gameHistory.length - 1 
-                    ? 'text-gray-600' 
-                    : 'text-gray-400'
-                }`} />
+                <ChevronRight
+                  className={`transition-transform group-hover:scale-150 ${
+                    isViewingHistory &&
+                    currentHistoryIndex >= gameHistory.length - 1
+                      ? 'text-gray-600'
+                      : 'text-gray-400'
+                  }`}
+                />
               </Button>
               <Button className="group" onClick={togglePlayer}>
                 <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
