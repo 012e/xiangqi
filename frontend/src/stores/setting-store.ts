@@ -8,6 +8,7 @@ import { CustomPieces } from 'react-xiangqiboard/dist/chessboard/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { defaultPieces } from '@/components/chessboard-styles/pieces-styles/xiangqi-default.tsx';
+import { XiangqiBoard } from '@/components/chessboard-styles/board-styles/xiangqi-board.tsx';
 
 export type Theme = 'dark' | 'light';
 
@@ -20,6 +21,7 @@ type SettingState = {
   theme: Theme;
   accessToken?: string;
   pieceTheme?: CustomPieces;
+  pieceThemeName?: ThemeNamesPiece;
   boardTheme?: string;
 };
 
@@ -82,6 +84,9 @@ const useSettingStore = create<SettingStore>()(
     (set, get) => ({
       backendUrl: BACKEND_URL,
       theme: systemTheme,
+      pieceTheme: THEME_DATA.default,
+      pieceThemeName: 'default',
+      boardTheme: XiangqiBoard,
       actions: {
         setTheme(theme: Theme): void {
           set({ theme });
@@ -100,6 +105,7 @@ const useSettingStore = create<SettingStore>()(
         setPieceTheme(pieceTheme: ThemeNamesPiece): void {
           set({
              pieceTheme: THEME_DATA[pieceTheme] || THEME_DATA.chinese,
+             pieceThemeName: pieceTheme,
           });
         },
         setBoardTheme(boardTheme: string): void {

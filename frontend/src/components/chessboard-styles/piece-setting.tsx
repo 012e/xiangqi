@@ -1,6 +1,7 @@
 import { IconKingBlack, IconKingRed } from './pieces-styles/chinese-pieces';
 import { cn } from '@/lib/utils';
 import * as RadioGroup from '@radix-ui/react-radio-group';
+import { useEffect } from 'react';
 import {
   BlackKingPiece,
   RedKingPiece,
@@ -17,6 +18,7 @@ import { CircleCheck } from 'lucide-react';
 import { ThemeNamesPiece } from '@/stores/setting-store';
 import { BlackKingPieceOk, RedKingPieceOk } from '@/components/chessboard-styles/pieces-styles/playok-pieces.tsx';
 import { defaultPieces } from '@/components/chessboard-styles/pieces-styles/xiangqi-default.tsx';
+import useSettingStore, { useSettingActions } from '@/stores/setting-store';
 
 
 const radioOptions = [
@@ -100,12 +102,24 @@ const radioOptions = [
   },
 ];
 
-
 export function PieceStyleSelector({ pieceTheme }: { pieceTheme: (theme: ThemeNamesPiece) => void }) {
+  const { setPieceTheme } = useSettingActions();
+  const currentThemeName = useSettingStore(state => state.pieceThemeName || 'default');
+
+  const handleStyleChange = (value: string) => {
+    const themeValue = value as ThemeNamesPiece;
+    setPieceTheme?.(themeValue);
+    pieceTheme(themeValue);
+  };
+
+  useEffect(() => {
+    pieceTheme(currentThemeName);
+  }, [pieceTheme, currentThemeName]);
   return (
     <RadioGroup.Root
+      value={currentThemeName}
       className="flex items-center flex-col gap-3"
-      onValueChange={(value) => pieceTheme(value as ThemeNamesPiece)}
+      onValueChange={handleStyleChange}
     >
       {radioOptions.map((option) => (
         <RadioGroup.Item
