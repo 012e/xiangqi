@@ -24,6 +24,7 @@ public class GameService {
     private final GameQueryService gameQueryService;
     private final GameResignService gameResignService;
     private final UserRepository userRepository;
+    private final GameDrawService gameOfferDrawService;
 
     public GameDto createGame(@Valid CreateGameDto dto) {
         return gameCreationService.createGame(dto);
@@ -49,5 +50,17 @@ public class GameService {
         final var user = userRepository.getUserBySub(sub)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         gameResignService.resign(gameId, user.getId());
+    }
+
+    public void offerDraw(String gameId, String sub) throws SchedulerException {
+        final var user = userRepository.getUserBySub(sub)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        gameOfferDrawService.offerDraw(gameId, user.getId());
+    }
+
+    public void declineDraw(String gameId, String sub) throws SchedulerException {
+        final var user = userRepository.getUserBySub(sub)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        gameOfferDrawService.declineDraw(gameId, user.getId());
     }
 }

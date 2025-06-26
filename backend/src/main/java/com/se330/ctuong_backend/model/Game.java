@@ -94,6 +94,18 @@ public class Game {
     @Column(name = "bot_strength")
     private Integer botStrength;
 
+    @Column(name = "is_white_offering_draw")
+    private Boolean isWhiteOfferingDraw = false;
+
+    @Column(name = "is_black_offering_draw")
+    private Boolean isBlackOfferingDraw = false;
+
+    @Column(name = "white_last_draw_offer")
+    private Integer whiteLastDrawOffer = -1;
+
+    @Column(name = "black_last_draw_offer")
+    private Integer blackLastDrawOffer = -1;
+
     @Transient
     public Boolean getGameEnded() {
         return getEndTime() != null;

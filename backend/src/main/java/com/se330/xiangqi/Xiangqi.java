@@ -1,5 +1,7 @@
 package com.se330.xiangqi;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -839,4 +841,14 @@ public class Xiangqi {
     public boolean isBlackTurn() {
         return currentPlayer.equals("white");
     }
+
+    /**
+     * Returns the number of moves made in the game
+     */
+    public int getMoveCount() {
+        // This is not the total number of moves, but rather the number of turns taken
+        // Each move consists of a "from" and "to" position, so we divide by 2 plus one if odd
+        return moveCount / 2 + (moveCount % 2);
+    }
+
 }
