@@ -1,11 +1,10 @@
 import { cn } from '@/lib/utils';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { CircleCheck } from 'lucide-react';
-import { useEffect } from 'react';
 import { XiangqiBoard } from '@/components/chessboard-styles/board-styles/xiangqi-board.tsx';
 import { BoardXboard1, BoardXboard2 } from '@/components/chessboard-styles/board-styles/xboard-board.tsx';
 import { Board01xq } from '@/components/chessboard-styles/board-styles/01xq-board.tsx';
-import useSettingStore, { useSettingActions } from '@/stores/setting-store';
+import { useSettingActions } from '@/stores/setting-store';
 
 const radioOptions = [
   {
@@ -43,22 +42,10 @@ const radioOptions = [
 ];
 
 export function BoardStyleSelector({ boardTheme }: { boardTheme: (theme: string) => void }) {
-  const { setBoardTheme } = useSettingActions();
-  const currentBoardTheme = useSettingStore(state => state.boardTheme || XiangqiBoard);
-
-  const handleStyleChange = (value: string) => {
-    setBoardTheme?.(value);
-    boardTheme(value);
-  };
-
-  useEffect(() => {
-    boardTheme(currentBoardTheme);
-  }, [boardTheme, currentBoardTheme]);
   return (
     <RadioGroup.Root
-      value={currentBoardTheme}
       className="flex items-center flex-col justify-center gap-3 p-3"
-      onValueChange={handleStyleChange}
+      onValueChange={(value) => boardTheme(value as string)}
     >
       {radioOptions.map((option) => (
         <RadioGroup.Item

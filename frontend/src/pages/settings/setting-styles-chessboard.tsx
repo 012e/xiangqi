@@ -4,7 +4,6 @@ import { TabsContent, TabsList } from '@radix-ui/react-tabs';
 import { PieceStyleSelector } from '@/components/chessboard-styles/piece-setting';
 import useSettingStore from '@/stores/setting-store';
 import { BoardStyleSelector } from '@/components/chessboard-styles/board-settings.tsx';
-import { Board01xq } from '@/components/chessboard-styles/board-styles/01xq-board.tsx';
 
 export default function SettingStylesChessboard() {
   const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
