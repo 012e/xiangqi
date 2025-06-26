@@ -47,14 +47,21 @@ function formatTime(ms: number): string {
 }
 
 function EloChangeText({ eloChange }: { eloChange?: number }) {
-  if (eloChange === undefined) {
+  if (!eloChange && eloChange !== 0) {
     return null;
   }
 
-  const eloChangeClass = eloChange > 0 ? 'text-green-500' : 'text-red-500';
+
+  let eloChangeClass = 'text-green-500';
+  if (eloChange < 0) {
+    eloChangeClass = 'text-red-500';
+  }
+  if (eloChange === 0) {
+    eloChangeClass = 'text-gray-500';
+  }
   return (
     <span className={`text-sm ${eloChangeClass}`}>
-      {eloChange > 0 ? `+${eloChange}` : eloChange}
+      {eloChange >= 0 ? `+${eloChange}` : eloChange}
     </span>
   );
 }
