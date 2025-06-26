@@ -2,40 +2,32 @@ import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
 import { useGameStore } from '@/stores/online-game-store'; // Import the store
-import {
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  Flag,
-  Handshake,
-  Loader2,
-} from 'lucide-react';
+import { ArrowUpDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
 import useSettingStore from '@/stores/setting-store';
 import { PlayerCard } from '@/components/play/my-hover-card.tsx';
-import { useMutation } from '@tanstack/react-query';
-import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
-import { toast } from 'sonner';
+import { addFriend as addFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import OfferDrawButton from '@/components/ui/offer-draw-button.tsx';
 import MovePosition, { HistoryMove } from '@/components/move-position';
 import Xiangqi from '@/lib/xiangqi';
 import ResignButton from '../../components/ui/alert-resign.tsx';
+import useWindowDimensions from '@/hooks/use-window-dimensions.tsx';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const { onMove, isLoading, isPlayWithBot, resign } = useOnlineGame(id);
-  const addFriend = useMutation({
-    mutationFn: postAddFriend,
-    onSuccess: () => {
-      toast('Successfully added friend!');
-    },
-    onError: () => {
-      toast('Fail add friend!');
-    },
-  });
+  const { onMove, isLoading, isPlayWithBot, resign, offerDraw, declineDraw } =
+    useOnlineGame(id);
+
+  const enemyOfferingDraw = useGameStore(
+    (state) => state.enemyPlayer.isOfferingDraw,
+  );
+  const currentPlayerOfferingDraw = useGameStore(
+    (state) => state.selfPlayer.isOfferingDraw,
+  );
 
   // History state management
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
@@ -43,6 +35,7 @@ export default function OnlineGame() {
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
   const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
   const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
+  const { width } = useWindowDimensions();
 
   // Get the time from the store
 
@@ -188,18 +181,6 @@ export default function OnlineGame() {
   const displayGame = isViewingHistory ? historicalGame : currentGame;
   const displayFen = displayGame?.exportFen() || fen;
 
-  // Format time from milliseconds to mm:ss:xx
-  function formatTime(ms: number): string {
-    // return ms.toString();
-    // example: 137608 (s)
-    const totalSeconds = Math.round(ms / 1000); // 138
-    const minutes = Math.floor(totalSeconds / 60); // 2
-    const seconds = totalSeconds % 60; // 18
-    return `${minutes.toString().padStart(2, '0')}:${seconds
-      .toString()
-      .padStart(2, '0')}`;
-  }
-
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
   }
@@ -212,170 +193,128 @@ export default function OnlineGame() {
   }): boolean {
     return getPieceColor(piece) === selfPlayer?.color;
   }
-  return (
-    <div className="w-full text-foreground">
-      <div className="grid grid-cols-1 items-start lg:grid-cols-[550px_400px]">
-        {/* Left */}
-        <div className="hidden p-4 mt-10 lg:block bg-background">
-          <div className="flex items-center px-6 w-full">
-            {isPlayWithBot ? (
-              <div className="flex flex-row items-center w-full">
-                <PlayerCard
-                  props={{
-                    name: enemyPlayer.username,
-                    elo: enemyPlayer.elo,
-                    image:
-                      'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg',
-                    isMe: false,
-                    userId: enemyPlayer.id, // Add user ID for friend request
-                    btnAddFriend: addFriend,
-                  }}
-                />
-                <div className={`text-xl font-bold ml-auto`}>
-                  {formatTime(enemyPlayer?.time)}
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-row items-center w-full">
-                <PlayerCard
-                  props={{
-                    name: enemyPlayer.username,
-                    elo: enemyPlayer.elo,
-                    eloChange: enemyPlayer.eloChange,
-                    image: enemyPlayer.picture,
-                    isMe: false,
-                    userId: enemyPlayer.id, // Add user ID for friend request
-                    btnAddFriend: addFriend,
-                  }}
-                />
-                <div className={`text-xl font-bold ml-auto`}>
-                  {formatTime(enemyPlayer?.time)}
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="flex justify-center items-center px-3 bg-background">
-            <div className="flex flex-col items-center">
-              <div className="flex justify-center items-center w-full">
-                {isLoading ? (
-                  <div className="flex justify-center items-center w-full h-full animate-spin">
-                    <Loader2 />
-                  </div>
-                ) : (
-                  <div className="flex justify-center items-center">
-                    <Chessboard
-                      boardWidth={400}
-                      id="online-xiangqi-board"
-                      onPieceDrop={handleMove}
-                      isDraggablePiece={(piece) =>
-                        isPlayerTurn(piece) && !gameEnded && !isViewingHistory
-                      }
-                      customPieces={pieceTheme}
-                      boardOrientation={selfPlayer?.color}
-                      position={displayFen}
-                      animationDuration={200}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center px-6 w-full">
-            <PlayerCard
-              props={{
-                name: selfPlayer.username,
-                elo: selfPlayer.elo,
-                eloChange: selfPlayer.eloChange,
-                image: selfPlayer.picture,
-                isMe: true,
-              }}
-            />
-            <div className={`text-xl font-bold ml-auto`}>
-              {formatTime(selfPlayer?.time)}
-            </div>
-          </div>
-          <div className="p-3 mx-5">
-            {isViewingHistory && (
-              <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
-                Watching history
-              </div>
-            )}
-          </div>
-        </div>
-        {/* Right */}
-        <div className="my-5 shadow-lg rounded-4xl bg-muted shadow-ring">
-          <div className="flex flex-col items-center p-6 space-y-6">
-            {/*h1*/}
-            <div>
-              <h1 className="justify-center text-4xl font-bold tracking-tight">
-                {isPlayWithBot ? 'Game with Bot' : 'Play Online'}
-              </h1>
-            </div>
-            {/*broad move*/}
-            <div className="w-full rounded-2xl bg-background">
-              <MovePosition
-                moves={gameHistory}
-                setRestoreHistory={getRestoreGame}
-                isViewingHistory={isViewingHistory}
-                onReturnToCurrentGame={handleReturnToCurrentGame}
-              />
-            </div>
-            {/*tools*/}
-            <div className="flex space-x-3">
-              <Button className="group">
-                <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
-              </Button>
-              <ResignButton onResign={resign} />
 
-              <Button
-                className="group"
-                onClick={handlePreviousMove}
-                disabled={isViewingHistory && currentHistoryIndex <= 0}
-              >
-                <ChevronLeft
-                  className={`transition-transform group-hover:scale-150 ${
-                    isViewingHistory && currentHistoryIndex <= 0
-                      ? 'text-gray-600'
-                      : 'text-gray-400'
-                  }`}
-                />
-              </Button>
-              <Button
-                className="group"
-                onClick={handleNextMove}
-                disabled={
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2" key={id}>
+      {/* Left */}
+      <div className="flex flex-col justify-center items-center p-10 bg-background">
+        {isPlayWithBot ? (
+          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
+        ) : (
+          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
+        )}
+
+        <div className="flex justify-center items-center w-full">
+          {isLoading ? (
+            <div className="flex justify-center items-center w-full h-full animate-spin">
+              <Loader2 />
+            </div>
+          ) : (
+            <Chessboard
+              id="online-xiangqi-board"
+              boardWidth={400}
+              onPieceDrop={handleMove}
+              isDraggablePiece={(piece) =>
+                isPlayerTurn(piece) && !gameEnded && !isViewingHistory
+              }
+              customPieces={pieceTheme}
+              boardOrientation={selfPlayer?.color}
+              position={displayFen}
+              animationDuration={200}
+            />
+          )}
+        </div>
+
+        <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
+
+        <div className="p-3 mx-5">
+          {isViewingHistory && (
+            <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
+              Watching history
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Right */}
+      <div className="m-5 shadow-lg rounded-4xl bg-muted shadow-ring">
+        <div className="flex flex-col items-center p-6 space-y-6">
+          {/*h1*/}
+          <div>
+            <h1 className="justify-center text-4xl font-bold tracking-tight">
+              {isPlayWithBot ? 'Game with Bot' : 'Play Online'}
+            </h1>
+          </div>
+          {/*broad move*/}
+          <div className="w-full rounded-2xl bg-background">
+            <MovePosition
+              moves={gameHistory}
+              setRestoreHistory={getRestoreGame}
+              isViewingHistory={isViewingHistory}
+              onReturnToCurrentGame={handleReturnToCurrentGame}
+            />
+          </div>
+          {/*tools*/}
+          {currentPlayerOfferingDraw && (
+            <div className="p-1 font-bold tracking-tight text-center text-black bg-yellow-300 rounded-xs">
+              You have offered a draw. Waiting for the opponent's response.
+            </div>
+          )}
+          <div className="flex space-x-3">
+            <OfferDrawButton
+              onDrawOffer={offerDraw}
+              onRejectDrawOffer={declineDraw}
+              showRejectPopup={enemyOfferingDraw}
+            />
+            <ResignButton onResign={resign} />
+
+            <Button
+              className="group"
+              onClick={handlePreviousMove}
+              disabled={isViewingHistory && currentHistoryIndex <= 0}
+            >
+              <ChevronLeft
+                className={`transition-transform group-hover:scale-150 ${
+                  isViewingHistory && currentHistoryIndex <= 0
+                    ? 'text-gray-600'
+                    : 'text-gray-400'
+                }`}
+              />
+            </Button>
+            <Button
+              className="group"
+              onClick={handleNextMove}
+              disabled={
+                isViewingHistory &&
+                currentHistoryIndex >= gameHistory.length - 1
+              }
+            >
+              <ChevronRight
+                className={`transition-transform group-hover:scale-150 ${
                   isViewingHistory &&
                   currentHistoryIndex >= gameHistory.length - 1
-                }
-              >
-                <ChevronRight
-                  className={`transition-transform group-hover:scale-150 ${
-                    isViewingHistory &&
-                    currentHistoryIndex >= gameHistory.length - 1
-                      ? 'text-gray-600'
-                      : 'text-gray-400'
-                  }`}
+                    ? 'text-gray-600'
+                    : 'text-gray-400'
+                }`}
+              />
+            </Button>
+            <Button className="group" onClick={togglePlayer}>
+              <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
+            </Button>
+          </div>
+          <div className="grid gap-2 w-full">
+            {!isPlayWithBot && (
+              <div>
+                <Textarea
+                  placeholder="Your Message"
+                  className="pointer-events-none resize-none read-only:opacity-80 h-30"
+                  readOnly
+                ></Textarea>
+                <Textarea
+                  placeholder="Type your message here."
+                  className="resize-none"
                 />
-              </Button>
-              <Button className="group" onClick={togglePlayer}>
-                <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
-              </Button>
-            </div>
-            <div className="grid gap-2 w-full">
-              {!isPlayWithBot && (
-                <div>
-                  <Textarea
-                    placeholder="Your Message"
-                    className="pointer-events-none resize-none read-only:opacity-80 h-30"
-                    readOnly
-                  ></Textarea>
-                  <Textarea
-                    placeholder="Type your message here."
-                    className="resize-none"
-                  />
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

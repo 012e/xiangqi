@@ -6,7 +6,7 @@ import { ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { findFriendByUsername } from '@/lib/friend/find-friend.ts';
-import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';  
+import { addFriend } from '@/lib/friend/useFriendRequestActions.ts';  
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input.tsx';
 import { getFriendList } from '@/lib/friend/friend-request-list.ts';
@@ -36,7 +36,7 @@ const FindFriendsByUsername: React.FC = () => {
   });
 
   const addFriendMutation = useMutation({
-    mutationFn: postAddFriend,
+    mutationFn: addFriend,
     onSuccess: () => {
       toast.success('Friend request sent successfully!');
     },

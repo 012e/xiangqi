@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DrawOfferingData extends MessageData {
+public class DrawOfferData extends MessageData {
     private boolean isWhiteOfferingDraw;
     private boolean isBlackOfferingDraw;
 }

@@ -57,6 +57,7 @@ public class GameFinalizerService {
         game.setEndTime(Instant.now());
         game.setIsEnded(true);
         patchTimeLeft(game);
+        gameTimeoutService.removeTimerIfExists(game.getId());
         gameRepository.save(game);
 
         final var resultDto = switch (gameResult.getResult()) {

@@ -66,7 +66,7 @@ public class GameController {
     @PostMapping("/game/{id}/decline-draw")
     @Operation(summary = "Decline a draw", description = "Deline other player's draw offer in the specified game")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Player declined draw offer successfully"),
+            @ApiResponse(responseCode = "204", description = "Player declined draw offer successfully"),
             @ApiResponse(responseCode = "404", description = "Game not found")
     })
     private ResponseEntity<Object> declineDraw(

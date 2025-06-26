@@ -16,26 +16,35 @@ import {
   Sword,
   Zap,
 } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover.tsx';
-import { UseMutationResult } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
-import { useMatch } from 'react-router';
+import { useMutation } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { Player } from '@/stores/online-game-store';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export type HoverCardType = {
-  name: string;
-  image: string;
-  elo: number;
-  eloChange?: number;
-  isMe: boolean;
-  userId?: number;
-  btnAddFriend?: UseMutationResult<AxiosResponse, Error, number>;
+export type PlayerCardProps = {
+  player: Player;
+  onAddFriend?: (id: number) => Promise<unknown>;
+  isCurrentPlayer?: boolean;
+  isBot?: boolean;
 };
+
+// Format time from milliseconds to mm:ss:xx
+function formatTime(ms: number): string {
+  // return ms.toString();
+  // example: 137608 (s)
+  const totalSeconds = Math.round(ms / 1000); // 138
+  const minutes = Math.floor(totalSeconds / 60); // 2
+  const seconds = totalSeconds % 60; // 18
+  return `${minutes.toString().padStart(2, '0')}:${seconds
+    .toString()
+    .padStart(2, '0')}`;
+}
 
 function EloChangeText({ eloChange }: { eloChange?: number }) {
   if (eloChange === undefined) {
@@ -50,67 +59,99 @@ function EloChangeText({ eloChange }: { eloChange?: number }) {
   );
 }
 
-export function PlayerCard({ props }: { props: HoverCardType }) {
-  const handleAddFriend = () => {
-    if (props.btnAddFriend && props.userId) {
-      props.btnAddFriend.mutate(props.userId);
-    }
-  };
+export function PlayerCard({
+  player,
+  onAddFriend,
+  isCurrentPlayer = false,
+}: PlayerCardProps) {
   const displayedElo = useMemo(() => {
-    if (props.eloChange) {
-      return props.elo + props.eloChange;
+    if (player.eloChange) {
+      return player.elo + player.eloChange;
     }
-    return props.elo;
-  }, [props.elo, props.eloChange]);
+    return player.elo;
+  }, [player.elo, player.eloChange]);
+
+  const { mutate: mutateAddFriend } = useMutation({
+    mutationFn: async (id: number) => {
+      if (!onAddFriend) {
+        throw new Error('onAddFriend function is not provided');
+      }
+      await onAddFriend(id);
+    },
+    onSuccess: () => {
+      console.log('Friend request sent successfully');
+    },
+    onError: (error: any) => {
+      console.error('Error sending friend request:', error);
+    },
+  });
+
+  async function handleAddFriend() {
+    if (!player || !player.id) {
+      throw new Error('Player data is incomplete');
+    }
+
+    if (isCurrentPlayer) {
+      throw new Error('Cannot add yourself as a friend');
+    }
+
+    if (onAddFriend) {
+      mutateAddFriend(player.id);
+    } else {
+      console.warn('onAddFriend function is not provided');
+    }
+  }
 
   return (
     <div className="w-full">
       <HoverCard>
-        <div className="flex items-center">
-          <HoverCardTrigger>
-            <div className="flex items-center w-13 h-13">
-              <img
-                className="flex self-center rounded-xs"
-                src={props.image}
-                alt="Avatar"
-              />
-            </div>
-          </HoverCardTrigger>
-          <HoverCardTrigger>
-            <div className="flex flex-col p-2">
-              <div className="items-center font-semibold tracking-tight text-md">
-                {props.name}
+        <div className="flex items-center justify-between w-[450px]">
+          <div className="flex">
+            <HoverCardTrigger asChild>
+              <div className="flex items-center">
+                <Avatar>
+                  <AvatarImage src={player.picture} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
               </div>
-              <span className="flex items-center tracking-tight text-md text-muted-foreground">
-                <Zap className="size-3"></Zap>
-                <div className="flex gap-1 items-center">
-                  <span>{displayedElo ?? 0}</span>
-                  <EloChangeText eloChange={props.eloChange} />
+            </HoverCardTrigger>
+            <HoverCardTrigger asChild>
+              <div className="flex flex-col p-2">
+                <div className="items-center font-semibold tracking-tight text-md">
+                  {player.username}
                 </div>
-              </span>
-            </div>
-          </HoverCardTrigger>
+                <span className="flex items-center tracking-tight text-md text-muted-foreground">
+                  <Zap className="size-3"></Zap>
+                  <div className="flex gap-1 items-center">
+                    <span>{displayedElo ?? 0}</span>
+                    <EloChangeText eloChange={player.eloChange} />
+                  </div>
+                </span>
+              </div>
+            </HoverCardTrigger>
+          </div>
+          <div className="text-xl font-bold">{formatTime(player?.time)}</div>
         </div>
         <HoverCardContent className="w-auto" asChild>
           <div className="flex flex-col gap-2 p-3">
             <div className="flex">
               <img
-                src={props.image}
+                src={player.picture}
                 className="flex justify-center items-center rounded-md size-25"
                 alt="Avatar"
               />
               <div className="flex flex-col gap-2 p-3">
                 <div className="font-semibold tracking-tight text-muted-foreground text-md">
-                  {props.name}
+                  {player.username}
                 </div>
                 <span className="flex items-center tracking-tight text-md text-muted-foreground">
                   <Zap className="size-3"></Zap>
                   {/* TODO: consider using displayedElo directly} */}
-                  <span>{props.elo ?? 0}</span>
+                  <span>{player.elo ?? 0}</span>
                 </span>
               </div>
             </div>
-            {props.isMe ? (
+            {isCurrentPlayer ? (
               <div className="grid grid-cols-2 gap-2 pt-2">
                 <Button className="flex gap-2 items-center w-auto font-semibold hover:text-muted-foreground">
                   <ChartLine></ChartLine>
@@ -124,7 +165,7 @@ export function PlayerCard({ props }: { props: HoverCardType }) {
             ) : (
               <div className="flex gap-2 pt-2">
                 <Popover>
-                  <PopoverTrigger>
+                  <PopoverTrigger asChild>
                     <Button className="py-2 px-7">
                       <Ellipsis></Ellipsis>
                     </Button>

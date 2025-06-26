@@ -6,11 +6,11 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class DrawOfferingMessage extends GameMessage<DrawOfferingData> {
-    protected BoardState type = BoardState.DrawOffering;
-    private DrawOfferingData data;
+public class DrawOfferMessage extends GameMessage<DrawOfferData> {
+    protected BoardState type = BoardState.DrawOffer;
+    private DrawOfferData data;
 
-    public DrawOfferingMessage(DrawOfferingData data) {
+    public DrawOfferMessage(DrawOfferData data) {
         this.data = data;
     }
 }

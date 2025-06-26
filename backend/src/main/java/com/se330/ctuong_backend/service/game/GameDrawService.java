@@ -1,9 +1,6 @@
 package com.se330.ctuong_backend.service.game;
 
-import com.se330.ctuong_backend.dto.message.game.state.DrawOfferingData;
-import com.se330.ctuong_backend.dto.message.game.state.DrawOfferingDeclinedMessage;
-import com.se330.ctuong_backend.dto.message.game.state.DrawOfferingMessage;
-import com.se330.ctuong_backend.dto.message.game.state.GameResult;
+import com.se330.ctuong_backend.dto.message.game.state.*;
 import com.se330.ctuong_backend.model.Game;
 import com.se330.ctuong_backend.repository.GameRepository;
 import com.se330.ctuong_backend.repository.UserRepository;
@@ -31,12 +28,12 @@ public class GameDrawService {
             if (game.getWhiteLastDrawOffer() == -1) {
                 return false; // No previous draw offer
             }
-            return lastMove - game.getWhiteLastDrawOffer() < 5;
+            return lastMove == game.getWhiteLastDrawOffer();
         } else {
             if (game.getBlackLastDrawOffer() == -1) {
                 return false; // No previous draw offer
             }
-            return lastMove - game.getBlackLastDrawOffer() < 5;
+            return lastMove == game.getBlackLastDrawOffer();
         }
     }
 
@@ -86,11 +83,11 @@ public class GameDrawService {
 
         gameRepository.save(game);
 
-        final var messageData = DrawOfferingData.builder()
+        final var messageData = DrawOfferData.builder()
                 .isWhiteOfferingDraw(game.getIsWhiteOfferingDraw())
                 .isBlackOfferingDraw(game.getIsBlackOfferingDraw())
                 .build();
-        gameMessageService.sendMessageGameTopic(gameId, new DrawOfferingMessage(messageData));
+        gameMessageService.sendMessageGameTopic(gameId, new DrawOfferMessage(messageData));
     }
 
     @Transactional
@@ -123,6 +120,6 @@ public class GameDrawService {
 
         gameRepository.save(game);
 
-        gameMessageService.sendMessageGameTopic(gameId, new DrawOfferingDeclinedMessage());
+        gameMessageService.sendMessageGameTopic(gameId, new DrawOfferDeclinedMessage(new DrawOfferDeclinedData()));
     }
 }

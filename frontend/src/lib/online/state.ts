@@ -58,10 +58,25 @@ export const StateGameEndSchema = z.object({
   data: GameEndData,
 });
 
+export const StateDrawOfferSchema = z.object({
+  type: z.literal('State.DrawOffer'),
+  data: z.object({
+    whiteOfferingDraw: z.boolean(),
+    blackOfferingDraw: z.boolean(),
+  }),
+});
+
+export const StateDrawOfferDeclinedSchema = z.object({
+  type: z.literal('State.DrawOfferDeclined'),
+  data: z.object({}),
+});
+
 export const ChessStateSchema = z.discriminatedUnion('type', [
   StatePlaySchema,
   StateErrorSchema,
   StateGameEndSchema,
+  StateDrawOfferSchema,
+  StateDrawOfferDeclinedSchema,
 ]);
 
 // State classes
@@ -98,7 +113,38 @@ export class StateGameEnd implements z.infer<typeof StateGameEndSchema> {
   }
 }
 
-export type ChessState = StatePlay | StateError | StateGameEnd;
+export class StateDrawOffer implements z.infer<typeof StateDrawOfferSchema> {
+  type = 'State.DrawOffer' as const;
+
+  constructor(public data: z.infer<typeof StateDrawOfferSchema>['data']) {}
+
+  static fromJSON(json: unknown): StateDrawOffer {
+    const parsed = StateDrawOfferSchema.parse(json);
+    return new StateDrawOffer(parsed.data);
+  }
+}
+
+export class StateDrawOfferDeclined
+  implements z.infer<typeof StateDrawOfferDeclinedSchema>
+{
+  type = 'State.DrawOfferDeclined' as const;
+
+  constructor(
+    public data: z.infer<typeof StateDrawOfferDeclinedSchema>['data'],
+  ) {}
+
+  static fromJSON(json: unknown): StateDrawOfferDeclined {
+    const parsed = StateDrawOfferDeclinedSchema.parse(json);
+    return new StateDrawOfferDeclined(parsed.data);
+  }
+}
+
+export type ChessState =
+  | StatePlay
+  | StateError
+  | StateGameEnd
+  | StateDrawOffer
+  | StateDrawOfferDeclined;
 
 // Deserialization
 export function deserializeState(json: unknown): ChessState {
@@ -111,6 +157,10 @@ export function deserializeState(json: unknown): ChessState {
       return new StateError(parsed.data);
     case 'State.GameEnd':
       return new StateGameEnd(parsed.data);
+    case 'State.DrawOffer':
+      return new StateDrawOffer(parsed.data);
+    case 'State.DrawOfferDeclined':
+      return new StateDrawOfferDeclined(parsed.data);
     default:
       throw new Error(`Unknown state type: ${(parsed as any).type}`);
   }

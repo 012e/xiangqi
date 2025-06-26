@@ -20,6 +20,8 @@ export type GameResponse = {
   endTime: string,
   blackTimeLeft: number,
   whiteTimeLeft: number,
+  whiteOfferingDraw: boolean,
+  blackOfferingDraw: boolean,
   result: string,
   resultDetail: string
   isGameWithBot: boolean

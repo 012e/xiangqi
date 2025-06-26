@@ -19,6 +19,7 @@ function getOurPlayer(data: GameResponse, ourUserId: string): Player {
       eloChange: data.whiteEloChange,
       color: 'white',
       time: data.whiteTimeLeft,
+      isOfferingDraw: data.whiteOfferingDraw ?? false,
     };
   } else {
     return {
@@ -27,6 +28,7 @@ function getOurPlayer(data: GameResponse, ourUserId: string): Player {
       eloChange: data.blackEloChange,
       color: 'black',
       time: data.blackTimeLeft,
+      isOfferingDraw: data.blackOfferingDraw ?? false,
     };
   }
 }
@@ -39,6 +41,7 @@ function getEnemyPlayer(data: GameResponse, ourUserId: string): Player {
       eloChange: data.whiteEloChange,
       color: 'white',
       time: data.whiteTimeLeft,
+      isOfferingDraw: data.whiteOfferingDraw ?? false,
     };
   } else {
     return {
@@ -47,6 +50,7 @@ function getEnemyPlayer(data: GameResponse, ourUserId: string): Player {
       eloChange: data.blackEloChange,
       color: 'black',
       time: data.blackTimeLeft,
+      isOfferingDraw: data.blackOfferingDraw ?? false,
     };
   }
 }
@@ -110,25 +114,28 @@ export function useOnlineGame(gameId: string | undefined) {
   }, [data, initialData, gameId, init, user]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function onMove(from: string, to: string, _piece: string): boolean {
-    if (!stompClient) {
-      console.log('No stomp client');
-      return false;
-    }
+  const onMove = useCallback(
+    function (from: string, to: string, _piece: string): boolean {
+      if (!stompClient) {
+        console.log('No stomp client');
+        return false;
+      }
 
-    if (move({ from, to })) {
-      // Send move to server
-      stompClient.publish({
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-        destination: `/app/game/${gameId}`,
-        body: JSON.stringify({ from, to }),
-      });
-    }
+      if (move({ from, to })) {
+        // Send move to server
+        stompClient.publish({
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          },
+          destination: `/app/game/${gameId}`,
+          body: JSON.stringify({ from, to }),
+        });
+      }
 
-    return true;
-  }
+      return true;
+    },
+    [gameId, move, stompClient],
+  );
 
   // Subscribe to game state updates
   useSubscription(
@@ -146,6 +153,14 @@ export function useOnlineGame(gameId: string | undefined) {
     appAxios.post(`/game/${gameId}/resign`);
   }, [gameId]);
 
+  const offerDraw = useCallback(async () => {
+    appAxios.post(`/game/${gameId}/offer-draw`);
+  }, [gameId]);
+
+  const declineDraw = useCallback(async () => {
+    appAxios.post(`/game/${gameId}/decline-draw`);
+  }, [gameId]);
+
   return {
     game: gameState,
     fen: useGameStore((state) => state.fen),
@@ -153,6 +168,8 @@ export function useOnlineGame(gameId: string | undefined) {
     playingColor,
     isLoading,
     resign,
+    declineDraw,
+    offerDraw,
     isPlayWithBot: data?.isGameWithBot ?? false,
   };
 }

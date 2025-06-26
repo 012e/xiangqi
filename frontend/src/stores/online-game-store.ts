@@ -2,6 +2,7 @@ import {
   GameResult,
   GameResultDetail,
   ChessState as GameState,
+  StateDrawOffer,
   StateGameEnd,
   StatePlay,
 } from '@/lib/online/state';
@@ -9,6 +10,7 @@ import Xiangqi from '@/lib/xiangqi';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import type { WritableDraft } from 'immer';
 
 type Move = {
   from: string;
@@ -27,6 +29,8 @@ type Actions = {
       isStarted: boolean;
       initialFen?: string;
       isEnded: boolean;
+      whiteOfferingDraw?: boolean;
+      blackOfferingDraw?: boolean;
     }): void;
     handleTopicMessage(message: GameState): void;
     setGameEndedDialog(showGameEndedDialog: boolean): void;
@@ -70,6 +74,7 @@ export type Player = {
   email: string;
   elo: number;
   eloChange?: number;
+  isOfferingDraw?: boolean;
 };
 
 const DEFAULT_STATE: Partial<Data> = {
@@ -113,10 +118,51 @@ function isEqualColor(
   color1: Color | 'w' | 'b',
   color2: Color | 'w' | 'b',
 ): boolean {
-  const normalize = (c: Color | 'w' | 'b') =>
-    c === 'w' ? 'white' : c === 'b' ? 'black' : c;
+  const normalize = (c: Color | 'w' | 'b') => {
+    if (c === 'w' || c === 'white') {
+      return 'white';
+    }
+    if (c === 'b' || c === 'black') {
+      return 'black';
+    }
+  };
 
   return normalize(color1) === normalize(color2);
+}
+
+class ActionBuilder {
+  private blackCallback: ((draft: WritableDraft<GameStore>) => void) | null =
+    null;
+  private whiteCallback: ((draft: WritableDraft<GameStore>) => void) | null =
+    null;
+
+  public isWhite(
+    callback: (draft: WritableDraft<GameStore>) => void,
+  ): ActionBuilder {
+    this.whiteCallback = callback;
+    return this;
+  }
+
+  public isBlack(
+    callback: (draft: WritableDraft<GameStore>) => void,
+  ): ActionBuilder {
+    this.blackCallback = callback;
+    return this;
+  }
+
+  public execute(): void {
+    if (isEqualColor(this.draft.playingColor, 'white')) {
+      this.whiteCallback?.(this.draft);
+    } else if (isEqualColor(this.draft.playingColor, 'black')) {
+      this.blackCallback?.(this.draft);
+    }
+  }
+
+  public constructor(private readonly draft: WritableDraft<GameStore>) {}
+}
+
+function casePlayer(draft: WritableDraft<GameStore>): ActionBuilder {
+  return new ActionBuilder(draft);
 }
 
 export const useGameStore = create<GameStore>()(
@@ -188,22 +234,26 @@ export const useGameStore = create<GameStore>()(
                 set(
                   (state) => {
                     state.fen = play.data.fen;
-                    if (state.selfPlayer.color === 'black') {
-                      state.selfPlayer.time = play.data.blackTime;
-                      state.enemyPlayer.time = play.data.whiteTime;
-                    } else {
-                      state.selfPlayer.time = play.data.whiteTime;
-                      state.enemyPlayer.time = play.data.blackTime;
-                    }
+                    casePlayer(state)
+                      .isBlack((state) => {
+                        state.selfPlayer.time = play.data.blackTime;
+                        state.enemyPlayer.time = play.data.whiteTime;
+                      })
+                      .isWhite((state) => {
+                        state.selfPlayer.time = play.data.whiteTime;
+                        state.enemyPlayer.time = play.data.blackTime;
+                      })
+                      .execute();
                   },
                   undefined,
                   'game.sync',
                 );
                 break;
               }
-              case 'State.Error':
+              case 'State.Error': {
                 console.error('Error from server:', message.data.message);
                 break;
+              }
               case 'State.GameEnd': {
                 const gameEndData = (message as StateGameEnd).data;
                 const gameResult = gameEndData.result;
@@ -219,6 +269,8 @@ export const useGameStore = create<GameStore>()(
                     }
                     state.gameResult = gameResult.result;
                     state.gameResultDetail = gameResult.detail;
+                    state.selfPlayer.isOfferingDraw = false;
+                    state.enemyPlayer.isOfferingDraw = false;
 
                     state.showGameEndedDialog = true;
                     state.isEnded = true;
@@ -272,6 +324,52 @@ export const useGameStore = create<GameStore>()(
                   default:
                     console.error('Unknown game result:', gameResult.result);
                 }
+                break;
+              }
+              case 'State.DrawOffer': {
+                const offer = (message as StateDrawOffer).data;
+                console.log('Draw offer received', offer);
+                set(
+                  (state) => {
+                    if (offer.whiteOfferingDraw) {
+                      state.selfPlayer.isOfferingDraw = isEqualColor(
+                        state.selfPlayer.color,
+                        'white',
+                      );
+                      state.enemyPlayer.isOfferingDraw = isEqualColor(
+                        state.selfPlayer.color,
+                        'black',
+                      );
+                    } else {
+                      state.selfPlayer.isOfferingDraw = isEqualColor(
+                        state.selfPlayer.color,
+                        'black',
+                      );
+                      state.enemyPlayer.isOfferingDraw = isEqualColor(
+                        state.selfPlayer.color,
+                        'white',
+                      );
+                    }
+                  },
+                  false,
+                  {
+                    type: 'game.drawOffer',
+                  },
+                );
+
+                break;
+              }
+              case 'State.DrawOfferDeclined': {
+                set(
+                  (state) => {
+                    state.selfPlayer.isOfferingDraw = false;
+                    state.enemyPlayer.isOfferingDraw = false;
+                  },
+                  false,
+                  {
+                    type: 'game.drawOfferDeclined',
+                  },
+                );
                 break;
               }
             }

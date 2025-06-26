@@ -1,59 +1,61 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ReactElement } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getFriendList, getRequestPending, getRequestSent } from '@/lib/friend/friend-request-list.ts';
+import {
+  getFriendList,
+  getRequestPending,
+  getRequestSent,
+} from '@/lib/friend/friend-request-list.ts';
 import UserRow from '@/components/userRow.tsx';
 import {
-  friendDelete,
-  postAcceptFriend,
-  postAddFriend,
-  postRejectFriend,
+  removeFriend,
+  acceptFriendRequest,
+  addFriend,
+  rejectFriendRequest,
 } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
 export type TabFriend = {
   name: string;
   value: string;
   content: ReactElement;
-}
+};
 const tabs = [
   {
-    name: "Friend",
-    value: "friend",
+    name: 'Friend',
+    value: 'friend',
   },
   {
-    name: "Sent",
-    value: "sent",
+    name: 'Sent',
+    value: 'sent',
   },
   {
-    name: "Pending",
-    value: "pending",
+    name: 'Pending',
+    value: 'pending',
   },
   {
-    name: "Suggestions",
-    value: "suggestions",
+    name: 'Suggestions',
+    value: 'suggestions',
   },
 ];
 type TabsFriendProps = {
   searchText: string;
 };
 export default function TabsFriend({ searchText }: TabsFriendProps) {
-  const {data: friendList} = useQuery(
-    {
-      queryKey: ['listFriends'],
-      queryFn: getFriendList
-    }
-  )
-  const {data: friendSent} = useQuery({
+  const { data: friendList } = useQuery({
+    queryKey: ['listFriends'],
+    queryFn: getFriendList,
+  });
+  const { data: friendSent } = useQuery({
     queryKey: ['listSent'],
-    queryFn: getRequestSent
-  })
-  const {data: friendPending} = useQuery( {
+    queryFn: getRequestSent,
+  });
+  const { data: friendPending } = useQuery({
     queryKey: ['listPending'],
-    queryFn: getRequestPending
-  })
+    queryFn: getRequestPending,
+  });
 
-  const addFriend = useMutation({
-    mutationFn: postAddFriend,
+  const addFriendMutate = useMutation({
+    mutationFn: addFriend,
     onSuccess: () => {
       toast('Successfully added friend!');
     },
@@ -62,7 +64,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
     },
   });
   const rejectFriend = useMutation({
-    mutationFn: postRejectFriend,
+    mutationFn: rejectFriendRequest,
     onSuccess: () => {
       toast('Successfully rejected friend!');
     },
@@ -71,7 +73,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
     },
   });
   const acceptFriend = useMutation({
-    mutationFn: postAcceptFriend,
+    mutationFn: acceptFriendRequest,
     onSuccess: () => {
       toast('Successfully accepted friend!');
     },
@@ -79,18 +81,18 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
       toast('Fail accept friend!');
     },
   });
-  const removeFriend = useMutation({
-    mutationFn: friendDelete,
+  const removeFriendMutate = useMutation({
+    mutationFn: removeFriend,
     onSuccess: () => {
       toast('Successfully removed friend!');
     },
     onError: () => {
       toast('Fail remove friend!');
     },
-  })
+  });
   return (
     <Tabs defaultValue={tabs[0].value} className="w-full">
-      <TabsList className="w-full h-auto p-0 bg-background justify-start border-b rounded-none">
+      <TabsList className="justify-start p-0 w-full h-auto rounded-none border-b bg-background">
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.value}
@@ -106,9 +108,9 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
         { value: 'pending', list: friendPending },
         { value: 'sent', list: friendSent },
         { value: 'friend', list: friendList },
-      ].map(({ value, list }) =>{
-        const filteredList = list?.filter(user =>
-          user.username.toLowerCase().includes(searchText.toLowerCase())
+      ].map(({ value, list }) => {
+        const filteredList = list?.filter((user) =>
+          user.username.toLowerCase().includes(searchText.toLowerCase()),
         );
 
         return (
@@ -121,17 +123,16 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
                   username={item.username}
                   displayName={item.name}
                   avatarUrl={item.picture}
-                  onAddFriendClick={addFriend}
+                  onAddFriendClick={addFriendMutate}
                   onAccept={acceptFriend}
                   onDecline={rejectFriend}
-                  onRemove={removeFriend}
+                  onRemove={removeFriendMutate}
                 />
               </div>
             ))}
           </TabsContent>
         );
       })}
-
     </Tabs>
   );
 }
