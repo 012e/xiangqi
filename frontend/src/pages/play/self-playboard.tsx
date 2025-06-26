@@ -34,6 +34,7 @@ export default function SelfPlayBoard({
 }: SelfPlayBoardProps = DEFAULT_PROPS) {
   const [game, setGame] = useState(new Xiangqi());
   const customPieces = useSettingStore(state => state.pieceTheme);
+  const customBoard = useSettingStore(state => state.boardTheme);
   const [currentGame, setCurrentGame] = useState(new Xiangqi()); // Lưu trạng thái game hiện tại
   const handleMoveInternal = useCallback(
     (from: string, to: string, piece: string) => {
@@ -141,7 +142,7 @@ export default function SelfPlayBoard({
       position={game.exportUciFen()}
       areArrowsAllowed={true}
       customPieces={customPieces}
-      // customBoardStyle={}
+      customBoardBackground={customBoard}
       arePiecesDraggable={true}
     />
   );

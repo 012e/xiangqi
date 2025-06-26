@@ -6,10 +6,6 @@ import {
   RedKingPiece,
 } from './pieces-styles/clubxiangqi-pieces';
 import {
-  BlackKingPieceOk,
-  RedKingPieceOk,
-} from './pieces-styles/playok-pieces';
-import {
   BlackKingPiecexahlee,
   RedKingPiecexahlee,
 } from './pieces-styles/xahlee-pieces';
@@ -18,9 +14,25 @@ import {
   RedKingPieceXboard,
 } from './pieces-styles/xboard-pieces';
 import { CircleCheck } from 'lucide-react';
-import { ThemeNames } from '@/stores/setting-store';
+import { ThemeNamesPiece } from '@/stores/setting-store';
+import { BlackKingPieceOk, RedKingPieceOk } from '@/components/chessboard-styles/pieces-styles/playok-pieces.tsx';
+import { defaultPieces } from '@/components/chessboard-styles/pieces-styles/xiangqi-default.tsx';
+
 
 const radioOptions = [
+  {
+    value: 'default',
+    content: (
+      <div className="flex items-center justify-center scale-[1] origin-center">
+        <div className="w-10 h-10">
+          {defaultPieces.wK}
+        </div>
+        <div className="w-10 h-10">
+          {defaultPieces.bK}
+        </div>
+      </div>
+    ),
+  },
   {
     value: 'chinese',
     content: (
@@ -50,7 +62,7 @@ const radioOptions = [
   {
     value: 'playok',
     content: (
-      <div className=" flex items-center justify-center scale-[1.25] origin-center">
+      <div className=" flex items-center justify-center scale-[1] origin-center">
         <div>
           <RedKingPieceOk />
         </div>
@@ -89,11 +101,11 @@ const radioOptions = [
 ];
 
 
-export function PieceStyleSelector({ pieceTheme }: { pieceTheme: (theme: ThemeNames) => void }) {
+export function PieceStyleSelector({ pieceTheme }: { pieceTheme: (theme: ThemeNamesPiece) => void }) {
   return (
     <RadioGroup.Root
       className="flex items-center flex-col gap-3"
-      onValueChange={(value) => pieceTheme(value as ThemeNames)}
+      onValueChange={(value) => pieceTheme(value as ThemeNamesPiece)}
     >
       {radioOptions.map((option) => (
         <RadioGroup.Item

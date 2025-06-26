@@ -7,6 +7,7 @@ import {
 import { CustomPieces } from 'react-xiangqiboard/dist/chessboard/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { defaultPieces } from '@/components/chessboard-styles/pieces-styles/xiangqi-default.tsx';
 
 export type Theme = 'dark' | 'light';
 
@@ -19,6 +20,7 @@ type SettingState = {
   theme: Theme;
   accessToken?: string;
   pieceTheme?: CustomPieces;
+  boardTheme?: string;
 };
 
 
@@ -28,7 +30,8 @@ type SettingActions = {
     setTheme: (theme: Theme) => void;
     toggleTheme: () => void;
     setToken: (token: string) => void;
-    setPieceTheme?: (pieceTheme: ThemeNames) => void;
+    setPieceTheme?: (pieceTheme: ThemeNamesPiece) => void;
+    setBoardTheme?: (boardTheme: string) => void;
   };
 };
 
@@ -58,14 +61,15 @@ function merge(target: any, source: any): any {
 
 export type SettingStore = SettingState & SettingActions;
 
-export type ThemeNames = "chinese" | "club" | "playok" | "xahlee" | 'xboard';
+export type ThemeNamesPiece = "chinese" | "club" | "playok" | "xahlee" | 'xboard' | 'default';
 
-const THEME_DATA: Record<ThemeNames, CustomPieces> = {
+const THEME_DATA: Record<ThemeNamesPiece, CustomPieces> = {
   chinese: PiecesChineseChess,
   club: PiecesClubXiangqi,
-  playok: PicesPlayOkXiangqi,
   xahlee: PiecesXahlee,
   xboard: PiecesXboard,
+  default: defaultPieces,
+  playok: PicesPlayOkXiangqi
 };
 
 const BACKEND_URL =
@@ -93,9 +97,14 @@ const useSettingStore = create<SettingStore>()(
         setToken(token): void {
           set({ accessToken: token });
         },
-        setPieceTheme(pieceTheme: ThemeNames): void {
+        setPieceTheme(pieceTheme: ThemeNamesPiece): void {
           set({
              pieceTheme: THEME_DATA[pieceTheme] || THEME_DATA.chinese,
+          });
+        },
+        setBoardTheme(boardTheme: string): void {
+          set({
+            boardTheme: boardTheme,
           });
         },
       },
