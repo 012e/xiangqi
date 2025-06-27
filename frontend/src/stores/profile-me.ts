@@ -1,6 +1,7 @@
 import { appAxios } from '@/services/AxiosClient.ts';
 
 export type ProfileMe = {
+  id: number;
   displayName: string;
   username: string;
   email: string;

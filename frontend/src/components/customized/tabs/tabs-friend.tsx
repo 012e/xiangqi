@@ -10,11 +10,15 @@ import {
   postRejectFriend,
 } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
+import { getSuggestion } from '@/lib/friend/find-friend.ts';
+import { getProfileMe } from '@/stores/profile-me.ts';
+
 export type TabFriend = {
   name: string;
   value: string;
   content: ReactElement;
 }
+
 const tabs = [
   {
     name: "Friend",
@@ -37,8 +41,13 @@ type TabsFriendProps = {
   searchText: string;
 };
 export default function TabsFriend({ searchText }: TabsFriendProps) {
-  const {data: friendList} = useQuery(
-    {
+  // Get current user profile
+  const { data: myProfile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfileMe,
+  });
+
+  const {data: friendList} = useQuery({
       queryKey: ['listFriends'],
       queryFn: getFriendList
     }
@@ -47,9 +56,14 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
     queryKey: ['listSent'],
     queryFn: getRequestSent
   })
-  const {data: friendPending} = useQuery( {
+  const {data: friendPending} = useQuery({
     queryKey: ['listPending'],
     queryFn: getRequestPending
+  })
+
+  const { data: friendSuggestions } = useQuery({
+    queryKey: ['listSuggestions'],
+    queryFn: getSuggestion
   })
 
   const addFriend = useMutation({
@@ -88,6 +102,33 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
       toast('Fail remove friend!');
     },
   })
+  // const cancelFriend = useMutation({
+  //   mutationFn: postCancelFriend,
+  //   onSuccess: () => {
+  //     toast('Successfully canceled friend request!');
+  //   },
+  //   onError: () => {
+  //     toast('Failed to cancel friend request!');
+  //   },
+  // });
+
+  // Filter suggestions to exclude current user, friends, sent requests, and pending requests
+  const filteredSuggestions = friendSuggestions?.filter(user => {
+    // Exclude current user
+    if (user.id === myProfile?.id) return false;
+    
+    // Exclude users who are already friends
+    if (friendList?.some(friend => friend.id === user.id)) return false;
+    
+    // Exclude users who have sent requests (pending for us)
+    if (friendPending?.some(pending => pending.id === user.id)) return false;
+    
+    // Exclude users we've already sent requests to
+    if (friendSent?.some(sent => sent.id === user.id)) return false;
+    
+    return true;
+  });
+
   return (
     <Tabs defaultValue={tabs[0].value} className="w-full">
       <TabsList className="w-full h-auto p-0 bg-background justify-start border-b rounded-none">
@@ -106,6 +147,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
         { value: 'pending', list: friendPending },
         { value: 'sent', list: friendSent },
         { value: 'friend', list: friendList },
+        { value: 'suggestions', list: filteredSuggestions}
       ].map(({ value, list }) =>{
         const filteredList = list?.filter(user =>
           user.username.toLowerCase().includes(searchText.toLowerCase())
@@ -125,6 +167,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
                   onAccept={acceptFriend}
                   onDecline={rejectFriend}
                   onRemove={removeFriend}
+                  // onCancel={cancelFriend}
                 />
               </div>
             ))}

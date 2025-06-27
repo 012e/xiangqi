@@ -49,4 +49,31 @@ export async function findFriendByUsername(username: string) {
   }
 }
 
+export async function getSuggestion(): Promise<Player[]> {
+  const response = await appAxios.get<PaginatedUsers>('/search');
+
+  if (response.status === 200) {
+    return getRandomPlayers(response.data.content);
+  }
+
+  throw new Error("Failed to get suggestion");
+}
+
+function getRandomPlayers(playerList: Player[], count: number = 10): Player[] {
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  if (playerList.length <= count) {
+    return [...playerList];
+  }
+
+  const shuffledPlayers = shuffleArray(playerList);
+  return shuffledPlayers.slice(0, count);
+}
 

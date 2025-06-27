@@ -6,7 +6,6 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  Flag,
   Handshake,
   Loader2,
 } from 'lucide-react';
@@ -113,15 +112,18 @@ export default function OnlineGame() {
       isViewingHistory &&
       currentHistoryIndex === gameHistory.length - 1
     ) {
-      // If at the end of history, return to current game
+      // If at the end of history, return to the current game
       handleReturnToCurrentGame();
     }
   }
 
+  const [bottomPlayerOrientation, setBottomPlayerOrientation] = useState<'white' | 'black'>(selfPlayer.color);
+  const [topPlayerOrientation, setTopPlayerOrientation] = useState<'white' | 'black'>(enemyPlayer.color);
+
+  // Function to toggle player card positions and board orientation
   function togglePlayer() {
-    // This function might not be as relevant for online games since orientation is fixed
-    // but keeping it for consistency
-    console.log('Toggle player orientation');
+    setBottomPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
+    setTopPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
   }
 
   function splitTwoParts(input: string): [string, string] | null {
@@ -136,7 +138,7 @@ export default function OnlineGame() {
     return [part1, part2];
   }
 
-  // Update current game when gameState changes
+  // Update the current game when gameState changes
   useEffect(() => {
     if (gameState && !isViewingHistory) {
       setCurrentGame(gameState);
@@ -172,10 +174,10 @@ export default function OnlineGame() {
 
   const handleMove = useCallback(
     (from: string, to: string, piece: string): boolean => {
-      // If viewing history, return to current game first
+      // If viewing history, return to the current game first
       if (isViewingHistory) {
         handleReturnToCurrentGame();
-        // Don't make the move immediately, let user try again
+        // Don't make the move immediately, let the user try again
         return false;
       }
 
@@ -190,11 +192,9 @@ export default function OnlineGame() {
 
   // Format time from milliseconds to mm:ss:xx
   function formatTime(ms: number): string {
-    // return ms.toString();
-    // example: 137608 (s)
-    const totalSeconds = Math.round(ms / 1000); // 138
-    const minutes = Math.floor(totalSeconds / 60); // 2
-    const seconds = totalSeconds % 60; // 18
+    const totalSeconds = Math.round(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${seconds
       .toString()
       .padStart(2, '0')}`;
@@ -205,51 +205,41 @@ export default function OnlineGame() {
   }
 
   function isPlayerTurn({
-    piece,
-  }: {
+                          piece,
+                        }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
     return getPieceColor(piece) === selfPlayer?.color;
   }
+
+  // Determine which player card goes to the top and bottom
+  const topPlayerCardProps = topPlayerOrientation === enemyPlayer?.color ? enemyPlayer : selfPlayer;
+  const bottomPlayerCardProps = bottomPlayerOrientation === selfPlayer?.color ? selfPlayer : enemyPlayer;
+  const boardDisplayOrientation: 'white' | 'black' = bottomPlayerOrientation; // The board should be oriented to the top player
+
   return (
     <div className="w-full text-foreground">
       <div className="grid grid-cols-1 items-start lg:grid-cols-[550px_400px]">
         {/* Left */}
         <div className="hidden p-4 mt-10 lg:block bg-background">
           <div className="flex items-center px-6 w-full">
-            {isPlayWithBot ? (
+            {/* Top Player Card */}
+            {topPlayerCardProps && (
               <div className="flex flex-row items-center w-full">
                 <PlayerCard
                   props={{
-                    name: enemyPlayer.username,
-                    elo: enemyPlayer.elo,
-                    image:
-                      'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg',
-                    isMe: false,
-                    userId: enemyPlayer.id, // Add user ID for friend request
+                    name: topPlayerCardProps.username,
+                    elo: topPlayerCardProps.elo,
+                    eloChange: topPlayerCardProps.eloChange,
+                    image: isPlayWithBot && topPlayerCardProps.id === enemyPlayer?.id ? 'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg' : topPlayerCardProps.picture,
+                    isMe: topPlayerCardProps.id === selfPlayer?.id,
+                    userId: topPlayerCardProps.id,
                     btnAddFriend: addFriend,
                   }}
                 />
                 <div className={`text-xl font-bold ml-auto`}>
-                  {formatTime(enemyPlayer?.time)}
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-row items-center w-full">
-                <PlayerCard
-                  props={{
-                    name: enemyPlayer.username,
-                    elo: enemyPlayer.elo,
-                    eloChange: enemyPlayer.eloChange,
-                    image: enemyPlayer.picture,
-                    isMe: false,
-                    userId: enemyPlayer.id, // Add user ID for friend request
-                    btnAddFriend: addFriend,
-                  }}
-                />
-                <div className={`text-xl font-bold ml-auto`}>
-                  {formatTime(enemyPlayer?.time)}
+                  {formatTime(topPlayerCardProps.time)}
                 </div>
               </div>
             )}
@@ -271,7 +261,7 @@ export default function OnlineGame() {
                         isPlayerTurn(piece) && !gameEnded && !isViewingHistory
                       }
                       customPieces={pieceTheme}
-                      boardOrientation={selfPlayer?.color}
+                      boardOrientation={boardDisplayOrientation}
                       position={displayFen}
                       animationDuration={200}
                     />
@@ -281,17 +271,22 @@ export default function OnlineGame() {
             </div>
           </div>
           <div className="flex items-center px-6 w-full">
-            <PlayerCard
-              props={{
-                name: selfPlayer.username,
-                elo: selfPlayer.elo,
-                eloChange: selfPlayer.eloChange,
-                image: selfPlayer.picture,
-                isMe: true,
-              }}
-            />
+            {/* Bottom Player Card */}
+            {bottomPlayerCardProps && (
+              <PlayerCard
+                props={{
+                  name: bottomPlayerCardProps.username,
+                  elo: bottomPlayerCardProps.elo,
+                  eloChange: bottomPlayerCardProps.eloChange,
+                  image: isPlayWithBot && bottomPlayerCardProps.id === enemyPlayer?.id ? 'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg' : bottomPlayerCardProps.picture,
+                  isMe: bottomPlayerCardProps.id === selfPlayer?.id,
+                  userId: bottomPlayerCardProps.id,
+                  btnAddFriend: addFriend,
+                }}
+              />
+            )}
             <div className={`text-xl font-bold ml-auto`}>
-              {formatTime(selfPlayer?.time)}
+              {formatTime(bottomPlayerCardProps?.time)}
             </div>
           </div>
           <div className="p-3 mx-5">

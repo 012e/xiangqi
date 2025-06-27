@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import ModernButton from '@/components/ui/modern-button';
-import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
 import { getProfileMe } from '@/stores/profile-me.ts';

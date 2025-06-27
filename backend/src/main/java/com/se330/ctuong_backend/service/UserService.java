@@ -74,7 +74,14 @@ public class UserService {
     }
     public Page<UserDto> searchUsersByUsername(String username, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<com.se330.ctuong_backend.model.User> users = userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+
+        Page<com.se330.ctuong_backend.model.User> users;
+        if (username == null || username.trim().isEmpty()) {
+            users = userRepository.findAll(pageable);
+        } else {
+            users = userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+        }
+
 
         return users.map(user -> modelMapper.map(user, UserDto.class));
     }
