@@ -37,6 +37,7 @@ export default function SelfPlayBoard({
   const customPieces = usePieceTheme();
   const customBoard = useSettingStore(state => state.boardTheme);
   const [currentGame, setCurrentGame] = useState(new Xiangqi()); // Lưu trạng thái game hiện tại
+  const [optionSquares, setOptionSquares] = useState({});
   const handleMoveInternal = useCallback(
     (from: string, to: string, piece: string) => {
       // Nếu đang xem lịch sử, trở về trạng thái hiện tại và thử thực hiện nước đi
@@ -79,10 +80,6 @@ export default function SelfPlayBoard({
     },
     [game, onMove, isViewingHistory, onReturnToCurrentGame, currentGame],
   );
-  const onSquareClick = (square: string) => {
-    console.log('Square clicked:', square);
-    console.log(game.getLegalMoves(square, false))
-  }
   function splitTwoParts(input: string): [string, string] | null {
     const regex = /^([a-i])(10|[1-9])([a-i])(10|[1-9])$/;
     const match = input.match(regex);
@@ -137,13 +134,42 @@ export default function SelfPlayBoard({
       setGame(newGame); // Đồng bộ cả game hiện tại nếu không đang xem lịch sử
     }
   }, [currentHistory, isViewingHistory]);
+
+  function highlightMoves(square: string) {
+    const moves = game.getLegalMoves(square, false);
+
+    if (moves.length === 0) {
+      setOptionSquares({});
+      return;
+    }
+
+    const newSquares: Record<string, React.CSSProperties> = {};
+    moves.forEach(move => {
+      newSquares[move] = {
+        background: "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
+        borderRadius: "50%",
+        position: 'relative',
+        zIndex: 999
+      };
+    });
+
+    newSquares[square] = {
+      background: "rgba(255, 255, 0, 0.4)",
+      zIndex: 10
+    };
+
+    setOptionSquares(newSquares);
+  }
   return (
     <Chessboard
       {...chessboardProps}
       boardWidth={400}
       id="online-xiangqi-board"
       onPieceDrop={handleMoveInternal}
-      onSquareClick={onSquareClick}
+      onSquareClick={highlightMoves}
+      customSquareStyles={{
+        ...optionSquares,
+      }}
       position={game.exportUciFen()}
       areArrowsAllowed={true}
       customPieces={customPieces}

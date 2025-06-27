@@ -1104,8 +1104,8 @@ export default class Xiangqi {
             if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
 
             const isRed = piece === piece.toUpperCase();
-            if (isRed && toR > 4) continue; // Can't cross river
-            if (!isRed && toR < 5) continue;
+            if (isRed && toR < 5) continue; // Red bishops stay in rows 5-9
+            if (!isRed && toR > 4) continue; // Black bishops stay in rows 0-4
 
             if (this.board[eyeR]?.[eyeC] !== '') continue; // Eye blocked
 
@@ -1131,8 +1131,8 @@ export default class Xiangqi {
             if (toR < 0 || toR >= 10 || toC < 3 || toC > 5) continue;
 
             const isRed = piece === piece.toUpperCase();
-            if (isRed && (toR < 7 || toR > 9)) continue; // Must stay in palace
-            if (!isRed && (toR < 0 || toR > 2)) continue;
+            if (isRed && (toR < 7 || toR > 9)) continue; // Red must stay in rows 7-9
+            if (!isRed && (toR < 0 || toR > 2)) continue; // Black must stay in rows 0-2
 
             if (this.isValidMoveWithoutCheck(row, col, toR, toC, skipTurnForValidation)) {
               legalMoves.push(this.coordinatesToPosition([toR, toC]));
