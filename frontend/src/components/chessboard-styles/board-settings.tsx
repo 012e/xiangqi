@@ -4,6 +4,7 @@ import { CircleCheck } from 'lucide-react';
 import { XiangqiBoard } from '@/components/chessboard-styles/board-styles/xiangqi-board.tsx';
 import { BoardXboard1, BoardXboard2 } from '@/components/chessboard-styles/board-styles/xboard-board.tsx';
 import { Board01xq } from '@/components/chessboard-styles/board-styles/01xq-board.tsx';
+import useSettingStore from '@/stores/setting-store.ts';
 
 const radioOptions = [
   {
@@ -41,8 +42,10 @@ const radioOptions = [
 ];
 
 export function BoardStyleSelector({ boardTheme }: { boardTheme: (theme: string) => void }) {
+  const currentBoard = useSettingStore(state => state.boardTheme);
   return (
     <RadioGroup.Root
+      value={currentBoard}
       className="flex items-center flex-col justify-center gap-3 p-3"
       onValueChange={(value) => boardTheme(value as string)}
     >
