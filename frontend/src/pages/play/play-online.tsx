@@ -19,6 +19,7 @@ import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
 import { Slider } from '@/components/ui/slider.tsx';
 import { RiBaseStationLine } from 'react-icons/ri';
 import { FaRobot } from 'react-icons/fa';
+import { useEnsureGameTypes } from '@/hooks/use-prefetch-game-types';
 
 export default function PlayOnline({
   isGameWithBot: isOnline,
@@ -27,16 +28,25 @@ export default function PlayOnline({
 }) {
   const { createGame, loading } = useCreateGame();
 
+  // Ensure game types are available and fresh
+  useEnsureGameTypes();
+
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);
   const [isViewingHistory, setIsViewingHistory] = useState(false);
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
 
   const [player, setPlayer] = useState<'white' | 'black'>('white');
-  const { data: gameTypes } = useQuery({
+
+  const { data: gameTypes, isLoading: gameTypesLoading } = useQuery({
     queryKey: ['gameTypes'],
     queryFn: getGameTypes,
+    // Enable optimistic updates from cache
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    // Show cached data immediately while refetching in background
+    refetchOnMount: 'always',
   });
+
   const [selectedGameType, setSelectedGameType] = useState<
     GameType | undefined
   >();
@@ -93,14 +103,14 @@ export default function PlayOnline({
 
     const moveNumber = Math.floor(historyIndex / 2) + 1;
     const isWhiteMove = historyIndex % 2 === 0;
-    
+
     const historyMove: HistoryMove = {
       index: moveNumber,
       moves: [
         history[moveNumber * 2 - 2] || '', // White move
-        history[moveNumber * 2 - 1] || ''  // Black move
-      ].filter(move => move !== ''),
-      color: isWhiteMove ? 'white' : 'black'
+        history[moveNumber * 2 - 1] || '', // Black move
+      ].filter((move) => move !== ''),
+      color: isWhiteMove ? 'white' : 'black',
     };
 
     setSelectHistory(historyMove);
@@ -179,6 +189,7 @@ export default function PlayOnline({
                 gameType={gameTypes}
                 onSelect={setSelectedGameType}
                 defaultSelected={gameTypes?.[4]}
+                isLoading={gameTypesLoading}
               />
             </div>
             {!isOnline && (
@@ -233,26 +244,38 @@ export default function PlayOnline({
                 <Flag className="transition-transform group-hover:scale-150"></Flag>
               </Button>
               <Button
-                className="group" 
+                className="group"
                 onClick={handlePreviousMove}
-                disabled={(history.length == 0) || (isViewingHistory && currentHistoryIndex <= 0)}
+                disabled={
+                  history.length == 0 ||
+                  (isViewingHistory && currentHistoryIndex <= 0)
+                }
               >
-                <ChevronLeft className={`transition-transform group-hover:scale-150 ${
-                  isViewingHistory && currentHistoryIndex <= 0 
-                    ? 'text-gray-600' 
-                    : 'text-gray-400'
-                }`} />
+                <ChevronLeft
+                  className={`transition-transform group-hover:scale-150 ${
+                    isViewingHistory && currentHistoryIndex <= 0
+                      ? 'text-gray-600'
+                      : 'text-gray-400'
+                  }`}
+                />
               </Button>
-              <Button 
-                className="group" 
+              <Button
+                className="group"
                 onClick={handleNextMove}
-                disabled={history.length == 0 || (isViewingHistory && currentHistoryIndex >= history.length - 1)}
+                disabled={
+                  history.length == 0 ||
+                  (isViewingHistory &&
+                    currentHistoryIndex >= history.length - 1)
+                }
               >
-                <ChevronRight className={`transition-transform group-hover:scale-150 ${
-                  isViewingHistory && currentHistoryIndex >= history.length - 1 
-                    ? 'text-gray-600' 
-                    : 'text-gray-400'
-                }`} />
+                <ChevronRight
+                  className={`transition-transform group-hover:scale-150 ${
+                    isViewingHistory &&
+                    currentHistoryIndex >= history.length - 1
+                      ? 'text-gray-600'
+                      : 'text-gray-400'
+                  }`}
+                />
               </Button>
               <Button className="group" onClick={togglePlayer}>
                 <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
