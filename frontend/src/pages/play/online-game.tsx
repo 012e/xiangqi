@@ -117,12 +117,8 @@ export default function OnlineGame() {
     }
   }
 
-  // Initialize board orientation based on player colors
-  const initialBottomPlayerColor = selfPlayer?.color || 'white'; // Default to 'red' or handle null
-  const initialTopPlayerColor = enemyPlayer?.color || 'black'; // Default to 'black' or handle null
-
-  const [bottomPlayerOrientation, setBottomPlayerOrientation] = useState<'white' | 'black'>(initialBottomPlayerColor === 'black' ? 'black' : 'white');
-  const [topPlayerOrientation, setTopPlayerOrientation] = useState<'white' | 'black'>(initialTopPlayerColor === 'black' ? 'black' : 'white');
+  const [bottomPlayerOrientation, setBottomPlayerOrientation] = useState<'white' | 'black'>(selfPlayer.color);
+  const [topPlayerOrientation, setTopPlayerOrientation] = useState<'white' | 'black'>(enemyPlayer.color);
 
   // Function to toggle player card positions and board orientation
   function togglePlayer() {
