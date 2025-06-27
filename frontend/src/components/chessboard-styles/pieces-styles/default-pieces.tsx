@@ -1,19 +1,6 @@
 //red
 export const RedAdvisorPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontSize={18}
-      fontStyle="italic"
-      style={{
-        lineHeight: "100%",
-      }}
-      textAnchor="end"
-      transform="translate(-79.688 -10.75)"
-    />
     <g
       strokeLinecap="round"
       strokeLinejoin="bevel"
@@ -44,7 +31,6 @@ export const RedAdvisorPieceDefault = () => (
         strokeLinejoin="round"
         strokeWidth={2.0007791999999998}
         d="M24.368 28.137a10.3 10.3 0 0 0-2.088 6.262c0 2.89 1.236 5.51 3.204 7.427-3.898 2.3-6.697 6.253-7.524 10.874h31.068c-.827-4.62-3.627-8.574-7.525-10.874 1.969-1.917 3.156-4.537 3.156-7.427 0-2.228-.765-4.304-1.99-6.02z"
-        color="#000"
       />
       <path
         strokeLinejoin="round"
@@ -59,22 +45,8 @@ export const RedAdvisorPieceDefault = () => (
     </g>
   </svg>
 )
-
 export const RedPawnPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontSize={18}
-      fontStyle="italic"
-      style={{
-        lineHeight: "100%",
-      }}
-      textAnchor="end"
-      transform="translate(-68.11 -6.463)"
-    />
     <g strokeLinecap="round">
       <g strokeLinejoin="bevel" transform="translate(-81.661 -10.705)">
         <circle
@@ -102,35 +74,12 @@ export const RedPawnPieceDefault = () => (
         strokeLinejoin="round"
         strokeWidth={2}
         d="M49.889 52.928c-1.148-4.81-4.324-8.845-8.597-11.074a12.248 12.248 0 0 0 4.469-9.471c0-5.4-3.508-9.97-8.355-11.608.364-.65.583-1.388.583-2.186a4.52 4.52 0 0 0-4.517-4.517 4.52 4.52 0 0 0-4.517 4.517c0 .802.265 1.533.632 2.186-4.864 1.628-8.354 6.196-8.354 11.608 0 3.81 1.75 7.215 4.468 9.47-4.273 2.23-7.45 6.264-8.597 11.075z"
-        color="#000"
       />
     </g>
   </svg>
 )
-
 export const RedKnightPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-52.996 -7.877)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g
       strokeLinecap="round"
       strokeLinejoin="bevel"
@@ -170,7 +119,6 @@ export const RedKnightPieceDefault = () => (
         r={0.982}
         fill="#a00"
         strokeWidth={1.795}
-        color="#000"
         transform="translate(169.71 199.5) scale(.66867)"
       />
       <path
@@ -183,22 +131,8 @@ export const RedKnightPieceDefault = () => (
     </g>
   </svg>
 )
-
 export const RedBishopPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontSize={18}
-      fontStyle="italic"
-      style={{
-        lineHeight: "100%",
-      }}
-      textAnchor="end"
-      transform="translate(-71.063 -10.25)"
-    />
     <g
       strokeLinecap="round"
       strokeLinejoin="bevel"
@@ -240,36 +174,13 @@ export const RedBishopPieceDefault = () => (
         fill="#a00"
         strokeLinecap="round"
         strokeWidth={1.68}
-        color="#000"
         transform="translate(78.14 309.27) scale(.74438)"
       />
     </g>
   </svg>
 )
-
 export const RedRookPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-9.687 -11.518)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g
       strokeLinecap="round"
       strokeLinejoin="bevel"
@@ -301,35 +212,12 @@ export const RedRookPieceDefault = () => (
         strokeLinejoin="round"
         strokeWidth={2.0007607999999997}
         d="M24.545 26.23h17.903v15.008H24.545zM20.667 42.714h25.67v2.896h-25.67zM18.028 47.088h30.936v3.555H18.028zM46.793 16.366H41.08v3.64h-4.746v-3.64h-5.667v3.64H25.92v-3.64h-5.713l.046 8.386h26.493v-3.318z"
-        color="#000"
       />
     </g>
   </svg>
 )
-
 export const RedKingPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-44.438 -9.75)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g
       strokeLinecap="round"
       strokeLinejoin="bevel"
@@ -367,30 +255,8 @@ export const RedKingPieceDefault = () => (
     </g>
   </svg>
 )
-
 export const RedCannonPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-100.46 -8.23)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g transform="translate(-91.206 -9.645)">
       <circle
         cx={42.5}
@@ -426,7 +292,6 @@ export const RedCannonPieceDefault = () => (
           r={3.094}
           strokeLinecap="round"
           strokeLinejoin="round"
-          color="#000"
         />
         <circle
           cx={328.36}
@@ -434,7 +299,6 @@ export const RedCannonPieceDefault = () => (
           r={5.114}
           strokeLinecap="round"
           strokeLinejoin="round"
-          color="#000"
           transform="translate(0 -.316)"
         />
         <path d="M328.93 525.19c.105-1.452-.295-5.24-.568-8.27l-3.346-.064c-2.829 7.31-5.76 14.201-4.925 18.183.836 3.982 5.193 5.539 7.955 2.463l1.957 2.777v3.725l2.273.19-.063-4.357-2.904-4.482" />
@@ -442,33 +306,10 @@ export const RedCannonPieceDefault = () => (
     </g>
   </svg>
 )
-
-
 //black
 
 export const BlackKnightPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-191 -7.877)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g stroke="#000">
       <g
         strokeLinecap="round"
@@ -504,7 +345,6 @@ export const BlackKnightPieceDefault = () => (
           r={0.982}
           fill="#a00"
           strokeWidth={1.795}
-          color="#000"
           transform="translate(169.71 199.5) scale(.66867)"
         />
         <path
@@ -520,19 +360,6 @@ export const BlackKnightPieceDefault = () => (
 )
 export const BlackBishopPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontSize={18}
-      fontStyle="italic"
-      style={{
-        lineHeight: "100%",
-      }}
-      textAnchor="end"
-      transform="translate(-209.06 -10.25)"
-    />
     <g stroke="#000">
       <g
         strokeLinecap="round"
@@ -572,7 +399,6 @@ export const BlackBishopPieceDefault = () => (
           fill="#a00"
           strokeLinecap="round"
           strokeWidth={1.68}
-          color="#000"
           transform="translate(78.14 309.27) scale(.74438)"
         />
       </g>
@@ -581,27 +407,6 @@ export const BlackBishopPieceDefault = () => (
 )
 export const BlackRookPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-147.69 -11.518)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g stroke="#000">
       <g
         strokeLinecap="round"
@@ -632,7 +437,6 @@ export const BlackRookPieceDefault = () => (
           strokeLinejoin="round"
           strokeWidth={2.0007607999999997}
           d="M24.542 26.23h17.904v15.008H24.542zM20.664 42.714h25.671v2.896h-25.67zM18.025 47.088h30.936v3.555H18.025zM46.79 16.366h-5.713v3.64h-4.745v-3.64h-5.668v3.64h-4.746v-3.64h-5.713l.046 8.386h26.494v-3.318z"
-          color="#000"
         />
       </g>
     </g>
@@ -640,27 +444,6 @@ export const BlackRookPieceDefault = () => (
 )
 export const BlackKingPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-182.44 -9.75)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g stroke="#000">
       <g
         strokeLinecap="round"
@@ -700,19 +483,6 @@ export const BlackKingPieceDefault = () => (
 )
 export const BlackCannonPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontSize={18}
-      fontStyle="italic"
-      style={{
-        lineHeight: "100%",
-      }}
-      textAnchor="end"
-      transform="translate(-238.46 -8.23)"
-    />
     <g stroke="#000">
       <g
         strokeLinecap="round"
@@ -747,7 +517,6 @@ export const BlackCannonPieceDefault = () => (
           r={3.094}
           strokeLinecap="round"
           strokeLinejoin="round"
-          color="#000"
         />
         <circle
           cx={328.36}
@@ -755,7 +524,6 @@ export const BlackCannonPieceDefault = () => (
           r={5.114}
           strokeLinecap="round"
           strokeLinejoin="round"
-          color="#000"
           transform="translate(0 -.316)"
         />
         <path d="M328.93 525.19c.105-1.452-.295-5.24-.568-8.27l-3.346-.064c-2.829 7.31-5.76 14.201-4.925 18.183.836 3.982 5.193 5.539 7.955 2.463l1.957 2.777v3.725l2.273.19-.063-4.357-2.904-4.482" />
@@ -765,71 +533,36 @@ export const BlackCannonPieceDefault = () => (
 )
 export const BlackPawnPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-  <text
-    xmlSpace="preserve"
-    x={10.813}
-    y={51.531}
-    fontFamily="'DejaVu Serif'"
-    fontSize={18}
-    fontStyle="italic"
-    style={{
-      lineHeight: "100%",
-    }}
-    textAnchor="end"
-    transform="translate(-206.11 -6.463)"
-  />
-  <g stroke="#000" strokeLinecap="round">
-    <g strokeLinejoin="bevel" transform="translate(-175.692 -6.463)">
-      <circle
-        cx={42.5}
-        cy={42.5}
-        r={32.5}
-        fill="#fedaa4"
-        strokeWidth={2}
-        transform="translate(166.69 -2.537)"
-      />
-      <circle
-        cx={42.5}
-        cy={42.5}
-        r={32.5}
+    <g stroke="#000" strokeLinecap="round">
+      <g strokeLinejoin="bevel" transform="translate(-175.692 -6.463)">
+        <circle
+          cx={42.5}
+          cy={42.5}
+          r={32.5}
+          fill="#fedaa4"
+          strokeWidth={2}
+          transform="translate(166.69 -2.537)"
+        />
+        <circle
+          cx={42.5}
+          cy={42.5}
+          r={32.5}
+          fill="none"
+          strokeWidth={2.233}
+          transform="translate(171.13 1.897) scale(.89566)"
+        />
+      </g>
+      <path
         fill="none"
-        strokeWidth={2.233}
-        transform="translate(171.13 1.897) scale(.89566)"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M49.888 52.928c-1.148-4.81-4.324-8.845-8.597-11.074a12.248 12.248 0 0 0 4.469-9.47c0-5.4-3.508-9.97-8.355-11.609.364-.65.583-1.388.583-2.186a4.52 4.52 0 0 0-4.517-4.517 4.52 4.52 0 0 0-4.517 4.517c0 .803.265 1.533.632 2.186-4.864 1.629-8.354 6.197-8.354 11.608 0 3.81 1.75 7.215 4.468 9.471-4.273 2.23-7.45 6.264-8.597 11.074z"
       />
     </g>
-    <path
-      fill="none"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M49.888 52.928c-1.148-4.81-4.324-8.845-8.597-11.074a12.248 12.248 0 0 0 4.469-9.47c0-5.4-3.508-9.97-8.355-11.609.364-.65.583-1.388.583-2.186a4.52 4.52 0 0 0-4.517-4.517 4.52 4.52 0 0 0-4.517 4.517c0 .803.265 1.533.632 2.186-4.864 1.629-8.354 6.197-8.354 11.608 0 3.81 1.75 7.215 4.468 9.471-4.273 2.23-7.45 6.264-8.597 11.074z"
-      color="#000"
-    />
-  </g>
-</svg>
+  </svg>
 )
 export const BlackAdvisorPieceDefault = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67">
-    <text
-      xmlSpace="preserve"
-      x={10.813}
-      y={51.531}
-      fontFamily="'DejaVu Serif'"
-      fontStyle="italic"
-      style={{
-        lineHeight: "0%",
-      }}
-      textAnchor="end"
-      transform="translate(-217.69 -10.75)"
-    >
-      <tspan
-        x={16.543}
-        y={51.531}
-        fontSize={18}
-        style={{
-          lineHeight: 1,
-        }}
-      />
-    </text>
     <g stroke="#000">
       <g
         strokeLinecap="round"
@@ -859,7 +592,6 @@ export const BlackAdvisorPieceDefault = () => (
           strokeLinejoin="round"
           strokeWidth={2.0007791999999998}
           d="M24.369 28.137a10.3 10.3 0 0 0-2.087 6.262c0 2.89 1.235 5.51 3.203 7.427-3.897 2.3-6.697 6.253-7.524 10.874H49.03c-.827-4.62-3.626-8.574-7.524-10.874 1.968-1.917 3.155-4.537 3.155-7.427 0-2.228-.764-4.304-1.99-6.02z"
-          color="#000"
         />
         <path
           strokeLinejoin="round"
