@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
 import AddFriendRow from '@/components/addFriendRow';
 import { ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { findFriendByUsername } from '@/lib/friend/find-friend.ts';
-import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';  
+import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input.tsx';
 import { getFriendList } from '@/lib/friend/friend-request-list.ts';
+import { getProfileMe } from '@/stores/profile-me.ts';
 
 const FindFriendsByUsername: React.FC = () => {
+  const { data: myProfile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfileMe,
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const {data: listFriend} = useQuery(
@@ -44,8 +49,14 @@ const FindFriendsByUsername: React.FC = () => {
       toast.error(`Failed to send friend request: ${error.message}`);
     },
   });
-
+  function isMyInfo(userId: number): boolean {
+    return userId === myProfile?.id;
+  }
   const handleAddFriend = (userId: number) => {
+    if (isMyInfo(userId)) {
+      toast.error('You cannot add yourself as a friend');
+      return;
+    }
     addFriendMutation.mutate(userId);
   };
   const navigate = useNavigate();
@@ -98,11 +109,14 @@ const FindFriendsByUsername: React.FC = () => {
               {usersList && usersList.content.map((user) => (
                 <AddFriendRow
                   key={user.id}
+                  user={user}
                   avatarUrl={user.picture || 'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740'}
                   username={user.username}
                   email={user.email}
                   listFriend={listFriend}
-                  onAcceptClick={() => handleAddFriend(user.id)}
+                  isMe={isMyInfo(user.id)}
+                  onAddFriendClick={() => handleAddFriend(user.id)}
+                  onAcceptClick={() => console.log(`Accept ${user.username}`)}
                   onDeclineClick={() => console.log(`Cancel ${user.username}`)}
                 />
               ))}

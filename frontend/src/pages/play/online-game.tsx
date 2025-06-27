@@ -112,7 +112,7 @@ export default function OnlineGame() {
       isViewingHistory &&
       currentHistoryIndex === gameHistory.length - 1
     ) {
-      // If at the end of history, return to current game
+      // If at the end of history, return to the current game
       handleReturnToCurrentGame();
     }
   }
@@ -142,7 +142,7 @@ export default function OnlineGame() {
     return [part1, part2];
   }
 
-  // Update current game when gameState changes
+  // Update the current game when gameState changes
   useEffect(() => {
     if (gameState && !isViewingHistory) {
       setCurrentGame(gameState);
@@ -178,10 +178,10 @@ export default function OnlineGame() {
 
   const handleMove = useCallback(
     (from: string, to: string, piece: string): boolean => {
-      // If viewing history, return to current game first
+      // If viewing history, return to the current game first
       if (isViewingHistory) {
         handleReturnToCurrentGame();
-        // Don't make the move immediately, let user try again
+        // Don't make the move immediately, let the user try again
         return false;
       }
 
