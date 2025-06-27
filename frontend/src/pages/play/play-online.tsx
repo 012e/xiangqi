@@ -226,16 +226,16 @@ export default function PlayOnline({
               />
             </div>
             <div className="flex self-center space-x-3">
-              <Button className="group">
+              <Button className="group" disabled={true}>
                 <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
               </Button>
-              <Button className="group">
+              <Button className="group" disabled={true}>
                 <Flag className="transition-transform group-hover:scale-150"></Flag>
               </Button>
-              <Button 
+              <Button
                 className="group" 
                 onClick={handlePreviousMove}
-                disabled={isViewingHistory && currentHistoryIndex <= 0}
+                disabled={(history.length == 0) || (isViewingHistory && currentHistoryIndex <= 0)}
               >
                 <ChevronLeft className={`transition-transform group-hover:scale-150 ${
                   isViewingHistory && currentHistoryIndex <= 0 
@@ -246,7 +246,7 @@ export default function PlayOnline({
               <Button 
                 className="group" 
                 onClick={handleNextMove}
-                disabled={isViewingHistory && currentHistoryIndex >= history.length - 1}
+                disabled={history.length == 0 || (isViewingHistory && currentHistoryIndex >= history.length - 1)}
               >
                 <ChevronRight className={`transition-transform group-hover:scale-150 ${
                   isViewingHistory && currentHistoryIndex >= history.length - 1 

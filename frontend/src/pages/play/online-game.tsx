@@ -6,7 +6,6 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  Flag,
   Handshake,
   Loader2,
 } from 'lucide-react';
