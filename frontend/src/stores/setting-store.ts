@@ -19,7 +19,6 @@ type SettingState = {
   backendUrl: string;
   theme: Theme;
   accessToken?: string;
-  pieceTheme?: CustomPieces;
   pieceThemeName?: ThemeNamesPiece;
   boardTheme?: string;
 };
@@ -83,7 +82,6 @@ const useSettingStore = create<SettingStore>()(
     (set, get) => ({
       backendUrl: BACKEND_URL,
       theme: systemTheme,
-      pieceTheme: THEME_DATA.default,
       pieceThemeName: 'default',
       boardTheme: XiangqiBoard,
       actions: {
@@ -103,7 +101,6 @@ const useSettingStore = create<SettingStore>()(
         },
         setPieceTheme(pieceTheme: ThemeNamesPiece): void {
           set({
-             pieceTheme: THEME_DATA[pieceTheme] || THEME_DATA.chinese,
              pieceThemeName: pieceTheme,
           });
         },
@@ -126,6 +123,11 @@ const useSettingStore = create<SettingStore>()(
 
 export const useBackendUrl = () => useSettingStore((state) => state.backendUrl);
 export const useTheme = () => useSettingStore((state) => state.theme);
+export const usePieceTheme = () => useSettingStore((state) => {
+  const themeName = state.pieceThemeName || 'default';
+  return THEME_DATA[themeName] || THEME_DATA.default;
+});
+export const usePieceThemeName = () => useSettingStore((state) => state.pieceThemeName || 'default');
 
 export const useSettingActions = () =>
   useSettingStore((state) => state.actions);

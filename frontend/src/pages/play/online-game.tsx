@@ -14,7 +14,7 @@ import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
-import useSettingStore from '@/stores/setting-store';
+import { usePieceTheme } from '@/stores/setting-store';
 import { PlayerCard } from '@/components/play/my-hover-card.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
@@ -50,7 +50,7 @@ export default function OnlineGame() {
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
   const gameState = useGameStore((state) => state.gameState);
-  const pieceTheme = useSettingStore((state) => state.pieceTheme);
+  const pieceTheme = usePieceTheme();
 
   // Get game history from gameState
   const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);

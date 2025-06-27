@@ -4,7 +4,6 @@ import { CircleCheck } from 'lucide-react';
 import { XiangqiBoard } from '@/components/chessboard-styles/board-styles/xiangqi-board.tsx';
 import { BoardXboard1, BoardXboard2 } from '@/components/chessboard-styles/board-styles/xboard-board.tsx';
 import { Board01xq } from '@/components/chessboard-styles/board-styles/01xq-board.tsx';
-import { useSettingActions } from '@/stores/setting-store';
 
 const radioOptions = [
   {
