@@ -79,7 +79,10 @@ export default function SelfPlayBoard({
     },
     [game, onMove, isViewingHistory, onReturnToCurrentGame, currentGame],
   );
-
+  const onSquareClick = (square: string) => {
+    console.log('Square clicked:', square);
+    console.log(game.getLegalMoves(square, false))
+  }
   function splitTwoParts(input: string): [string, string] | null {
     const regex = /^([a-i])(10|[1-9])([a-i])(10|[1-9])$/;
     const match = input.match(regex);
@@ -140,6 +143,7 @@ export default function SelfPlayBoard({
       boardWidth={400}
       id="online-xiangqi-board"
       onPieceDrop={handleMoveInternal}
+      onSquareClick={onSquareClick}
       position={game.exportUciFen()}
       areArrowsAllowed={true}
       customPieces={customPieces}

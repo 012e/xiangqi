@@ -235,7 +235,7 @@ export default class Xiangqi {
    * @param position - Chess notation position
    * @returns Board coordinates [row, col]
    */
-  private positionToCoordinates(position: string): [number, number] {
+  public positionToCoordinates(position: string): [number, number] {
     if (position.length < 2) {
       throw new Error(`Invalid position: ${position}`);
     }
@@ -342,6 +342,65 @@ export default class Xiangqi {
       });
       if (!result.ok || !this.moveInCheckValidator(fromCoords, toCoords).ok) {
         return this.invalidMove(fromCoords, toCoords);
+      }
+    }
+    return OK_RESULT;
+  }
+
+  /**
+   * Check if a move is legal without checking turn
+   * @param fromCoords - Starting coordinates [row, col]
+   * @param toCoords - Target coordinates [row, col]
+   * @returns Result indicating if move is legal
+   */
+  private _isLegalMoveSkipTurn(
+    fromCoords: [number, number],
+    toCoords: [number, number],
+  ): Result {
+    const validators: Validator[] = [
+      inBoundValiator,
+      duplicateMoveValidator,
+      fromPieceValidator,
+      // Skip correctTurnValidator
+      captureOwnPieceValidator,
+    ];
+    const [fromRow, fromCol] = fromCoords;
+    const piece = this.board[fromRow][fromCol];
+
+    switch (piece.toLowerCase()) {
+      case 'p':
+        validators.push(validPawnMoveValidator);
+        break;
+      case 'c':
+        validators.push(validCannonMoveValidator);
+        break;
+      case 'n':
+        validators.push(validKnightMoveValidator);
+        break;
+      case 'b':
+        validators.push(validBishopMoveValidator);
+        break;
+      case 'a':
+        validators.push(validAdvisorMoveValidator);
+        break;
+      case 'k':
+        validators.push(validKingMoveValidator);
+        break;
+      case 'r':
+        validators.push(validRookMoveValidator);
+        break;
+
+      default:
+        return { ok: false, message: `Unknown piece: ${piece}` };
+    }
+
+    for (const validator of validators) {
+      const result = validator(fromCoords, toCoords, {
+        board: this.board,
+        currentPlayer: this.currentPlayer,
+      });
+      if (!result.ok) {
+        return result;
       }
     }
     return OK_RESULT;
@@ -916,5 +975,345 @@ export default class Xiangqi {
 
   public getHistory(): string[] {
     return [...this.moveHistory]; // Return a copy
+  }
+
+  /**
+   * Get all legal moves for a piece at the given position
+   * @param from - Position in chess notation (e.g., 'e4')
+   * @param needTurn - Whether to check if it's the piece's turn to move
+   * @returns Array of legal move destinations in chess notation
+   */
+  getLegalMoves(from: string, needTurn: boolean = true): string[] {
+    const legalMoves: string[] = [];
+    
+    try {
+      const fromCoords = this.positionToCoordinates(from);
+      const [row, col] = fromCoords;
+      const piece = this.board[row][col];
+      
+
+      if (!piece) {
+        return []; // No piece at the position
+      }
+      
+      // Check if it's the correct player's turn
+      if (needTurn) {
+        const isPieceRed = piece === piece.toUpperCase();
+        if ((isPieceRed && this.currentPlayer !== 'w') || (!isPieceRed && this.currentPlayer !== 'b')) {
+          return []; // Not this piece's turn
+        }
+      }
+      
+      // Generate all possible moves based on piece type
+      const skipTurnForValidation = !needTurn; // Skip turn check in validation if needTurn is false
+      
+      switch (piece.toLowerCase()) {
+        case 'r': { // Rook
+          // Horizontal moves
+          for (let c = col - 1; c >= 0; c--) {
+            if (this.board[row][c] !== '') {
+              if (this.isValidMoveWithoutCheck(row, col, row, c, skipTurnForValidation)) {
+                legalMoves.push(this.coordinatesToPosition([row, c]));
+              }
+              break;
+            }
+            if (this.isValidMoveWithoutCheck(row, col, row, c, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([row, c]));
+            }
+          }
+          for (let c = col + 1; c < 9; c++) {
+            if (this.board[row][c] !== '') {
+              if (this.isValidMoveWithoutCheck(row, col, row, c, skipTurnForValidation)) {
+                legalMoves.push(this.coordinatesToPosition([row, c]));
+              }
+              break;
+            }
+            if (this.isValidMoveWithoutCheck(row, col, row, c, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([row, c]));
+            }
+          }
+          
+          // Vertical moves
+          for (let r = row - 1; r >= 0; r--) {
+            if (this.board[r][col] !== '') {
+              if (this.isValidMoveWithoutCheck(row, col, r, col, skipTurnForValidation)) {
+                legalMoves.push(this.coordinatesToPosition([r, col]));
+              }
+              break;
+            }
+            if (this.isValidMoveWithoutCheck(row, col, r, col, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([r, col]));
+            }
+          }
+          for (let r = row + 1; r < 10; r++) {
+            if (this.board[r][col] !== '') {
+              if (this.isValidMoveWithoutCheck(row, col, r, col, skipTurnForValidation)) {
+                legalMoves.push(this.coordinatesToPosition([r, col]));
+              }
+              break;
+            }
+            if (this.isValidMoveWithoutCheck(row, col, r, col, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([r, col]));
+            }
+          }
+          break;
+        }
+        
+        case 'n': { // Knight
+          const horseMoves = [
+            { dr: -2, dc: -1, blockR: -1, blockC: 0 },
+            { dr: -2, dc: 1, blockR: -1, blockC: 0 },
+            { dr: -1, dc: -2, blockR: 0, blockC: -1 },
+            { dr: -1, dc: 2, blockR: 0, blockC: 1 },
+            { dr: 1, dc: -2, blockR: 0, blockC: -1 },
+            { dr: 1, dc: 2, blockR: 0, blockC: 1 },
+            { dr: 2, dc: -1, blockR: 1, blockC: 0 },
+            { dr: 2, dc: 1, blockR: 1, blockC: 0 },
+          ];
+
+          for (const move of horseMoves) {
+            const toR = row + move.dr;
+            const toC = col + move.dc;
+            const blockR = row + move.blockR;
+            const blockC = col + move.blockC;
+
+            if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
+            if (this.board[blockR]?.[blockC] !== '') continue;
+
+            if (this.isValidMoveWithoutCheck(row, col, toR, toC, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([toR, toC]));
+            }
+          }
+          break;
+        }
+        
+        case 'b': { // Bishop
+          const bishopMoves = [
+            { dr: -2, dc: -2, eyeR: -1, eyeC: -1 },
+            { dr: -2, dc: 2, eyeR: -1, eyeC: 1 },
+            { dr: 2, dc: -2, eyeR: 1, eyeC: -1 },
+            { dr: 2, dc: 2, eyeR: 1, eyeC: 1 },
+          ];
+
+          for (const move of bishopMoves) {
+            const toR = row + move.dr;
+            const toC = col + move.dc;
+            const eyeR = row + move.eyeR;
+            const eyeC = col + move.eyeC;
+
+            if (toR < 0 || toR >= 10 || toC < 0 || toC >= 9) continue;
+
+            const isRed = piece === piece.toUpperCase();
+            if (isRed && toR > 4) continue; // Can't cross river
+            if (!isRed && toR < 5) continue;
+
+            if (this.board[eyeR]?.[eyeC] !== '') continue; // Eye blocked
+
+            if (this.isValidMoveWithoutCheck(row, col, toR, toC, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([toR, toC]));
+            }
+          }
+          break;
+        }
+        
+        case 'a': { // Advisor
+          const advisorMoves = [
+            { dr: -1, dc: -1 },
+            { dr: -1, dc: 1 },
+            { dr: 1, dc: -1 },
+            { dr: 1, dc: 1 },
+          ];
+
+          for (const move of advisorMoves) {
+            const toR = row + move.dr;
+            const toC = col + move.dc;
+
+            if (toR < 0 || toR >= 10 || toC < 3 || toC > 5) continue;
+
+            const isRed = piece === piece.toUpperCase();
+            if (isRed && (toR < 7 || toR > 9)) continue; // Must stay in palace
+            if (!isRed && (toR < 0 || toR > 2)) continue;
+
+            if (this.isValidMoveWithoutCheck(row, col, toR, toC, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([toR, toC]));
+            }
+          }
+          break;
+        }
+        
+        case 'k': { // King
+          const kingMoves = [
+            { dr: -1, dc: 0 },
+            { dr: 1, dc: 0 },
+            { dr: 0, dc: -1 },
+            { dr: 0, dc: 1 },
+          ];
+
+          const isRed = piece === piece.toUpperCase();
+
+          for (const move of kingMoves) {
+            const toR = row + move.dr;
+            const toC = col + move.dc;
+
+            if (toC < 3 || toC > 5) continue; // Must stay in palace columns
+            if (isRed && (toR < 7 || toR > 9)) continue; // Red king palace
+            if (!isRed && (toR < 0 || toR > 2)) continue; // Black king palace
+
+            if (this.isValidMoveWithoutCheck(row, col, toR, toC, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([toR, toC]));
+            }
+          }
+
+          // Check for flying general move (kings facing each other)
+          let enemyKingRow = -1;
+          for (let r = 0; r < 10; r++) {
+            const targetPiece = this.board[r][col];
+            if (targetPiece === '') continue;
+            if (targetPiece.toLowerCase() === 'k' && r !== row) {
+              enemyKingRow = r;
+              break;
+            } else break; // Blocked
+          }
+
+          if (enemyKingRow !== -1 && this.isValidMoveWithoutCheck(row, col, enemyKingRow, col, skipTurnForValidation)) {
+            legalMoves.push(this.coordinatesToPosition([enemyKingRow, col]));
+          }
+          break;
+        }
+        
+        case 'c': { // Cannon
+          const directions = [
+            { dr: -1, dc: 0 },
+            { dr: 1, dc: 0 },
+            { dr: 0, dc: -1 },
+            { dr: 0, dc: 1 },
+          ];
+
+          for (const { dr, dc } of directions) {
+            let r = row + dr;
+            let c = col + dc;
+            let hasJumped = false;
+
+            while (r >= 0 && r < 10 && c >= 0 && c < 9) {
+              const target = this.board[r][c];
+
+              if (!hasJumped) {
+                if (target === '') {
+                  if (this.isValidMoveWithoutCheck(row, col, r, c, skipTurnForValidation)) {
+                    legalMoves.push(this.coordinatesToPosition([r, c]));
+                  } else {
+                  }
+                } else {
+                  hasJumped = true; // Found jumping piece
+                }
+              } else {
+                if (target !== '') {
+                  // Found target to capture after jumping
+                  if (this.isValidMoveWithoutCheck(row, col, r, c, skipTurnForValidation)) {
+                    legalMoves.push(this.coordinatesToPosition([r, c]));
+                  }
+                  break;
+                }
+              }
+
+              r += dr;
+              c += dc;
+            }
+          }
+          break;
+        }
+        
+        case 'p': { // Pawn
+          const isRed = piece === piece.toUpperCase();
+          const forward = isRed ? -1 : 1; // Red moves up (decreasing row), Black moves down (increasing row)
+
+          // Move forward
+          const toR = row + forward;
+          if (toR >= 0 && toR < 10) {
+            if (this.isValidMoveWithoutCheck(row, col, toR, col, skipTurnForValidation)) {
+              legalMoves.push(this.coordinatesToPosition([toR, col]));
+            }
+          }
+
+          // Sideways moves if crossed river
+          const crossedRiver = isRed ? row <= 4 : row >= 5; // Fixed river crossing logic
+          if (crossedRiver) {
+            for (const dc of [-1, 1]) {
+              const toC = col + dc;
+              if (toC >= 0 && toC < 9) {
+                if (this.isValidMoveWithoutCheck(row, col, row, toC, skipTurnForValidation)) {
+                  legalMoves.push(this.coordinatesToPosition([row, toC]));
+                }
+              }
+            }
+          }
+          break;
+        }
+      }
+    } catch (error) {
+      console.error('Error getting legal moves:', error);
+      return [];
+    }
+    
+    return legalMoves;
+  }
+
+  /**
+   * Helper method to check if a move is valid without causing check
+   * @param fromRow - Starting row
+   * @param fromCol - Starting column  
+   * @param toRow - Target row
+   * @param toCol - Target column
+   * @param skipTurnCheck - Whether to skip the turn validation
+   * @returns Boolean indicating if move is valid
+   */
+  private isValidMoveWithoutCheck(
+    fromRow: number,
+    fromCol: number,
+    toRow: number,
+    toCol: number,
+    skipTurnCheck: boolean = false,
+  ): boolean {
+    // First check basic move validity
+    let moveResult: Result;
+    
+    if (skipTurnCheck) {
+      // Create a custom validation without turn check
+      moveResult = this._isLegalMoveSkipTurn([fromRow, fromCol], [toRow, toCol]);
+    } else {
+      moveResult = this._isLegalMove([fromRow, fromCol], [toRow, toCol]);
+    }
+    
+    if (!moveResult.ok) {
+      return false;
+    }
+
+    // Then check if move would put own king in check
+    const originalPiece = this.board[fromRow][fromCol];
+    const targetPiece = this.board[toRow][toCol];
+    
+    // Make temporary move
+    this.board[toRow][toCol] = originalPiece;
+    this.board[fromRow][fromCol] = '';
+    
+    // Update king position if king moved
+    const color = originalPiece === originalPiece.toUpperCase() ? 'w' : 'b';
+    let originalKingPos = null;
+    if (originalPiece.toLowerCase() === 'k') {
+      originalKingPos = [...this.kings[color]];
+      this.kings[color] = [toRow, toCol];
+    }
+    
+    // Check if this move puts own king in check or creates face-to-face kings
+    const wouldBeInCheck = this.isInCheck(color) || this.isKingFaceToFace(this.board);
+    
+    // Restore board state
+    this.board[fromRow][fromCol] = originalPiece;
+    this.board[toRow][toCol] = targetPiece;
+    if (originalKingPos) {
+      this.kings[color] = originalKingPos;
+    }
+    
+    return !wouldBeInCheck;
   }
 }
