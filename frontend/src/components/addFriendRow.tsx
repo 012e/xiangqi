@@ -2,8 +2,6 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Player } from '@/lib/online/game-response.ts';
-
-
 type AddFriendRowProps = {
   user: Player;
   avatarUrl: string;
@@ -13,7 +11,6 @@ type AddFriendRowProps = {
   onAddFriendClick?: () => void;
   onDeclineClick?: () => void;
   isFriend?: boolean;
-  listFriend?: Player[];
   isMe?: boolean;
 };
 
@@ -22,17 +19,9 @@ const AddFriendRow: React.FC<AddFriendRowProps> = ({
                                                      username,
                                                      email,
                                                      onAddFriendClick,
-                                                     listFriend,
                                                      isMe,
+                                                     isFriend,
                                                    }) => {
-
-
-  function checkIfFriend() {
-    if (listFriend) {
-      return !!listFriend.find(friend => friend.username === username);
-    }
-    return false;
-  }
   return (
     <div className="bg-accent rounded flex items-center justify-between p-3 w-full">
       {/* Avatar + Info */}
@@ -50,7 +39,7 @@ const AddFriendRow: React.FC<AddFriendRowProps> = ({
       {/* Action Buttons */}
       <div className="flex space-x-2">
         {
-          checkIfFriend() ? (
+          isFriend ? (
             <div>
               <p className="font-bold p-3 text-chart-2">Friend</p>
             </div>) : (

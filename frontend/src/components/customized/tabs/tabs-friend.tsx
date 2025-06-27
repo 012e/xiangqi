@@ -10,6 +10,7 @@ import {
   postRejectFriend,
 } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
+import { getSuggestion } from '@/lib/friend/find-friend.ts';
 export type TabFriend = {
   name: string;
   value: string;
@@ -37,8 +38,7 @@ type TabsFriendProps = {
   searchText: string;
 };
 export default function TabsFriend({ searchText }: TabsFriendProps) {
-  const {data: friendList} = useQuery(
-    {
+  const {data: friendList} = useQuery({
       queryKey: ['listFriends'],
       queryFn: getFriendList
     }
@@ -47,9 +47,14 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
     queryKey: ['listSent'],
     queryFn: getRequestSent
   })
-  const {data: friendPending} = useQuery( {
+  const {data: friendPending} = useQuery({
     queryKey: ['listPending'],
     queryFn: getRequestPending
+  })
+
+  const { data: friendSuggestions } = useQuery({
+    queryKey: ['listSuggestions'],
+    queryFn: getSuggestion
   })
 
   const addFriend = useMutation({
@@ -106,6 +111,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
         { value: 'pending', list: friendPending },
         { value: 'sent', list: friendSent },
         { value: 'friend', list: friendList },
+        { value: 'suggestions', list: friendSuggestions}
       ].map(({ value, list }) =>{
         const filteredList = list?.filter(user =>
           user.username.toLowerCase().includes(searchText.toLowerCase())

@@ -47,7 +47,7 @@ public class UserController {
     }
     @GetMapping("/search")
     public Page<UserDto> searchUsers(
-            @RequestParam String username,
+            @RequestParam(required = false) String username, // Make username optional
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {

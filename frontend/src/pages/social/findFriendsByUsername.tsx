@@ -52,6 +52,13 @@ const FindFriendsByUsername: React.FC = () => {
   function isMyInfo(userId: number): boolean {
     return userId === myProfile?.id;
   }
+  function isMyFriend(userId: number): boolean {
+    if (!listFriend) {
+      return false;
+    }
+    return listFriend.some((friend) => friend.id === userId);
+  }
+
   const handleAddFriend = (userId: number) => {
     if (isMyInfo(userId)) {
       toast.error('You cannot add yourself as a friend');
@@ -113,8 +120,8 @@ const FindFriendsByUsername: React.FC = () => {
                   avatarUrl={user.picture || 'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740'}
                   username={user.username}
                   email={user.email}
-                  listFriend={listFriend}
                   isMe={isMyInfo(user.id)}
+                  isFriend={isMyFriend(user.id)}
                   onAddFriendClick={() => handleAddFriend(user.id)}
                   onAcceptClick={() => console.log(`Accept ${user.username}`)}
                   onDeclineClick={() => console.log(`Cancel ${user.username}`)}
