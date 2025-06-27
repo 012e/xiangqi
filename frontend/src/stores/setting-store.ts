@@ -1,12 +1,13 @@
 import {
   PicesPlayOkXiangqi,
   PiecesChineseChess,
-  PiecesClubXiangqi,
+  PiecesClubXiangqi, PiecesDefault,
   PiecesXahlee, PiecesXboard,
 } from '@/components/chessboard-styles/Pieces.tsx';
 import { CustomPieces } from 'react-xiangqiboard/dist/chessboard/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { XiangqiBoard } from '@/components/chessboard-styles/board-styles/xiangqi-board.tsx';
 
 export type Theme = 'dark' | 'light';
 
@@ -18,7 +19,8 @@ type SettingState = {
   backendUrl: string;
   theme: Theme;
   accessToken?: string;
-  pieceTheme?: CustomPieces;
+  pieceThemeName?: ThemeNamesPiece;
+  boardTheme?: string;
 };
 
 
@@ -28,7 +30,8 @@ type SettingActions = {
     setTheme: (theme: Theme) => void;
     toggleTheme: () => void;
     setToken: (token: string) => void;
-    setPieceTheme?: (pieceTheme: ThemeNames) => void;
+    setPieceTheme?: (pieceTheme: ThemeNamesPiece) => void;
+    setBoardTheme?: (boardTheme: string) => void;
   };
 };
 
@@ -58,14 +61,15 @@ function merge(target: any, source: any): any {
 
 export type SettingStore = SettingState & SettingActions;
 
-export type ThemeNames = "chinese" | "club" | "playok" | "xahlee" | 'xboard';
+export type ThemeNamesPiece = "chinese" | "club" | "playok" | "xahlee" | 'xboard' | 'default';
 
-const THEME_DATA: Record<ThemeNames, CustomPieces> = {
+const THEME_DATA: Record<ThemeNamesPiece, CustomPieces> = {
   chinese: PiecesChineseChess,
   club: PiecesClubXiangqi,
-  playok: PicesPlayOkXiangqi,
   xahlee: PiecesXahlee,
   xboard: PiecesXboard,
+  default: PiecesDefault,
+  playok: PicesPlayOkXiangqi
 };
 
 const BACKEND_URL =
@@ -78,6 +82,8 @@ const useSettingStore = create<SettingStore>()(
     (set, get) => ({
       backendUrl: BACKEND_URL,
       theme: systemTheme,
+      pieceThemeName: 'default',
+      boardTheme: XiangqiBoard,
       actions: {
         setTheme(theme: Theme): void {
           set({ theme });
@@ -93,9 +99,14 @@ const useSettingStore = create<SettingStore>()(
         setToken(token): void {
           set({ accessToken: token });
         },
-        setPieceTheme(pieceTheme: ThemeNames): void {
+        setPieceTheme(pieceTheme: ThemeNamesPiece): void {
           set({
-             pieceTheme: THEME_DATA[pieceTheme] || THEME_DATA.chinese,
+             pieceThemeName: pieceTheme,
+          });
+        },
+        setBoardTheme(boardTheme: string): void {
+          set({
+            boardTheme: boardTheme,
           });
         },
       },
@@ -112,6 +123,11 @@ const useSettingStore = create<SettingStore>()(
 
 export const useBackendUrl = () => useSettingStore((state) => state.backendUrl);
 export const useTheme = () => useSettingStore((state) => state.theme);
+export const usePieceTheme = () => useSettingStore((state) => {
+  const themeName = state.pieceThemeName || 'default';
+  return THEME_DATA[themeName] || THEME_DATA.default;
+});
+export const usePieceThemeName = () => useSettingStore((state) => state.pieceThemeName || 'default');
 
 export const useSettingActions = () =>
   useSettingStore((state) => state.actions);

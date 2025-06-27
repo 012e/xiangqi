@@ -123,8 +123,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1(react@19.1.0)
       react-xiangqiboard:
-        specifier: ^0.1.7
-        version: 0.1.7(@types/node@22.13.15)(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^0.1.8
+        version: 0.1.8(@types/node@22.13.15)(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       sonner:
         specifier: ^2.0.2
         version: 2.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3368,8 +3368,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-xiangqiboard@0.1.7:
-    resolution: {integrity: sha512-qzcHMUZs2JiqJE4YHszpyIDcCi+0C58STYrdjiWfBeZWIx7Mp1admkQ6p2McH8uLkZKNBVpBqOijMUljxYaVRQ==}
+  react-xiangqiboard@0.1.8:
+    resolution: {integrity: sha512-2sGdQotFPTbJufbNP5iKXqsppSEEecc9qzWuhfy6813sddfQkK1p/RACsdMAOwMf664zFmkGSyumFXi3Srj8dQ==}
     peerDependencies:
       react: '>=16.14.0'
       react-dom: '>=16.14.0'
@@ -7415,7 +7415,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.12
 
-  react-xiangqiboard@0.1.7(@types/node@22.13.15)(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-xiangqiboard@0.1.8(@types/node@22.13.15)(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       dnd-core: 16.0.1
       react: 19.1.0

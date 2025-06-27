@@ -31,6 +31,15 @@ import {
   RedPawnPieceXboard,
   RedRookPieceXboard,
 } from '@/components/chessboard-styles/pieces-styles/xboard-pieces.tsx';
+import {
+  BlackAdvisorPieceDefault,
+  BlackBishopPieceDefault, BlackCannonPieceDefault, BlackKingPieceDefault, BlackKnightPieceDefault,
+  BlackPawnPieceDefault,
+  BlackRookPieceDefault,
+  RedAdvisorPieceDefault, RedBishopPieceDefault, RedCannonPieceDefault, RedKingPieceDefault,
+  RedKnightPieceDefault, RedPawnPieceDefault,
+  RedRookPieceDefault,
+} from '@/components/chessboard-styles/pieces-styles/default-pieces.tsx';
 
 // theme 1 chinese chess
 export const PiecesChineseChess: CustomPieces = {
@@ -126,3 +135,21 @@ export const PiecesXboard: CustomPieces = {
   bA: BlackAdvisorPieceXboard,
   bK: BlackKingPieceXboard,
 };
+
+export const PiecesDefault: CustomPieces = {
+  wP: RedPawnPieceDefault,
+  wC: RedCannonPieceDefault,
+  wB: RedBishopPieceDefault,
+  wN: RedKnightPieceDefault,
+  wR: RedRookPieceDefault,
+  wA: RedAdvisorPieceDefault,
+  wK: RedKingPieceDefault,
+
+  bP: BlackPawnPieceDefault,
+  bC: BlackCannonPieceDefault,
+  bB: BlackBishopPieceDefault,
+  bN: BlackKnightPieceDefault,
+  bR: BlackRookPieceDefault,
+  bA: BlackAdvisorPieceDefault,
+  bK: BlackKingPieceDefault,
+}

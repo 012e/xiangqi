@@ -1,0 +1,1 @@
+export const XiangqiBoard: string = "https://raw.githubusercontent.com/lengyanyu258/xiangqiboardjs/refs/heads/master/docs/img/xiangqiboards/wikimedia/xiangqiboard.svg"
