@@ -115,22 +115,22 @@ const UserRow: React.FC<UserRowProps> = ({
       {/* Action Icons */}
       <div className="flex space-x-4 text-foreground text-sm">
         {
-          typeTab === 'friend' ? <div className="flex gap-2">
-              <FaGamepad className="hover:opacity-70 cursor-pointer" onClick={handlePlay} />
-              <Trash2 className="hover:opacity-70 cursor-pointer" onClick={handleRemove} />
+          typeTab === 'friend' ? <div className="flex gap-2 justify-center items-center">
+              <FaGamepad className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handlePlay} />
+              <Trash2 className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleRemove} />
             </div> :
             typeTab === 'sent' ? <div>
-                <CircleX className="hover:opacity-70 cursor-pointer" onClick={handleCancel} />
+                <CircleX className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleCancel} />
               </div> :
               typeTab === 'pending' ? <div className="flex gap-2">
-                  <Check className="hover:opacity-70 cursor-pointer" onClick={handleAccept} />
-                  <X className="hover:opacity-70 cursor-pointer" onClick={handleDecline} />
+                  <Check className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleAccept} />
+                  <X className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleDecline} />
                 </div> :
                 typeTab === 'suggestions' ? <div>
                   {isFriendRequestSent ? (
-                    <CircleX className="hover:opacity-70 cursor-pointer text-muted-foreground" />
+                    <CircleX className="hover:opacity-70 cursor-pointer text-muted-foreground w-5 h-auto" />
                   ) : (
-                    <UserPlus className="hover:opacity-70 cursor-pointer" onClick={handleAddFriend} />
+                    <UserPlus className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleAddFriend} />
                   )}
                 </div> : 'Not found'
         }
