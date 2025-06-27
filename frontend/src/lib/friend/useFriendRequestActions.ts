@@ -15,3 +15,7 @@ export function postAcceptFriend(id: number) {
 export function friendDelete(id: number) {
   return appAxios.delete(`/friend/${id}`);
 }
+
+// export function postCancelFriend(id: number) {
+//   return appAxios.delete(`/friend/request/${id}`);
+// }

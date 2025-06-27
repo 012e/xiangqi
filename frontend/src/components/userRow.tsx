@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FaGamepad,
 } from 'react-icons/fa';
@@ -43,6 +43,7 @@ const UserRow: React.FC<UserRowProps> = ({
                                            typeTab,
                                          }) => {
   const queryClient = useQueryClient();
+  const [isFriendRequestSent, setIsFriendRequestSent] = useState(false);
   const handlePlay = () => {
     if (onPlayClick) {
       onPlayClick.mutate(userId, {});
@@ -89,7 +90,9 @@ const UserRow: React.FC<UserRowProps> = ({
     if (onAddFriendClick) {
       onAddFriendClick.mutate(userId, {
         onSuccess: () => {
+          setIsFriendRequestSent(true);
           queryClient.invalidateQueries({ queryKey: ['listSuggestions'] });
+          queryClient.invalidateQueries({ queryKey: ['listSent'] });
         },
       });
     }
@@ -124,7 +127,11 @@ const UserRow: React.FC<UserRowProps> = ({
                   <X className="hover:opacity-70 cursor-pointer" onClick={handleDecline} />
                 </div> :
                 typeTab === 'suggestions' ? <div>
-                  <UserPlus className="hover:opacity-70 cursor-pointer" onClick={handleAddFriend} />
+                  {isFriendRequestSent ? (
+                    <CircleX className="hover:opacity-70 cursor-pointer text-muted-foreground" />
+                  ) : (
+                    <UserPlus className="hover:opacity-70 cursor-pointer" onClick={handleAddFriend} />
+                  )}
                 </div> : 'Not found'
         }
       </div>
