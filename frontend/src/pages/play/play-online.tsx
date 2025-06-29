@@ -144,7 +144,6 @@ export default function PlayOnline({
             </span>
               <span>Opponent</span>
             </div>
-
             <div className="flex justify-center items-center">
               <div className="border-2">
                 <SelfPlayBoard
@@ -159,7 +158,6 @@ export default function PlayOnline({
                 />
               </div>
             </div>
-
             <div className="flex flex-wrap justify-center space-x-2">
               <span>
                 <SquareUser size={30} />
@@ -167,9 +165,6 @@ export default function PlayOnline({
                 <span>Me</span>
             </div>
           </div>
-
-
-
           <div className="p-3 mx-5">
             {isViewingHistory && (
               <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">

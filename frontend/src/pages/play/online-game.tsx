@@ -347,7 +347,7 @@ export default function OnlineGame() {
             isRotated ? 'flex-col-reverse' : '',
           )}
         >
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center w-full pl-5 pr-7">
             <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
           </div>
 
@@ -359,7 +359,7 @@ export default function OnlineGame() {
             ) : (
               <AppBoard
                 id="online-xiangqi-board"
-                boardWidth={400}
+                boardWidth={500}
                 onPieceDrop={handleMove}
                 onSquareClick={handleSquareClick}
                 onPieceClick={handlePieceClick}
@@ -379,7 +379,7 @@ export default function OnlineGame() {
               />
             )}
           </div>
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center w-full pl-5 pr-7">
             <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
           </div>
         </div>
