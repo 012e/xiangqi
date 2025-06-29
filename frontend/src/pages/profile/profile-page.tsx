@@ -174,7 +174,7 @@ const ProfilePage: React.FC = () => {
                 <Input
                   value={profile?.username ?? 'None'}
                   readOnly
-                  className="w-full bg-muted text-foreground"
+                  className="w-auto bg-muted text-foreground"
                 ></Input>
               </div>
 
@@ -183,7 +183,7 @@ const ProfilePage: React.FC = () => {
                 <Input
                   value={profile?.displayName ?? 'None'}
                   readOnly
-                  className="w-full bg-muted text-foreground"
+                  className="w-auto bg-muted text-foreground"
                 ></Input>
               </div>
 
@@ -192,7 +192,7 @@ const ProfilePage: React.FC = () => {
                 <Input
                   value={profile?.email ?? 'None'}
                   readOnly
-                  className="w-full bg-muted text-foreground"
+                  className="w-auto bg-muted text-foreground"
                 ></Input>
               </div>
             </div>
