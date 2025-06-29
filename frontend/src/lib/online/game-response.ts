@@ -24,5 +24,6 @@ export type GameResponse = {
   blackOfferingDraw: boolean,
   result: string,
   resultDetail: string
+  createdAt: string,
   isGameWithBot: boolean
 };

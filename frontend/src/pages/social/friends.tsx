@@ -13,8 +13,8 @@ const Friends: React.FC = () => {
   };
 
   return (
-    <div className="w-full text-foreground">
-      <main className="p-8 m-4 bg-card text-card-foreground rounded-lg border border-border">
+    <div className="w-full h-full text-foreground my-6">
+      <main className="p-8 mx-6 bg-card text-card-foreground rounded-lg border border-border h-full">
         <h1 className="text-2xl font-bold mb-4">Friends</h1>
         <div className="gap-4">
           <div className="grid gap-4 mb-6">

@@ -16,6 +16,7 @@ import MovePosition, { HistoryMove } from '@/components/move-position';
 import Xiangqi from '@/lib/xiangqi';
 import ResignButton from '../../components/ui/alert-resign.tsx';
 import { cn } from '@/lib/utils.ts';
+import AppBoard from '@/components/app-board.tsx';
 
 export default function OnlineGame() {
   const { id } = useParams();
@@ -189,6 +190,10 @@ export default function OnlineGame() {
     return getPieceColor(piece) === selfPlayer?.color;
   }
 
+  function handlePieceClick() {
+
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2" key={id}>
       {/* Left */}
@@ -207,14 +212,13 @@ export default function OnlineGame() {
                 <Loader2 />
               </div>
             ) : (
-              <Chessboard
+              <AppBoard
                 id="online-xiangqi-board"
                 boardWidth={400}
                 onPieceDrop={handleMove}
                 isDraggablePiece={(piece) =>
                   isPlayerTurn(piece) && !gameEnded && !isViewingHistory
                 }
-                customPieces={pieceTheme}
                 boardOrientation={
                   isRotated ? enemyPlayer?.color : selfPlayer?.color
                 }

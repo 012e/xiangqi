@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
-import ModernButton from '@/components/ui/modern-button';
-import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
 import { getProfileMe } from '@/stores/profile-me.ts';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar.tsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { UserPen } from 'lucide-react';
+import { GameHistories } from '@/pages/profile/game-histories.tsx';
 
 const ProfilePage: React.FC = () => {
   const [shortBio, setShortBio] = useState('');
@@ -27,9 +22,6 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleSave = () => {
-    toast.success('Saved successfully!', {});
-  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -124,13 +116,11 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
           </div>
+          <div>
+            <h3 className="text-lg font-bold mb-4">History</h3>
+            { myProfile && <GameHistories userId={myProfile.id} />}
+          </div>
         </section>
-        {/* Button Save & Cancel */}
-        <div className="flex justify-end gap-4">
-          <ModernButton onClick={handleSave} variant="CTA">
-            Save
-          </ModernButton>
-        </div>
       </main>
     </div>
   );
