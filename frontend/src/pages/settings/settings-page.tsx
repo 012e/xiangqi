@@ -77,7 +77,7 @@ export default function SettingsPage() {
         <Tabs orientation="vertical" defaultValue={tabs[0].value} className="">
           <div className="flex w-full h-full">
             <div className="h-full w-auto">
-              <TabsList className="shrink-0 grid grid-cols-1 gap-1 p-0 bg-background h-full w-auto">
+              <TabsList className="rounded-2xl shrink-0 grid grid-cols-1 gap-1 p-0 bg-background h-full w-auto">
                 {tabs.map((tab) => (
                     <TabsTrigger
                       key={tab.value}

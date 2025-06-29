@@ -5,6 +5,7 @@ import com.se330.ctuong_backend.model.GameTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
@@ -24,5 +25,16 @@ public class GameTypeController {
                 .stream()
                 .map(t -> mapper.map(t, GameTypeResponse.class))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/game-types/{id}")
+    public GameTypeResponse getGameTypeById(@PathVariable Long id) {
+        final var gameType = gameTypeRepository.findById(id);
+
+        if (gameType.isEmpty()) {
+            throw new IllegalArgumentException("Game type not found");
+        }
+
+        return mapper.map(gameType.get(), GameTypeResponse.class);
     }
 }

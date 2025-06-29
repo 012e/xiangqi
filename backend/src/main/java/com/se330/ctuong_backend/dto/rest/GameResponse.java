@@ -31,6 +31,8 @@ public class GameResponse {
     private Boolean isEnded;
     private Timestamp createdAt;
 
+    private Long gameTypeId;
+
     @NotNull
     private Long blackTimeLeft;
 
