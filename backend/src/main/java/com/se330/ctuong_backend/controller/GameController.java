@@ -24,7 +24,6 @@ import java.security.Principal;
 @Tag(name = "Game", description = "Game management operations")
 public class GameController {
     private final GameService gameService;
-    private final GameResignService gameResignService;
 
     @GetMapping("/game/{id}")
     @Operation(summary = "Get game by ID", description = "Retrieves a specific game by its unique identifier")
@@ -48,6 +47,32 @@ public class GameController {
             @Parameter(description = "Game ID", required = true) @PathVariable String id,
             Principal principal) throws SchedulerException {
         gameService.resign(id, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/game/{id}/offer-draw")
+    @Operation(summary = "Offer a draw", description = "Allows a player to offer a draw in the specified game")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Player offered draw successfully"),
+            @ApiResponse(responseCode = "404", description = "Game not found")
+    })
+    private ResponseEntity<Object> offerDraw(
+            @Parameter(description = "Game ID", required = true) @PathVariable String id,
+            Principal principal) throws SchedulerException {
+        gameService.offerDraw(id, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/game/{id}/decline-draw")
+    @Operation(summary = "Decline a draw", description = "Deline other player's draw offer in the specified game")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Player declined draw offer successfully"),
+            @ApiResponse(responseCode = "404", description = "Game not found")
+    })
+    private ResponseEntity<Object> declineDraw(
+            @Parameter(description = "Game ID", required = true) @PathVariable String id,
+            Principal principal) throws SchedulerException {
+        gameService.declineDraw(id, principal.getName());
         return ResponseEntity.noContent().build();
     }
 }

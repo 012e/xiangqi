@@ -59,6 +59,10 @@ public class GameCreationService {
                 .blackTimeLeft(gameType.getTimeControl())
                 .whiteTimeLeft(gameType.getTimeControl())
                 .uciFen(Xiangqi.INITIAL_UCI_FEN)
+                .whiteLastDrawOffer(-1)
+                .blackLastDrawOffer(-1)
+                .isWhiteOfferingDraw(false)
+                .isBlackOfferingDraw(false)
                 .isStarted(false)
                 .isEnded(false);
 

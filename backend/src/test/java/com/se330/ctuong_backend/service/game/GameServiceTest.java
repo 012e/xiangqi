@@ -307,7 +307,7 @@ class GameServiceTest {
 
     @Test
     @DisplayName("Should throw exception when user not found during resign")
-    void shouldThrowExceptionWhenUserNotFoundDuringResign() {
+    void shouldThrowExceptionWhenUserNotFoundDuringResign() throws SchedulerException {
         // Given
         String gameId = "game-123";
         String userSub = "unknown-user-sub";

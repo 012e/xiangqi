@@ -39,7 +39,7 @@ public class GameQueryService {
 
     private void patchTimeLeft(Game game) throws SchedulerException {
         final var gameLogic = Xiangqi.fromUciFen(game.getUciFen());
-        if (!game.getIsStarted()) {
+        if (!game.getIsStarted() || game.getIsEnded()) {
             return;
         }
         if (isWhiteTurn(gameLogic)) {

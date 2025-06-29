@@ -93,6 +93,9 @@ public class GameTimeoutService {
         }
         final var trigger = scheduler.getTrigger(triggerKey);
         final var nextFireTime = trigger.getNextFireTime();
+        if (nextFireTime == null) {
+            return Duration.ZERO;
+        }
 
         return Duration.between(nextFireTime.toInstant(), Instant.now()).abs();
     }

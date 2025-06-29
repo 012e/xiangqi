@@ -9,6 +9,7 @@ import com.se330.ctuong_backend.service.GameMessageService;
 import com.se330.ctuong_backend.service.elo.EloService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,41 +21,33 @@ public class GameResignService {
     private final GameRepository gameRepository;
     private final EloService eloService;
     private final UserRepository userRepository;
+    private final GameFinalizerService gameFinalizerService;
 
-    public void resign(String gameId, Long playerId) {
+    public void resign(String gameId, Long playerId) throws SchedulerException {
         var game = gameRepository.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found");
         }
+        final var player = userRepository.getUserById(playerId).orElseThrow(() ->
+                new IllegalStateException("User not found with id: " + playerId));
+
+        final var isWhite = game.getWhitePlayer().getId().equals(player.getId());
+        final var isBlack = game.getBlackPlayer().getId().equals(player.getId());
+        if (!isBlack && !isWhite) {
+            throw new IllegalArgumentException("User is not a participant in the game");
+        }
+
         if (game.getIsEnded()) {
             return;
         }
-        final var player = userRepository.getUserById(playerId).orElseThrow(() ->
-                new IllegalStateException("User not found with id: " + playerId));
+
         GameResult gameResult;
-        final var isWhite = game.getWhitePlayer().getId().equals(player.getId());
         if (isWhite) {
             gameResult = GameResult.builder().blackWin().byResignation();
         } else {
             gameResult = GameResult.builder().whiteWin().byResignation();
         }
+        gameFinalizerService.finalizeGame(game.getId(), gameResult);
 
-        game.setEndTime(Instant.now());
-        game.setResult(gameResult.getResult());
-        game.setResultDetail(gameResult.getDetail());
-        game.setIsEnded(true);
-        gameRepository.save(game);
-
-        final var updatedElo = eloService.updateElo(game.getId(),
-                isWhite ? com.se330.xiangqi.GameResult.BLACK_WIN : com.se330.xiangqi.GameResult.WHITE_WIN);
-
-        final var gameEndData = GameEndData.builder()
-                .result(gameResult)
-                .blackEloChange(updatedElo.getBlackEloChange().longValue())
-                .whiteEloChange(updatedElo.getWhiteEloChange().longValue())
-                .build();
-
-
-        gameMessageService.sendMessageGameTopic(gameId, new GameEndMessage(gameEndData));
     }
 }

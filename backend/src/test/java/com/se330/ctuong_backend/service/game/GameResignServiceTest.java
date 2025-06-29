@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.quartz.SchedulerException;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -85,7 +86,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should handle white player resignation correctly")
-    void shouldHandleWhitePlayerResignationCorrectly() {
+    void shouldHandleWhitePlayerResignationCorrectly() throws SchedulerException {
         // Given
         String gameId = "game-123";
         Long whitePlayerId = whitePlayer.getId();
@@ -111,7 +112,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should handle black player resignation correctly")
-    void shouldHandleBlackPlayerResignationCorrectly() {
+    void shouldHandleBlackPlayerResignationCorrectly() throws SchedulerException {
         // Given
         String gameId = "game-123";
         Long blackPlayerId = blackPlayer.getId();
@@ -180,7 +181,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should do nothing when game is already ended")
-    void shouldDoNothingWhenGameIsAlreadyEnded() {
+    void shouldDoNothingWhenGameIsAlreadyEnded() throws SchedulerException {
         // Given
         String gameId = "game-123";
         Long playerId = whitePlayer.getId();
@@ -201,7 +202,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should send correct game end message with elo changes")
-    void shouldSendCorrectGameEndMessageWithEloChanges() {
+    void shouldSendCorrectGameEndMessageWithEloChanges() throws SchedulerException {
         // Given
         String gameId = "game-123";
         Long whitePlayerId = whitePlayer.getId();
@@ -230,7 +231,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should handle resignation with null end time initially")
-    void shouldHandleResignationWithNullEndTimeInitially() {
+    void shouldHandleResignationWithNullEndTimeInitially() throws SchedulerException {
         // Given
         String gameId = "game-123";
         Long blackPlayerId = blackPlayer.getId();
@@ -256,7 +257,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should handle multiple resignations in sequence")
-    void shouldHandleMultipleResignationsInSequence() {
+    void shouldHandleMultipleResignationsInSequence() throws SchedulerException {
         // Given
         Game game1 = Game.builder()
                 .id("game-1")
@@ -304,7 +305,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should handle resignation by player not in the game")
-    void shouldHandleResignationByPlayerNotInTheGame() {
+    void shouldHandleResignationByPlayerNotInTheGame() throws SchedulerException {
         // Given
         String gameId = "game-123";
         User unknownPlayer = User.builder()
@@ -337,7 +338,7 @@ class GameResignServiceTest {
 
     @Test
     @DisplayName("Should preserve game state except for resignation fields")
-    void shouldPreserveGameStateExceptForResignationFields() {
+    void shouldPreserveGameStateExceptForResignationFields() throws SchedulerException {
         // Given
         String gameId = "game-123";
         Long whitePlayerId = whitePlayer.getId();

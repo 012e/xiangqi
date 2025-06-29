@@ -2,39 +2,32 @@ import { useParams } from 'react-router';
 import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
 import { useGameStore } from '@/stores/online-game-store'; // Import the store
-import {
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  Handshake,
-  Loader2,
-} from 'lucide-react';
+import { ArrowUpDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
 import { usePieceTheme } from '@/stores/setting-store';
 import { PlayerCard } from '@/components/play/my-hover-card.tsx';
-import { useMutation } from '@tanstack/react-query';
-import { postAddFriend } from '@/lib/friend/useFriendRequestActions.ts';
-import { toast } from 'sonner';
+import { addFriend as addFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import OfferDrawButton from '@/components/ui/offer-draw-button.tsx';
 import MovePosition, { HistoryMove } from '@/components/move-position';
 import Xiangqi from '@/lib/xiangqi';
 import ResignButton from '../../components/ui/alert-resign.tsx';
+import { cn } from '@/lib/utils.ts';
 
 export default function OnlineGame() {
   const { id } = useParams();
-  const { onMove, isLoading, isPlayWithBot, resign } = useOnlineGame(id);
-  const addFriend = useMutation({
-    mutationFn: postAddFriend,
-    onSuccess: () => {
-      toast('Successfully added friend!');
-    },
-    onError: () => {
-      toast('Fail add friend!');
-    },
-  });
+  const { onMove, isLoading, isPlayWithBot, resign, offerDraw, declineDraw } =
+    useOnlineGame(id);
+
+  const enemyOfferingDraw = useGameStore(
+    (state) => state.enemyPlayer.isOfferingDraw,
+  );
+  const currentPlayerOfferingDraw = useGameStore(
+    (state) => state.selfPlayer.isOfferingDraw,
+  );
 
   // History state management
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
@@ -42,8 +35,7 @@ export default function OnlineGame() {
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
   const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
   const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
-
-  // Get the time from the store
+  const [isRotated, setIsRotated] = useState(false);
 
   const selfPlayer = useGameStore((state) => state.selfPlayer);
   const enemyPlayer = useGameStore((state) => state.enemyPlayer);
@@ -52,7 +44,6 @@ export default function OnlineGame() {
   const gameState = useGameStore((state) => state.gameState);
   const pieceTheme = usePieceTheme();
 
-  // Get game history from gameState
   const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);
 
   // History navigation functions
@@ -117,13 +108,8 @@ export default function OnlineGame() {
     }
   }
 
-  const [bottomPlayerOrientation, setBottomPlayerOrientation] = useState<'white' | 'black'>(selfPlayer.color);
-  const [topPlayerOrientation, setTopPlayerOrientation] = useState<'white' | 'black'>(enemyPlayer.color);
-
-  // Function to toggle player card positions and board orientation
   function togglePlayer() {
-    setBottomPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
-    setTopPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
+    setIsRotated((prev) => !prev);
   }
 
   function splitTwoParts(input: string): [string, string] | null {
@@ -190,187 +176,144 @@ export default function OnlineGame() {
   const displayGame = isViewingHistory ? historicalGame : currentGame;
   const displayFen = displayGame?.exportFen() || fen;
 
-  // Format time from milliseconds to mm:ss:xx
-  function formatTime(ms: number): string {
-    const totalSeconds = Math.round(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds
-      .toString()
-      .padStart(2, '0')}`;
-  }
-
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
   }
 
   function isPlayerTurn({
-                          piece,
-                        }: {
+    piece,
+  }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
     return getPieceColor(piece) === selfPlayer?.color;
   }
 
-  // Determine which player card goes to the top and bottom
-  const topPlayerCardProps = topPlayerOrientation === enemyPlayer?.color ? enemyPlayer : selfPlayer;
-  const bottomPlayerCardProps = bottomPlayerOrientation === selfPlayer?.color ? selfPlayer : enemyPlayer;
-  const boardDisplayOrientation: 'white' | 'black' = bottomPlayerOrientation; // The board should be oriented to the top player
-
   return (
-    <div className="w-full text-foreground">
-      <div className="grid grid-cols-1 items-start lg:grid-cols-[550px_400px]">
-        {/* Left */}
-        <div className="hidden p-4 mt-10 lg:block bg-background">
-          <div className="flex items-center px-6 w-full">
-            {/* Top Player Card */}
-            {topPlayerCardProps && (
-              <div className="flex flex-row items-center w-full">
-                <PlayerCard
-                  props={{
-                    name: topPlayerCardProps.username,
-                    elo: topPlayerCardProps.elo,
-                    eloChange: topPlayerCardProps.eloChange,
-                    image: isPlayWithBot && topPlayerCardProps.id === enemyPlayer?.id ? 'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg' : topPlayerCardProps.picture,
-                    isMe: topPlayerCardProps.id === selfPlayer?.id,
-                    userId: topPlayerCardProps.id,
-                    btnAddFriend: addFriend,
-                  }}
-                />
-                <div className={`text-xl font-bold ml-auto`}>
-                  {formatTime(topPlayerCardProps.time)}
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="flex justify-center items-center px-3 bg-background">
-            <div className="flex flex-col items-center">
-              <div className="flex justify-center items-center w-full">
-                {isLoading ? (
-                  <div className="flex justify-center items-center w-full h-full animate-spin">
-                    <Loader2 />
-                  </div>
-                ) : (
-                  <div className="flex justify-center items-center">
-                    <Chessboard
-                      boardWidth={400}
-                      id="online-xiangqi-board"
-                      onPieceDrop={handleMove}
-                      isDraggablePiece={(piece) =>
-                        isPlayerTurn(piece) && !gameEnded && !isViewingHistory
-                      }
-                      customPieces={pieceTheme}
-                      boardOrientation={boardDisplayOrientation}
-                      position={displayFen}
-                      animationDuration={200}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center px-6 w-full">
-            {/* Bottom Player Card */}
-            {bottomPlayerCardProps && (
-              <PlayerCard
-                props={{
-                  name: bottomPlayerCardProps.username,
-                  elo: bottomPlayerCardProps.elo,
-                  eloChange: bottomPlayerCardProps.eloChange,
-                  image: isPlayWithBot && bottomPlayerCardProps.id === enemyPlayer?.id ? 'https://st5.depositphotos.com/72897924/62255/v/450/depositphotos_622556394-stock-illustration-robot-web-icon-vector-illustration.jpg' : bottomPlayerCardProps.picture,
-                  isMe: bottomPlayerCardProps.id === selfPlayer?.id,
-                  userId: bottomPlayerCardProps.id,
-                  btnAddFriend: addFriend,
-                }}
-              />
-            )}
-            <div className={`text-xl font-bold ml-auto`}>
-              {formatTime(bottomPlayerCardProps?.time)}
-            </div>
-          </div>
-          <div className="p-3 mx-5">
-            {isViewingHistory && (
-              <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
-                Watching history
-              </div>
-            )}
-          </div>
-        </div>
-        {/* Right */}
-        <div className="my-5 shadow-lg rounded-4xl bg-muted shadow-ring">
-          <div className="flex flex-col items-center p-6 space-y-6">
-            {/*h1*/}
-            <div>
-              <h1 className="justify-center text-4xl font-bold tracking-tight">
-                {isPlayWithBot ? 'Game with Bot' : 'Play Online'}
-              </h1>
-            </div>
-            {/*broad move*/}
-            <div className="w-full rounded-2xl bg-background">
-              <MovePosition
-                moves={gameHistory}
-                setRestoreHistory={getRestoreGame}
-                isViewingHistory={isViewingHistory}
-                onReturnToCurrentGame={handleReturnToCurrentGame}
-              />
-            </div>
-            {/*tools*/}
-            <div className="flex space-x-3">
-              <Button className="group">
-                <Handshake className="text-green-500 transition-transform group-hover:scale-150" />
-              </Button>
-              <ResignButton onResign={resign} />
+    <div className="grid grid-cols-1 lg:grid-cols-2" key={id}>
+      {/* Left */}
+      <div>
+        <div
+          className={cn(
+            'flex flex-col justify-center items-center p-10 bg-background',
+            isRotated ? 'flex-col-reverse' : '',
+          )}
+        >
+          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
 
-              <Button
-                className="group"
-                onClick={handlePreviousMove}
-                disabled={isViewingHistory && currentHistoryIndex <= 0}
-              >
-                <ChevronLeft
-                  className={`transition-transform group-hover:scale-150 ${
-                    isViewingHistory && currentHistoryIndex <= 0
-                      ? 'text-gray-600'
-                      : 'text-gray-400'
-                  }`}
-                />
-              </Button>
-              <Button
-                className="group"
-                onClick={handleNextMove}
-                disabled={
+          <div className="flex justify-center items-center w-full">
+            {isLoading ? (
+              <div className="flex justify-center items-center w-full h-full animate-spin">
+                <Loader2 />
+              </div>
+            ) : (
+              <Chessboard
+                id="online-xiangqi-board"
+                boardWidth={400}
+                onPieceDrop={handleMove}
+                isDraggablePiece={(piece) =>
+                  isPlayerTurn(piece) && !gameEnded && !isViewingHistory
+                }
+                customPieces={pieceTheme}
+                boardOrientation={
+                  isRotated ? enemyPlayer?.color : selfPlayer?.color
+                }
+                position={displayFen}
+                animationDuration={200}
+              />
+            )}
+          </div>
+
+          <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
+        </div>
+        <div className="p-3 mx-5">
+          {isViewingHistory && (
+            <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
+              Watching history
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Right */}
+      <div className="m-5 shadow-lg rounded-4xl bg-muted shadow-ring">
+        <div className="flex flex-col items-center p-6 space-y-6">
+          {/*h1*/}
+          <div>
+            <h1 className="justify-center text-4xl font-bold tracking-tight">
+              {isPlayWithBot ? 'Game with Bot' : 'Play Online'}
+            </h1>
+          </div>
+          {/*broad move*/}
+          <div className="w-full rounded-2xl bg-background">
+            <MovePosition
+              moves={gameHistory}
+              setRestoreHistory={getRestoreGame}
+              isViewingHistory={isViewingHistory}
+              onReturnToCurrentGame={handleReturnToCurrentGame}
+            />
+          </div>
+          {/*tools*/}
+          {currentPlayerOfferingDraw && (
+            <div className="p-1 font-bold tracking-tight text-center text-black bg-yellow-300 rounded-xs">
+              You have offered a draw. Waiting for the opponent's response.
+            </div>
+          )}
+          <div className="flex space-x-3">
+            <OfferDrawButton
+              onDrawOffer={offerDraw}
+              onRejectDrawOffer={declineDraw}
+              showRejectPopup={enemyOfferingDraw}
+            />
+            <ResignButton onResign={resign} />
+
+            <Button
+              className="group"
+              onClick={handlePreviousMove}
+              disabled={isViewingHistory && currentHistoryIndex <= 0}
+            >
+              <ChevronLeft
+                className={`transition-transform group-hover:scale-150 ${
+                  isViewingHistory && currentHistoryIndex <= 0
+                    ? 'text-gray-600'
+                    : 'text-gray-400'
+                }`}
+              />
+            </Button>
+            <Button
+              className="group"
+              onClick={handleNextMove}
+              disabled={
+                isViewingHistory &&
+                currentHistoryIndex >= gameHistory.length - 1
+              }
+            >
+              <ChevronRight
+                className={`transition-transform group-hover:scale-150 ${
                   isViewingHistory &&
                   currentHistoryIndex >= gameHistory.length - 1
-                }
-              >
-                <ChevronRight
-                  className={`transition-transform group-hover:scale-150 ${
-                    isViewingHistory &&
-                    currentHistoryIndex >= gameHistory.length - 1
-                      ? 'text-gray-600'
-                      : 'text-gray-400'
-                  }`}
+                    ? 'text-gray-600'
+                    : 'text-gray-400'
+                }`}
+              />
+            </Button>
+            <Button className="group" onClick={togglePlayer}>
+              <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
+            </Button>
+          </div>
+          <div className="grid gap-2 w-full">
+            {!isPlayWithBot && (
+              <div>
+                <Textarea
+                  placeholder="Your Message"
+                  className="pointer-events-none resize-none read-only:opacity-80 h-30"
+                  readOnly
+                ></Textarea>
+                <Textarea
+                  placeholder="Type your message here."
+                  className="resize-none"
                 />
-              </Button>
-              <Button className="group" onClick={togglePlayer}>
-                <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
-              </Button>
-            </div>
-            <div className="grid gap-2 w-full">
-              {!isPlayWithBot && (
-                <div>
-                  <Textarea
-                    placeholder="Your Message"
-                    className="pointer-events-none resize-none read-only:opacity-80 h-30"
-                    readOnly
-                  ></Textarea>
-                  <Textarea
-                    placeholder="Type your message here."
-                    className="resize-none"
-                  />
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -378,3 +321,4 @@ export default function OnlineGame() {
     </div>
   );
 }
+

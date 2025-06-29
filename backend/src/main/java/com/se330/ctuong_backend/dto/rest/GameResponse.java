@@ -30,6 +30,7 @@ public class GameResponse {
 
     private Timestamp startTime;
     private Instant endTime;
+    private Boolean isEnded;
 
     @NotNull
     private Long blackTimeLeft;

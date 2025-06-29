@@ -8,6 +8,8 @@ import lombok.Getter;
 public enum BoardState {
     Play,
     Error,
+    DrawOffer,
+    DrawOfferDeclined,
     GameEnd;
 
     @JsonValue
