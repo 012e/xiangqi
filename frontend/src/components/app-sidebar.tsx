@@ -42,10 +42,6 @@ const navItems: NavItem[] = [
         url: '/play/online',
       },
       {
-        title: 'Play with friends',
-        url: '/play/friend',
-      },
-      {
         title: 'Play with bot',
         url: '/play/bot',
       },
@@ -73,7 +69,7 @@ const navItems: NavItem[] = [
   },
   {
     title: 'Profile',
-    url: '/profile',
+    url: '/me/profile',
     icon: SquareUser,
   },
   {

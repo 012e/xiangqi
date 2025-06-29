@@ -4,15 +4,13 @@ import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import '@/styles/index.css';
 import App from './App.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { StompSessionProvider } from 'react-stomp-hooks';
 import { Toaster } from './components/ui/sonner.tsx';
 import NewGame from './pages/play/new-game.tsx';
 import OnlineGame from './pages/play/online-game.tsx';
 import PlayOnline from './pages/play/play-online.tsx';
 import Layout from './components/layout.tsx';
-import PlayFriend from './pages/play/play-friend.tsx';
-import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 
@@ -32,13 +30,7 @@ import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
 import Guide from './pages/document/Guide.tsx';
 import Rule from './pages/document/Rule.tsx';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 10,
-    },
-  },
-});
+const queryClient = new QueryClient({});
 
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -113,11 +105,10 @@ createRoot(document.getElementById('root')!).render(
                 path="/play/bot"
                 element={<PlayOnline isGameWithBot={false} />}
               />
-              <Route path="/play/friend" element={<PlayFriend />} />
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
 
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/me/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
 
               <Route path="/social" element={<Friends />} />

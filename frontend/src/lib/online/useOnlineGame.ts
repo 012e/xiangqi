@@ -69,7 +69,7 @@ export function useOnlineGame(gameId: string | undefined) {
   // Access store actions and state
   const gameState = useGameStore((state) => state.gameState);
   const playingColor = useGameStore((state) => state.playingColor);
-  const { move, handleTopicMessage } = useGameStore((state) => state.actions);
+  const { move, handleTopicMessage, reset } = useGameStore((state) => state.actions);
 
   const {
     data,
@@ -92,7 +92,12 @@ export function useOnlineGame(gameId: string | undefined) {
   if (isError) console.log(error);
 
   useEffect(() => {
-    if (initialData.current || !data) {
+    if (!data) {
+      reset();
+      return;
+    }
+
+    if (initialData.current) {
       return;
     }
     initialData.current = data as GameResponse;

@@ -1,11 +1,9 @@
-import { Chessboard } from 'react-xiangqiboard';
 import { ChessboardProps } from 'react-xiangqiboard/dist/chessboard/types';
 import Xiangqi from '@/lib/xiangqi';
 import { useCallback, useState } from 'react';
 import { HistoryMove } from '@/components/move-position';
 import { useEffect } from 'react';
-import useSettingStore from '@/stores/setting-store';
-import { usePieceTheme } from '@/stores/setting-store';
+import AppBoard from '@/components/app-board.tsx';
 
 type MoveEvent = {
   from: string;
@@ -35,8 +33,6 @@ export default function SelfPlayBoard({
 }: SelfPlayBoardProps = DEFAULT_PROPS) {
   const [game, setGame] = useState(new Xiangqi());
   const [selectedSquare, setSelectedSquare] = useState<string>(''); // Track selected piece position
-  const customPieces = usePieceTheme();
-  const customBoard = useSettingStore(state => state.boardTheme);
   const [currentGame, setCurrentGame] = useState(new Xiangqi()); // Lưu trạng thái game hiện tại
   const [optionSquares, setOptionSquares] = useState({});
   const handleMoveInternal = useCallback(
@@ -267,7 +263,7 @@ export default function SelfPlayBoard({
     setOptionSquares(newSquares);
   }
   return (
-    <Chessboard
+    <AppBoard
       {...chessboardProps}
       boardWidth={400}
       id="online-xiangqi-board"
@@ -279,8 +275,6 @@ export default function SelfPlayBoard({
       }}
       position={game.exportUciFen()}
       areArrowsAllowed={true}
-      customPieces={customPieces}
-      customBoardBackground={customBoard}
       arePiecesDraggable={true}
     />
   );

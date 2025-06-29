@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Check, ChevronsUpDown, Clock, Loader2 } from 'lucide-react';
+import { Check, ChevronsUpDown, Clock } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -43,12 +43,11 @@ export default function Combobox({
 
   const {
     data: gameTypes,
-    isSuccess,
-    isLoading,
     isFetched
   } = useQuery({
     queryFn: getGameTypes,
     queryKey: ['gameTypes'],
+    staleTime: 1000 * 60 * 10,
   });
 
   const handleSelect = useCallback(
