@@ -15,7 +15,7 @@ import OfferDrawButton from '@/components/ui/offer-draw-button.tsx';
 import MovePosition, { HistoryMove } from '@/components/move-position';
 import Xiangqi from '@/lib/xiangqi';
 import ResignButton from '../../components/ui/alert-resign.tsx';
-import useWindowDimensions from '@/hooks/use-window-dimensions.tsx';
+import { cn } from '@/lib/utils.ts';
 
 export default function OnlineGame() {
   const { id } = useParams();
@@ -35,9 +35,7 @@ export default function OnlineGame() {
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
   const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
   const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
-  const { width } = useWindowDimensions();
-
-  // Get the time from the store
+  const [isRotated, setIsRotated] = useState(false);
 
   const selfPlayer = useGameStore((state) => state.selfPlayer);
   const enemyPlayer = useGameStore((state) => state.enemyPlayer);
@@ -46,7 +44,6 @@ export default function OnlineGame() {
   const gameState = useGameStore((state) => state.gameState);
   const pieceTheme = usePieceTheme();
 
-  // Get game history from gameState
   const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);
 
   // History navigation functions
@@ -111,13 +108,8 @@ export default function OnlineGame() {
     }
   }
 
-  const [bottomPlayerOrientation, setBottomPlayerOrientation] = useState<'white' | 'black'>(selfPlayer.color);
-  const [topPlayerOrientation, setTopPlayerOrientation] = useState<'white' | 'black'>(enemyPlayer.color);
-
-  // Function to toggle player card positions and board orientation
   function togglePlayer() {
-    setBottomPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
-    setTopPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
+    setIsRotated((prev) => !prev);
   }
 
   function splitTwoParts(input: string): [string, string] | null {
@@ -189,8 +181,8 @@ export default function OnlineGame() {
   }
 
   function isPlayerTurn({
-                          piece,
-                        }: {
+    piece,
+  }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
@@ -200,36 +192,40 @@ export default function OnlineGame() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2" key={id}>
       {/* Left */}
-      <div className="flex flex-col justify-center items-center p-10 bg-background">
-        {isPlayWithBot ? (
-          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
-        ) : (
-          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
-        )}
-
-        <div className="flex justify-center items-center w-full">
-          {isLoading ? (
-            <div className="flex justify-center items-center w-full h-full animate-spin">
-              <Loader2 />
-            </div>
-          ) : (
-            <Chessboard
-              id="online-xiangqi-board"
-              boardWidth={400}
-              onPieceDrop={handleMove}
-              isDraggablePiece={(piece) =>
-                isPlayerTurn(piece) && !gameEnded && !isViewingHistory
-              }
-              customPieces={pieceTheme}
-              boardOrientation={selfPlayer?.color}
-              position={displayFen}
-              animationDuration={200}
-            />
+      <div>
+        <div
+          className={cn(
+            'flex flex-col justify-center items-center p-10 bg-background',
+            isRotated ? 'flex-col-reverse' : '',
           )}
+        >
+          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
+
+          <div className="flex justify-center items-center w-full">
+            {isLoading ? (
+              <div className="flex justify-center items-center w-full h-full animate-spin">
+                <Loader2 />
+              </div>
+            ) : (
+              <Chessboard
+                id="online-xiangqi-board"
+                boardWidth={400}
+                onPieceDrop={handleMove}
+                isDraggablePiece={(piece) =>
+                  isPlayerTurn(piece) && !gameEnded && !isViewingHistory
+                }
+                customPieces={pieceTheme}
+                boardOrientation={
+                  isRotated ? enemyPlayer?.color : selfPlayer?.color
+                }
+                position={displayFen}
+                animationDuration={200}
+              />
+            )}
+          </div>
+
+          <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
         </div>
-
-        <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
-
         <div className="p-3 mx-5">
           {isViewingHistory && (
             <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
@@ -325,3 +321,4 @@ export default function OnlineGame() {
     </div>
   );
 }
+
