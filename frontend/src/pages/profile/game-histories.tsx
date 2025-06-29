@@ -1,86 +1,79 @@
-import { useQuery } from '@tanstack/react-query';
-import { getGamesByUserId } from '@/lib/profile/profile-games.ts';
-import { Crosshair, Loader2, Swords } from 'lucide-react';
-import { GameResponse } from '@/lib/online/game-response';
-import AppBoard from '@/components/app-board.tsx';
-import { cn } from '@/lib/utils.ts';
-import { appAxios } from '@/services/AxiosClient.ts';
+import { useMemo, useRef } from 'react';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { Crosshair, Loader2, Swords } from 'lucide-react';
+
+import { getGamesByUserId } from '@/lib/profile/profile-games.ts';
+import { GameResponse } from '@/lib/online/game-response';
+import { appAxios } from '@/services/AxiosClient.ts';
 import { addFriend } from '@/lib/friend/useFriendRequestActions.ts';
+import { cn } from '@/lib/utils.ts';
+
+import AppBoard from '@/components/app-board.tsx';
 import PlayerCard from '@/components/play/my-hover-card.tsx';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card.tsx';
-import React, { useMemo, useRef } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
 
-async function getGameTypeById(gameId: number) {
+interface GameType {
+  id: number;
+  typeName: string;
+}
+
+async function getGameTypeById(gameId: number): Promise<GameType> {
   const response = await appAxios.get(`/game-types/${gameId}`);
-
   if (response.status === 200) {
     return response.data;
   }
-
   throw new Error("Can't get game type");
 }
 
-export function GameHistory({
+function GameHistory({
   game,
+  gameType,
   index,
 }: {
   game: GameResponse;
+  gameType: GameType | undefined;
   index: number;
 }) {
-  const { data: gameType, isLoading } = useQuery({
-    queryFn: () => getGameTypeById(game.gameTypeId),
-    queryKey: ['gameType', game.gameTypeId],
-  });
   const navigate = useNavigate();
 
-  const convertToPlayerCardFormat = (
-    player: GameResponse['whitePlayer'],
-    elo: number,
-    eloChange?: number,
-    color: 'white' | 'black' = 'white',
-  ) => {
-    if (!player) return null;
-    return {
-      id: player.id,
-      username: player.username,
-      color: color,
-      picture: player.picture,
-      time: game[`${color}TimeLeft`],
-      name: player.name,
-      sub: player.sub,
-      email: player.email,
-      elo: elo,
-      eloChange: eloChange,
-    };
-  };
-
   const whitePlayerForCard = useMemo(() => {
-    return convertToPlayerCardFormat(
-      game.whitePlayer,
-      game.whiteElo,
-      game.whiteEloChange,
-      'white',
-    );
+    if (!game.whitePlayer) return null;
+    return {
+      id: game.whitePlayer.id,
+      username: game.whitePlayer.username,
+      color: 'white' as const,
+      picture: game.whitePlayer.picture,
+      time: game.whiteTimeLeft,
+      name: game.whitePlayer.name,
+      sub: game.whitePlayer.sub,
+      email: game.whitePlayer.email,
+      elo: game.whiteElo,
+      eloChange: game.whiteEloChange,
+    };
   }, [game]);
 
   const blackPlayerForCard = useMemo(() => {
-    return convertToPlayerCardFormat(
-      game.blackPlayer,
-      game.blackElo,
-      game.blackEloChange,
-      'black',
-    );
+    if (!game.blackPlayer) return null;
+    return {
+      id: game.blackPlayer.id,
+      username: game.blackPlayer.username,
+      color: 'black' as const,
+      picture: game.blackPlayer.picture,
+      time: game.blackTimeLeft,
+      name: game.blackPlayer.name,
+      sub: game.blackPlayer.sub,
+      email: game.blackPlayer.email,
+      elo: game.blackElo,
+      eloChange: game.blackEloChange,
+    };
   }, [game]);
 
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
   return (
     <div
       className={cn(
@@ -98,9 +91,11 @@ export function GameHistory({
         <div className="flex items-start">
           <div className="flex gap-2 items-center">
             <span>
-              <Crosshair className="w-7 h-auto"></Crosshair>
+              <Crosshair className="w-7 h-auto" />
             </span>
-            <p className="text-2xl font-semibold">{gameType.typeName}</p>
+            <p className="text-2xl font-semibold">
+              {gameType?.typeName ?? 'Unknown Mode'}
+            </p>
           </div>
         </div>
         <div className="flex flex-row gap-5 justify-center items-center w-full h-full">
@@ -127,16 +122,14 @@ export function GameHistory({
             )}
             <p className="text-lg">
               <span>{game.whiteElo + ' '}</span>
-              {game.whiteEloChange && (
+              {game.whiteEloChange != null && (
                 <span
                   className={cn(
-                    'text-chart-2',
                     game.whiteEloChange < 0 ? 'text-chart-5' : 'text-chart-2',
                   )}
                 >
-                  {game.whiteEloChange < 0
-                    ? game.whiteEloChange
-                    : '+' + (game.whiteEloChange ? game.whiteEloChange : '0')}
+                  {game.whiteEloChange > 0 ? '+' : ''}
+                  {game.whiteEloChange}
                 </span>
               )}
             </p>
@@ -167,25 +160,20 @@ export function GameHistory({
             )}
             <p className="text-lg">
               <span>{game.blackElo + ' '}</span>
-              {game.blackEloChange && (
+              {game.blackEloChange != null && (
                 <span
                   className={cn(
-                    'text-chart-2',
                     game.blackEloChange < 0 ? 'text-chart-5' : 'text-chart-2',
                   )}
                 >
-                  {game.blackEloChange < 0
-                    ? game.blackEloChange
-                    : '+' + (game.blackEloChange ? game.blackEloChange : '0')}
+                  {game.blackEloChange > 0 ? '+' : ''}
+                  {game.blackEloChange}
                 </span>
               )}
             </p>
           </div>
         </div>
-
-        <div>
-          <p></p>
-        </div>
+        <div />
       </div>
     </div>
   );
@@ -194,36 +182,65 @@ export function GameHistory({
 export function GameHistories({ userId }: { userId: number }) {
   const {
     data: games,
-    isLoading,
+    isLoading: isLoadingGames,
     isError,
   } = useQuery({
     queryKey: ['gamesOfUser', userId],
     queryFn: () => getGamesByUserId(userId),
+    staleTime: 5 * 60 * 1000,
   });
 
+  const uniqueGameTypeIds = useMemo(() => {
+    if (!games) return [];
+    return [...new Set(games.map((game) => game.gameTypeId))];
+  }, [games]);
+
+  const gameTypeQueries = useQueries({
+    queries: uniqueGameTypeIds.map((id) => ({
+      queryKey: ['gameType', id],
+      queryFn: () => getGameTypeById(id),
+      staleTime: Infinity,
+    })),
+  });
+
+  const gameTypesMap = useMemo(() => {
+    const map = new Map<number, GameType>();
+    gameTypeQueries.forEach((query) => {
+      if (query.data) {
+        map.set(query.data.id, query.data);
+      }
+    });
+    return map;
+  }, [gameTypeQueries]);
+
   const parentRef = useRef<HTMLDivElement>(null);
+
   const rowVirtualizer = useVirtualizer({
     count: games?.length || 0,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 290,
   });
 
+  const isLoading =
+    isLoadingGames || gameTypeQueries.some((query) => query.isLoading);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center w-full h-full">
-        <Loader2 className="animate-spin size-10"></Loader2>
+        <Loader2 className="animate-spin size-10" />
       </div>
     );
   }
 
-  if (isError) return <div>Error</div>;
+  if (isError) return <div>Error loading game history.</div>;
+  if (!games || games.length === 0) return <div>No games played yet.</div>;
 
   const virtualItems = rowVirtualizer.getVirtualItems();
 
   return (
     <div
       ref={parentRef}
-      className="flex overflow-auto flex-col w-full"
+      className="overflow-auto w-full"
       style={{ height: '600px' }}
     >
       <div
@@ -234,7 +251,9 @@ export function GameHistories({ userId }: { userId: number }) {
         }}
       >
         {virtualItems.map((virtualRow) => {
-          const game = games![virtualRow.index];
+          const game = games[virtualRow.index];
+          const gameType = gameTypesMap.get(game.gameTypeId);
+
           return (
             <div
               key={virtualRow.key}
@@ -243,11 +262,14 @@ export function GameHistories({ userId }: { userId: number }) {
                 top: 0,
                 left: 0,
                 width: '100%',
-                height: `${virtualRow.size}px`,
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
-              <GameHistory game={game} index={virtualRow.index} />
+              <GameHistory
+                game={game}
+                gameType={gameType}
+                index={virtualRow.index}
+              />
             </div>
           );
         })}
