@@ -6,6 +6,7 @@ import { Check, CircleX, Trash2, UserPlus, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router';
 
 type UserRowProps = {
   userId: number;
@@ -43,7 +44,13 @@ const UserRow: React.FC<UserRowProps> = ({
                                            typeTab,
                                          }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isFriendRequestSent, setIsFriendRequestSent] = useState(false);
+  
+  const handleProfileClick = () => {
+    navigate(`/user/profile/${userId}`);
+  };
+  
   const handlePlay = () => {
     if (onPlayClick) {
       onPlayClick.mutate(userId, {});
@@ -107,7 +114,12 @@ const UserRow: React.FC<UserRowProps> = ({
           <AvatarFallback>???</AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-foreground font-semibold leading-none">{username}</p>
+          <p 
+            className="text-foreground font-semibold leading-none cursor-pointer hover:text-primary"
+            onClick={handleProfileClick}
+          >
+            {username}
+          </p>
           <p className="text-sm text-foreground leading-none">{displayName}</p>
         </div>
       </div>

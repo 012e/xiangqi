@@ -70,7 +70,13 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
           {whitePlayerForCard ? (
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p className="font-semibold text-xl cursor-pointer hover:text-primary" onClick={() => navigate('/')}>
+                <p 
+                  className="font-semibold text-xl cursor-pointer hover:text-primary" 
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the game navigation
+                    navigate(`/user/profile/${game.whitePlayer.id}`);
+                  }}
+                >
                   {game.whitePlayer.username}
                 </p>
               </HoverCardTrigger>
@@ -83,7 +89,13 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
               </HoverCardContent>
             </HoverCard>
           ) : (
-            <p className="font-semibold text-xl">
+            <p 
+              className="font-semibold text-xl cursor-pointer hover:text-primary"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering the game navigation
+                navigate(`/user/profile/${game.whitePlayer.id}`);
+              }}
+            >
               {game.whitePlayer.username}
             </p>
           )}
@@ -109,7 +121,13 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
           {blackPlayerForCard ? (
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p className="font-semibold text-xl cursor-pointer hover:text-primary">
+                <p 
+                  className="font-semibold text-xl cursor-pointer hover:text-primary"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the game navigation
+                    navigate(`/user/profile/${game.blackPlayer.id}`);
+                  }}
+                >
                   {game.blackPlayer.username}
                 </p>
               </HoverCardTrigger>
@@ -122,7 +140,13 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
               </HoverCardContent>
             </HoverCard>
           ) : (
-            <p className="font-semibold text-xl">
+            <p 
+              className="font-semibold text-xl cursor-pointer hover:text-primary"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering the game navigation
+                navigate(`/user/profile/${game.blackPlayer.id}`);
+              }}
+            >
               {game.blackPlayer.username}
             </p>
           )}

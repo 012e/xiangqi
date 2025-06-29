@@ -69,7 +69,7 @@ const navItems: NavItem[] = [
   },
   {
     title: 'Profile',
-    url: 'user/me/profile',
+    url: 'user/profile/me',
     icon: SquareUser,
   },
   {

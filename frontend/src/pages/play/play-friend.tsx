@@ -223,7 +223,12 @@ export default function PlayFriend() {
                               <AvatarImage src={fr.picture} ></AvatarImage>
                               <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
-                            {fr.username}
+                            <span 
+                              className="cursor-pointer hover:text-primary"
+                              onClick={() => navigate(`/user/profile/${fr.id}`)}
+                            >
+                              {fr.username}
+                            </span>
                             <span className="ml-auto ">
                               <Send className="hover:cursor-pointer hover:opacity-70 font-semibold" ></Send>
                             </span>
