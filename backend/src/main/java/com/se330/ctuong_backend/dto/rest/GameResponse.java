@@ -1,8 +1,6 @@
 package com.se330.ctuong_backend.dto.rest;
 
 import com.se330.ctuong_backend.config.ApplicationConfiguration;
-import com.se330.xiangqi.Xiangqi;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +29,7 @@ public class GameResponse {
     private Timestamp startTime;
     private Instant endTime;
     private Boolean isEnded;
+    private Timestamp createdAt;
 
     @NotNull
     private Long blackTimeLeft;

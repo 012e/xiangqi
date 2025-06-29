@@ -1,5 +1,6 @@
 package com.se330.ctuong_backend.repository;
 
+import com.se330.ctuong_backend.model.Game;
 import com.se330.ctuong_backend.model.GameType;
 import com.se330.ctuong_backend.model.User;
 import lombok.Data;
@@ -32,6 +33,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "GROUP BY gt.id, gt.type_name, gt.time_control, e.current_elo",
             nativeQuery = true)
     Optional<GameStat> getGameStatByUserId(@Param("userId") Long userId, @Param("gameTypeId") Long gameTypeId);
+
+    @Query(value = "SELECT g FROM Game g WHERE g.whitePlayer.id = :userId OR g.blackPlayer.id = :userId order by g.createdAt desc")
+    List<Game> getAllGamesByUserId(Long userId);
 
     Optional<User> getUserBySub(String sub);
 

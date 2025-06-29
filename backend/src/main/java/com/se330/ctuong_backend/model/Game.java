@@ -52,6 +52,10 @@ public class Game {
     @Column(name = "start_time")
     private Timestamp startTime = new Timestamp(System.currentTimeMillis());
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp createdAt;
+
     @Column(name = "uci_fen", columnDefinition = "text")
     private String uciFen = Xiangqi.INITIAL_UCI_FEN;
 
@@ -106,6 +110,11 @@ public class Game {
     @Column(name = "black_last_draw_offer")
     private Integer blackLastDrawOffer = -1;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Timestamp(System.currentTimeMillis());
+    }
+
     @Transient
     public Boolean getGameEnded() {
         return getEndTime() != null;
@@ -159,6 +168,6 @@ public class Game {
     @Transient
     public boolean isGameWithBot() {
         return whitePlayer != null && whitePlayer.getId().equals(ApplicationConfiguration.getBotId()) ||
-               blackPlayer != null && blackPlayer.getId().equals(ApplicationConfiguration.getBotId());
+                blackPlayer != null && blackPlayer.getId().equals(ApplicationConfiguration.getBotId());
     }
 }

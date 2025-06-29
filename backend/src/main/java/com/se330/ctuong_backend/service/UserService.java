@@ -4,6 +4,7 @@ import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.client.mgmt.filter.UserFilter;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.mgmt.users.User;
+import com.se330.ctuong_backend.dto.rest.GameResponse;
 import com.se330.ctuong_backend.dto.rest.UserDto;
 import com.se330.ctuong_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -72,6 +74,7 @@ public class UserService {
         return userRepository.getUserBySub(sub)
                 .map(user -> modelMapper.map(user, UserDto.class));
     }
+
     public Page<UserDto> searchUsersByUsername(String username, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -84,6 +87,13 @@ public class UserService {
 
 
         return users.map(user -> modelMapper.map(user, UserDto.class));
+    }
+
+    public List<GameResponse> getAllGamesByUserId(Long userId) {
+        return userRepository.getAllGamesByUserId(userId)
+                .stream()
+                .map(game -> modelMapper.map(game, GameResponse.class))
+                .toList();
     }
 
 //    public void updateUser(Principal principal, UpdateUserRequest updateUserRequest) {
