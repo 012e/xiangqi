@@ -53,7 +53,8 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
         <div>Loading</div>
       );
     }
-  return <div className={cn('p-5 flex gap-5 hover:opacity-80 hover:cursor-pointer', (index % 2 !== 0) ? 'bg-card' : 'bg-muted')} onClick={() => navigate(`/game/${game.id}`)}>
+  return <div className={cn('p-5 flex gap-5 hover:opacity-80 hover:cursor-pointer', (index % 2 !== 0) ? 'bg-card' : 'bg-muted')}
+              onClick={() => navigate(`/game/${game.id}`)}>
     <div>
       <AppBoard boardWidth={250} position={game.uciFen} isDraggablePiece={() => false} />
     </div>
