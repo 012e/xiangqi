@@ -174,7 +174,7 @@ export default function OnlineGame() {
 
   // Get the appropriate game state for display
   const displayGame = isViewingHistory ? historicalGame : currentGame;
-  const displayFen = displayGame?.exportUciFen() || fen;
+  const displayFen = displayGame?.exportFen() || fen;
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
