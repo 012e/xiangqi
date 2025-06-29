@@ -14,7 +14,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InvitationAcceptedMessage {
-    private static final String TYPE = "accepted";
+    @Builder.Default
+    private String type = "accepted";
 
     private Long id;
     private GameTypeResponse gameType;
@@ -23,5 +24,5 @@ public class InvitationAcceptedMessage {
     private Timestamp createdAt;
     private Timestamp expiresAt;
     private String message;
-    private Long gameId;
+    private String gameId;
 }

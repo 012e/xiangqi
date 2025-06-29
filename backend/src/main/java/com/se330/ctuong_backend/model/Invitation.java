@@ -42,7 +42,7 @@ public class Invitation {
     private Boolean isAccepted = false;
 
     @Column(name = "game_id")
-    private Long gameId;
+    private String gameId;
 
     @Column(name = "expires_at")
     private Timestamp expiresAt;

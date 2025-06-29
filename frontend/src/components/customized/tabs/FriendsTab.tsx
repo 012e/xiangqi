@@ -22,6 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { inviteToGame } from '@/lib/friend/invite';
 import { extractErrorDetail } from '@/lib/utils';
+import { useNavigate } from 'react-router';
 
 type FriendsTabProps = {
   searchText: string;
@@ -29,6 +30,7 @@ type FriendsTabProps = {
 
 export default function FriendsTab({ searchText }: FriendsTabProps) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: friendList } = useQuery({
     queryKey: ['listFriends'],
@@ -50,8 +52,9 @@ export default function FriendsTab({ searchText }: FriendsTabProps) {
 
   const inviteFriendMutation = useMutation({
     mutationFn: inviteToGame,
-    onSuccess: () => {
-      toast.info('Successfully invited friend to game!');
+    onSuccess: (data) => {
+      toast.info('Successfully sent invitation to your friend.');
+      navigate(`/invitations/waiting/${data.id}`);
     },
     onError: (e: any) => {
       toast.error('Failed to invite friend to game!', {

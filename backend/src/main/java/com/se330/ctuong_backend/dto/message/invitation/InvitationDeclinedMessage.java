@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class InvitationDeclinedMessage {
-    private static final String TYPE = "declined";
+    @Builder.Default
+    private String type = "declined";
 }

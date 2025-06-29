@@ -30,6 +30,8 @@ import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
 import Guide from './pages/document/Guide.tsx';
 import Rule from './pages/document/Rule.tsx';
 import FriendInvitationProvider from './components/friend-invitation-provider.tsx';
+import InvitationsPage from './pages/invitations/invitations.tsx';
+import WaitingPage from './pages/invitations/waiting.tsx';
 
 const queryClient = new QueryClient({});
 
@@ -50,7 +52,7 @@ function AccessTokenProvider({ children }: { children: React.ReactNode }) {
   return children;
 }
 
-function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children }: { children: React.ReactNode }) {
   const backendUrl = useBackendUrl();
   const stompUrl = useMemo(
     () => new URL('ws', backendUrl).toString(),
@@ -90,12 +92,12 @@ function Providers({ children }: { children: React.ReactNode }) {
     </PersistQueryClientProvider>
   );
 }
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Providers>
-      <ThemeProvider>
-        <BrowserRouter>
-          <Routes>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<App />} />
               <Route
@@ -123,12 +125,13 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/document" element={<Guide />} />
               <Route path="/document/guide" element={<Guide />} />
               <Route path="/document/rule" element={<Rule />} />
+
+              <Route path="/invitations" element={<InvitationsPage />} />
+              <Route path="/invitations/waiting/:id" element={<WaitingPage />} />
             </Route>
             <Route path="/test" element={<Demo />} />
-            {/* Fallback route */}
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
-    </Providers>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   </StrictMode>,
 );

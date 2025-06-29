@@ -13,7 +13,12 @@ import java.util.Optional;
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
     
-    @Query("SELECT i FROM Invitation i WHERE i.inviter.id = :inviterId AND i.recipient.id = :recipientId AND i.gameType.id = :gameTypeId AND i.isDeclined = false AND i.isAccepted = false AND i.expiresAt > :currentTime")
+    @Query("SELECT i FROM Invitation i WHERE" +
+            " i.inviter.id = :inviterId AND i.recipient.id = :recipientId AND" +
+            " i.gameType.id = :gameTypeId AND" +
+            " i.isDeclined = false AND" +
+            " i.isAccepted = false AND" +
+            " i.expiresAt > :currentTime")
     Optional<Invitation> findPendingInvitationBetweenUsers(@Param("inviterId") Long inviterId, @Param("recipientId") Long recipientId, @Param("gameTypeId") Long gameTypeId, @Param("currentTime") Timestamp currentTime);
     
     @Query("SELECT i FROM Invitation i WHERE i.recipient.id = :userId AND i.isDeclined = false AND i.isAccepted = false AND i.expiresAt > :currentTime")

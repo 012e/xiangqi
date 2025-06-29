@@ -22,5 +22,5 @@ public class InvitationDto {
     private Boolean isAccepted;
     private Timestamp expiresAt;
     private String message;
-    private Long gameId;
+    private String gameId;
 }

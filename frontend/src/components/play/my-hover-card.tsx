@@ -117,7 +117,7 @@ export function PlayerCard({
             <HoverCardTrigger asChild>
               <div className="flex items-center">
                 <Avatar>
-                  <AvatarImage src={player.picture} />
+                  <AvatarImage src={player.picture !== "" ? player.picture : undefined} />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
               </div>
