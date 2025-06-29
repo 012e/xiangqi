@@ -5,7 +5,7 @@ import com.auth0.client.mgmt.filter.UserFilter;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.mgmt.users.User;
 import com.se330.ctuong_backend.dto.rest.GameResponse;
-import com.se330.ctuong_backend.dto.rest.UserDto;
+import com.se330.ctuong_backend.dto.UserDto;
 import com.se330.ctuong_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

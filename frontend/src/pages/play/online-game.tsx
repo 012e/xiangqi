@@ -32,7 +32,6 @@ export default function OnlineGame() {
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [isViewingHistory, setIsViewingHistory] = useState(false);
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
-  const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
   const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
   const [isRotated, setIsRotated] = useState(false);
 
@@ -129,45 +128,24 @@ export default function OnlineGame() {
     return [part1, part2];
   }
 
-  // Update the current game when gameState changes
-  useEffect(() => {
-    if (gameState && !isViewingHistory) {
-      setCurrentGame(gameState);
-    }
-  }, [gameState, isViewingHistory]);
-
   // Handle history restoration
   useEffect(() => {
-    if (selectHistory && gameHistory.length > 0) {
-      const newGame = new Xiangqi();
-      if (selectHistory.color === 'white') {
-        for (let i = 1; i <= selectHistory.index * 2 - 1; ++i) {
-          const moveStr = gameHistory[i - 1];
-          const parts = moveStr ? splitTwoParts(moveStr) : null;
-          if (parts) {
-            newGame.move({ from: parts[0], to: parts[1] });
-          }
-        }
-      } else {
-        for (let i = 1; i <= selectHistory.index * 2; ++i) {
-          const moveStr = gameHistory[i - 1];
-          const parts = moveStr ? splitTwoParts(moveStr) : null;
-          if (parts) {
-            newGame.move({ from: parts[0], to: parts[1] });
-          }
+    // Only run this logic when actively viewing a point in history
+    if (isViewingHistory && currentHistoryIndex >= 0) {
+      const newGame = new Xiangqi(); // Start from the initial board
+      // Replay moves from the beginning up to the current history index
+      for (let i = 0; i <= currentHistoryIndex; i++) {
+        const moveStr = gameHistory[i];
+        const parts = moveStr ? splitTwoParts(moveStr) : null;
+        if (parts) {
+          newGame.move({ from: parts[0], to: parts[1] });
         }
       }
       setHistoricalGame(newGame);
-      // Clear selection when viewing history
-      setSelectedSquare('');
-      setOptionSquares({});
     } else if (!isViewingHistory) {
-      setHistoricalGame(currentGame);
-      // Clear selection when returning to current game
-      setSelectedSquare('');
-      setOptionSquares({});
+      setHistoricalGame(gameState);
     }
-  }, [selectHistory, gameHistory, currentGame, isViewingHistory]);
+  }, [isViewingHistory, currentHistoryIndex, gameHistory, gameState]);
 
   // Clear selection when game state changes
   useEffect(() => {
@@ -186,22 +164,23 @@ export default function OnlineGame() {
         return false;
       }
 
-      return onMove(from, to, piece);
+      return onMove(from, to);
     },
     [onMove, isViewingHistory],
   );
 
-  // Get the appropriate game state for display
-  const displayGame = isViewingHistory ? historicalGame : currentGame;
-  const displayFen = displayGame?.exportUciFen() || fen;
+  // Get the appropriate game state for display. Use `gameState` from the store as the source of truth.
+  const displayGame = isViewingHistory ? historicalGame : gameState;
+  const displayFen = displayGame?.exportFen() || fen;
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
   }
 
   function isPlayerTurn({
-                          piece,
-                        }: {
+    piece,
+    sourceSquare,
+  }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
@@ -457,25 +436,9 @@ export default function OnlineGame() {
               <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
             </Button>
           </div>
-          {/*<div className="grid gap-2 w-full">*/}
-          {/*  {!isPlayWithBot && (*/}
-          {/*    <div>*/}
-          {/*      <Textarea*/}
-          {/*        placeholder="Your Message"*/}
-          {/*        className="pointer-events-none resize-none read-only:opacity-80 h-30"*/}
-          {/*        readOnly*/}
-          {/*      ></Textarea>*/}
-          {/*      <Textarea*/}
-          {/*        placeholder="Type your message here."*/}
-          {/*        className="resize-none"*/}
-          {/*      />*/}
-          {/*    </div>*/}
-          {/*  )}*/}
-          {/*</div>*/}
         </div>
       </div>
       <GameEndedDialog />
     </div>
   );
 }
-

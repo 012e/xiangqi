@@ -1,6 +1,6 @@
 package com.se330.ctuong_backend.service;
 
-import com.se330.ctuong_backend.dto.rest.UserDto;
+import com.se330.ctuong_backend.dto.UserDto;
 import com.se330.ctuong_backend.model.Friendship;
 import com.se330.ctuong_backend.repository.FriendRepository;
 import com.se330.ctuong_backend.repository.UserRepository;
@@ -41,9 +41,9 @@ public class FriendService {
         if (existingFriendship.isPresent()) {
             String status = existingFriendship.get().getStatus();
             if ("accepted".equals(status)) {
-                throw new IllegalStateException("Users are already friends");
+                throw new IllegalArgumentException("Users are already friends");
             } else if ("pending".equals(status)) {
-                throw new IllegalStateException("Friend request already sent");
+                throw new IllegalArgumentException("Friend request already sent");
             }
         }
 
@@ -83,7 +83,7 @@ public class FriendService {
         Friendship friendship = friendshipOpt.get();
         
         if (!"pending".equals(friendship.getStatus())) {
-            throw new IllegalStateException("Friend request is not pending");
+            throw new IllegalArgumentException("Friend request is not pending");
         }
 
         // Check if the current user is the recipient of the request
@@ -107,7 +107,7 @@ public class FriendService {
         Friendship friendship = friendshipOpt.get();
         
         if (!"pending".equals(friendship.getStatus())) {
-            throw new IllegalStateException("Friend request is not pending");
+            throw new IllegalArgumentException("Friend request is not pending");
         }
 
         // Check if the current user is the recipient of the request

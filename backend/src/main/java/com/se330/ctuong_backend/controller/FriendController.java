@@ -1,6 +1,6 @@
 package com.se330.ctuong_backend.controller;
 
-import com.se330.ctuong_backend.dto.rest.UserDto;
+import com.se330.ctuong_backend.dto.UserDto;
 import com.se330.ctuong_backend.service.FriendService;
 import com.se330.ctuong_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -3,6 +3,7 @@
 import type * as React from 'react';
 import {
   BookOpen,
+  Mail,
   Settings2,
   SquareTerminal,
   SquareUser,
@@ -77,6 +78,11 @@ const navItems: NavItem[] = [
     url: '/settings',
     icon: Settings2,
   },
+  {
+    title: 'Invitations',
+    url: '/invitations',
+    icon: Mail,
+  }
 ];
 
 function LoginRegister() {
