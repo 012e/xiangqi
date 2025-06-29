@@ -2,7 +2,7 @@ package com.se330.ctuong_backend.controller;
 
 import com.auth0.exception.Auth0Exception;
 import com.se330.ctuong_backend.dto.rest.GameResponse;
-import com.se330.ctuong_backend.dto.rest.UserDto;
+import com.se330.ctuong_backend.dto.UserDto;
 import com.se330.ctuong_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

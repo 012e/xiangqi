@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import {
-  FaGamepad,
-} from 'react-icons/fa';
+import { FaGamepad } from 'react-icons/fa';
 import { Check, CircleX, Trash2, UserPlus, X } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar.tsx';
 import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
@@ -30,18 +32,18 @@ type UserRowProps = {
 };
 
 const UserRow: React.FC<UserRowProps> = ({
-                                           userId,
-                                           avatarUrl,
-                                           username,
-                                           displayName,
-                                           onPlayClick,
-                                           onRemove,
-                                           onCancel,
-                                           onAccept,
-                                           onDecline,
-                                           onAddFriendClick,
-                                           typeTab,
-                                         }) => {
+  userId,
+  avatarUrl,
+  username,
+  displayName,
+  onPlayClick,
+  onRemove,
+  onCancel,
+  onAccept,
+  onDecline,
+  onAddFriendClick,
+  typeTab,
+}) => {
   const queryClient = useQueryClient();
   const [isFriendRequestSent, setIsFriendRequestSent] = useState(false);
   const handlePlay = () => {
@@ -98,8 +100,7 @@ const UserRow: React.FC<UserRowProps> = ({
     }
   };
   return (
-    <div
-      className="bg-accent rounded hover:cursor-pointer hover:opacity-85 flex items-center justify-between p-3 w-full">
+    <div className="flex justify-between items-center p-3 w-full rounded hover:cursor-pointer bg-accent hover:opacity-85">
       {/* Avatar + Info */}
       <div className="flex items-center space-x-3">
         <Avatar>
@@ -107,33 +108,58 @@ const UserRow: React.FC<UserRowProps> = ({
           <AvatarFallback>???</AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-foreground font-semibold leading-none">{username}</p>
-          <p className="text-sm text-foreground leading-none">{displayName}</p>
+          <p className="font-semibold leading-none text-foreground">
+            {username}
+          </p>
+          <p className="text-sm leading-none text-foreground">{displayName}</p>
         </div>
       </div>
 
       {/* Action Icons */}
-      <div className="flex space-x-4 text-foreground text-sm">
-        {
-          typeTab === 'friend' ? <div className="flex gap-2 justify-center items-center">
-              <FaGamepad className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handlePlay} />
-              <Trash2 className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleRemove} />
-            </div> :
-            typeTab === 'sent' ? <div>
-                <CircleX className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleCancel} />
-              </div> :
-              typeTab === 'pending' ? <div className="flex gap-2">
-                  <Check className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleAccept} />
-                  <X className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleDecline} />
-                </div> :
-                typeTab === 'suggestions' ? <div>
-                  {isFriendRequestSent ? (
-                    <CircleX className="hover:opacity-70 cursor-pointer text-muted-foreground w-5 h-auto" />
-                  ) : (
-                    <UserPlus className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleAddFriend} />
-                  )}
-                </div> : 'Not found'
-        }
+      <div className="flex space-x-4 text-sm text-foreground">
+        {typeTab === 'friend' ? (
+          <div className="flex gap-2 justify-center items-center">
+            <FaGamepad
+              className="w-5 h-auto cursor-pointer hover:opacity-70"
+              onClick={handlePlay}
+            />
+            <Trash2
+              className="w-5 h-auto cursor-pointer hover:opacity-70"
+              onClick={handleRemove}
+            />
+          </div>
+        ) : typeTab === 'sent' ? (
+          <div>
+            <CircleX
+              className="w-5 h-auto cursor-pointer hover:opacity-70"
+              onClick={handleCancel}
+            />
+          </div>
+        ) : typeTab === 'pending' ? (
+          <div className="flex gap-2">
+            <Check
+              className="w-5 h-auto cursor-pointer hover:opacity-70"
+              onClick={handleAccept}
+            />
+            <X
+              className="w-5 h-auto cursor-pointer hover:opacity-70"
+              onClick={handleDecline}
+            />
+          </div>
+        ) : typeTab === 'suggestions' ? (
+          <div>
+            {isFriendRequestSent ? (
+              <CircleX className="w-5 h-auto cursor-pointer hover:opacity-70 text-muted-foreground" />
+            ) : (
+              <UserPlus
+                className="w-5 h-auto cursor-pointer hover:opacity-70"
+                onClick={handleAddFriend}
+              />
+            )}
+          </div>
+        ) : (
+          'Not found'
+        )}
       </div>
     </div>
   );

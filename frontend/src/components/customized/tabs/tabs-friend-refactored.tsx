@@ -3,7 +3,6 @@ import FriendsTab from './FriendsTab';
 import SentTab from './SentTab';
 import PendingTab from './PendingTab';
 import SuggestionsTab from './SuggestionsTab';
-import { Users, Send, Hourglass, Lightbulb } from 'lucide-react';
 
 export type TabFriend = {
   name: string;
@@ -15,22 +14,18 @@ const tabs = [
   {
     name: 'Friend',
     value: 'friend',
-    icon: <Users />,
   },
   {
     name: 'Sent',
     value: 'sent',
-    icon: <Send />,
   },
   {
     name: 'Pending',
     value: 'pending',
-    icon: <Hourglass />,
   },
   {
     name: 'Suggestions',
     value: 'suggestions',
-    icon: <Lightbulb />,
   },
 ];
 
@@ -48,7 +43,6 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
             value={tab.value}
             className="font-semibold font-sans rounded-xl bg-background h-full data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-primary"
           >
-            {tab.icon}
             <p className="text-md">{tab.name}</p>
           </TabsTrigger>
         ))}
