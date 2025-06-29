@@ -33,7 +33,6 @@ export default function OnlineGame() {
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [isViewingHistory, setIsViewingHistory] = useState(false);
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
-  const [currentGame, setCurrentGame] = useState<Xiangqi>(new Xiangqi());
   const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
   const [isRotated, setIsRotated] = useState(false);
 
@@ -42,7 +41,6 @@ export default function OnlineGame() {
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
   const gameState = useGameStore((state) => state.gameState);
-  const pieceTheme = usePieceTheme();
 
   const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);
 
@@ -124,39 +122,22 @@ export default function OnlineGame() {
     return [part1, part2];
   }
 
-  // Update the current game when gameState changes
-  useEffect(() => {
-    if (gameState && !isViewingHistory) {
-      setCurrentGame(gameState);
-    }
-  }, [gameState, isViewingHistory]);
-
   // Handle history restoration
   useEffect(() => {
-    if (selectHistory && gameHistory.length > 0) {
-      const newGame = new Xiangqi();
-      if (selectHistory.color === 'white') {
-        for (let i = 1; i <= selectHistory.index * 2 - 1; ++i) {
-          const moveStr = gameHistory[i - 1];
-          const parts = moveStr ? splitTwoParts(moveStr) : null;
-          if (parts) {
-            newGame.move({ from: parts[0], to: parts[1] });
-          }
-        }
-      } else {
-        for (let i = 1; i <= selectHistory.index * 2; ++i) {
-          const moveStr = gameHistory[i - 1];
-          const parts = moveStr ? splitTwoParts(moveStr) : null;
-          if (parts) {
-            newGame.move({ from: parts[0], to: parts[1] });
-          }
+    // Only run this logic when actively viewing a point in history
+    if (isViewingHistory && currentHistoryIndex >= 0) {
+      const newGame = new Xiangqi(); // Start from the initial board
+      // Replay moves from the beginning up to the current history index
+      for (let i = 0; i <= currentHistoryIndex; i++) {
+        const moveStr = gameHistory[i];
+        const parts = moveStr ? splitTwoParts(moveStr) : null;
+        if (parts) {
+          newGame.move({ from: parts[0], to: parts[1] });
         }
       }
       setHistoricalGame(newGame);
-    } else if (!isViewingHistory) {
-      setHistoricalGame(currentGame);
     }
-  }, [selectHistory, gameHistory, currentGame, isViewingHistory]);
+  }, [isViewingHistory, currentHistoryIndex, gameHistory]);
 
   const handleMove = useCallback(
     (from: string, to: string, piece: string): boolean => {
@@ -167,13 +148,13 @@ export default function OnlineGame() {
         return false;
       }
 
-      return onMove(from, to, piece);
+      return onMove(from, to);
     },
     [onMove, isViewingHistory],
   );
 
-  // Get the appropriate game state for display
-  const displayGame = isViewingHistory ? historicalGame : currentGame;
+  // Get the appropriate game state for display. Use `gameState` from the store as the source of truth.
+  const displayGame = isViewingHistory ? historicalGame : gameState;
   const displayFen = displayGame?.exportFen() || fen;
 
   function getPieceColor(piece: string): 'white' | 'black' {
@@ -187,10 +168,6 @@ export default function OnlineGame() {
     sourceSquare: Square;
   }): boolean {
     return getPieceColor(piece) === selfPlayer?.color;
-  }
-
-  function handlePieceClick() {
-
   }
 
   return (
@@ -221,7 +198,7 @@ export default function OnlineGame() {
                 boardOrientation={
                   isRotated ? enemyPlayer?.color : selfPlayer?.color
                 }
-                position={fen}
+                position={displayFen}
                 animationDuration={200}
               />
             )}
@@ -324,4 +301,3 @@ export default function OnlineGame() {
     </div>
   );
 }
-
