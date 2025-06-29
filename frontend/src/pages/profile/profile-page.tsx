@@ -6,14 +6,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { UserPen } from 'lucide-react';
 import { GameHistories } from '@/pages/profile/game-histories.tsx';
+import { useParams } from 'react-router';
 
 const ProfilePage: React.FC = () => {
+  const { id } = useParams();
   const [shortBio, setShortBio] = useState('');
+
+  if (id) {
+    console.log(id);
+  }
 
   const { data: myProfile } = useQuery({
     queryKey: ['profile'],
     queryFn: getProfileMe,
   });
+
   const maxBioLength = 50;
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

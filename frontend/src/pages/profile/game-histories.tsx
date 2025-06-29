@@ -70,7 +70,7 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
           {whitePlayerForCard ? (
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p className="font-semibold text-xl cursor-pointer hover:text-primary">
+                <p className="font-semibold text-xl cursor-pointer hover:text-primary" onClick={() => navigate('/')}>
                   {game.whitePlayer.username}
                 </p>
               </HoverCardTrigger>
