@@ -33,7 +33,7 @@ const menuItems = [
     icon: <Handshake className="text-amber-600 w-10 h-10" />,
     title: 'Play a Friend',
     desc: 'Invite a friend to a game of chess',
-    link: '/play/friend',
+    link: '/social/friend',
   },
   {
     icon: <Medal className="text-yellow-100 w-10 h-10" />,
