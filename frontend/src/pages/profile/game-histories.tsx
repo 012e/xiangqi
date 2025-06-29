@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import { addFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import PlayerCard from '@/components/play/my-hover-card.tsx';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card.tsx';
+import { useEffect, useRef, useState } from 'react';
 
 async function getGameTypeById(gameId: number) {
   const response = await appAxios.get(`/game-types/${gameId}`);
@@ -47,11 +48,11 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
   const whitePlayerForCard = convertToPlayerCardFormat(game.whitePlayer, game.whiteElo, game.whiteEloChange, 'white');
   const blackPlayerForCard = convertToPlayerCardFormat(game.blackPlayer, game.blackElo, game.blackEloChange, 'black');
 
-  if (isLoading) {
-    return (
-      <div>Loading</div>
-    );
-  }
+    if (isLoading) {
+      return (
+        <div>Loading</div>
+      );
+    }
   return <div className={cn('p-5 flex gap-5 hover:opacity-80 hover:cursor-pointer', (index % 2 !== 0) ? 'bg-card' : 'bg-muted')} onClick={() => navigate(`/game/${game.id}`)}>
     <div>
       <AppBoard boardWidth={250} position={game.uciFen} isDraggablePiece={() => false} />
@@ -70,8 +71,8 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
           {whitePlayerForCard ? (
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p 
-                  className="font-semibold text-xl cursor-pointer hover:text-primary" 
+                <p
+                  className="font-semibold text-xl cursor-pointer hover:text-primary"
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent triggering the game navigation
                     navigate(`/user/profile/${game.whitePlayer.id}`);
@@ -81,15 +82,15 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-auto">
-                <PlayerCard 
-                  player={whitePlayerForCard} 
+                <PlayerCard
+                  player={whitePlayerForCard}
                   onAddFriend={addFriend}
                   isCurrentPlayer={false}
                 />
               </HoverCardContent>
             </HoverCard>
           ) : (
-            <p 
+            <p
               className="font-semibold text-xl cursor-pointer hover:text-primary"
               onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering the game navigation
@@ -121,7 +122,7 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
           {blackPlayerForCard ? (
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p 
+                <p
                   className="font-semibold text-xl cursor-pointer hover:text-primary"
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent triggering the game navigation
@@ -132,15 +133,15 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-auto">
-                <PlayerCard 
-                  player={blackPlayerForCard} 
+                <PlayerCard
+                  player={blackPlayerForCard}
                   onAddFriend={addFriend}
                   isCurrentPlayer={false}
                 />
               </HoverCardContent>
             </HoverCard>
           ) : (
-            <p 
+            <p
               className="font-semibold text-xl cursor-pointer hover:text-primary"
               onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering the game navigation
@@ -169,12 +170,79 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
       </div>
 
       <div>
-        <p></p>
+        <p className="font-semibold">Dutch Defense:</p>
+        {/* This div's width will constrain the MoveHistory component */}
+        <div>
+          <MoveHistory uciFen={game.uciFen} />
+        </div>
       </div>
     </div>
   </div>;
 }
+function MoveHistory({ uciFen }: { uciFen: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLSpanElement>(null); // A hidden element for measuring text width
 
+  const [displayMoves, setDisplayMoves] = useState<string[]>([]);
+  const [totalMoves, setTotalMoves] = useState(0);
+
+  useEffect(() => {
+    // 1. Parse the moves from the uciFen string
+    const parts = uciFen.split('|');
+    const moveHistoryString = parts.length > 1 ? parts[1].trim() : '';
+    if (!moveHistoryString) return;
+
+    const allMoves = moveHistoryString.split(/\s+/).filter(Boolean);
+    const totalMoveCount = allMoves.length;
+    setTotalMoves(totalMoveCount);
+
+    if (!containerRef.current || !measureRef.current) return;
+
+    const containerWidth = containerRef.current.offsetWidth;
+    let visibleMoves: string[] = [];
+
+    // 2. Determine how many moves fit in the container
+    for (let i = 0; i < totalMoveCount; i++) {
+      const moveNumber = Math.floor(i / 2) + 1;
+      const moveText = i % 2 === 0 ? `${moveNumber}. ${allMoves[i]}` : allMoves[i];
+
+      const potentialMoves = [...visibleMoves, moveText];
+
+      // Suffix for measurement, e.g., "... moves 14"
+      const suffix = ` ... moves ${totalMoveCount}`;
+
+      measureRef.current.textContent = potentialMoves.join(' ') + suffix;
+
+      // 3. Stop if the text overflows
+      if (measureRef.current.offsetWidth > containerWidth) {
+        break;
+      }
+
+      visibleMoves = potentialMoves;
+    }
+
+    setDisplayMoves(visibleMoves);
+
+  }, [uciFen]);
+
+  // Only show the suffix if not all moves are displayed
+  const showSuffix = displayMoves.length < totalMoves;
+
+  return (
+    <div className="w-full">
+      {/* Container to establish the width boundary */}
+      <div ref={containerRef} className="w-full text-ellipsis">
+        <span>{displayMoves.join(' ')}</span>
+        {showSuffix && (
+          <span className="ml-1 font-semibold">{`... moves ${totalMoves}`}</span>
+        )}
+      </div>
+
+      {/* Hidden span used only for measuring text width. It does not affect the layout. */}
+      <span ref={measureRef} className="absolute top-[-9999px] left-[-9999px] invisible" />
+    </div>
+  );
+}
 export function GameHistories({ userId }: { userId: number }) {
   const { data: games, isLoading, isError } = useQuery({
     queryKey: ['gamesOfUser', userId],

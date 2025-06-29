@@ -61,7 +61,7 @@ const ProfilePage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="settings-profile w-full">
-        <main className="p-8 m-4 min-w-[600px] bg-card text-card-foreground rounded-lg border border-border">
+        <main className="p-8 mx-4 bg-card text-card-foreground rounded-lg border border-border">
           <div className="flex items-center justify-center h-64">
             <p className="text-lg">Loading profile...</p>
           </div>
@@ -74,7 +74,7 @@ const ProfilePage: React.FC = () => {
   if (error) {
     return (
       <div className="settings-profile w-full">
-        <main className="p-8 m-4 min-w-[600px] bg-card text-card-foreground rounded-lg border border-border">
+        <main className="p-8 mx-4 bg-card text-card-foreground rounded-lg border border-border">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <p className="text-lg text-destructive mb-2">Error loading profile</p>
@@ -92,7 +92,7 @@ const ProfilePage: React.FC = () => {
   if (!isViewingOwnProfile && numericId && isNaN(numericId)) {
     return (
       <div className="settings-profile w-full">
-        <main className="p-8 m-4 min-w-[600px] bg-card text-card-foreground rounded-lg border border-border">
+        <main className="p-8 mx-4 bg-card text-card-foreground rounded-lg border border-border">
           <div className="flex items-center justify-center h-64">
             <p className="text-lg text-destructive">Invalid user ID</p>
           </div>
@@ -170,29 +170,29 @@ const ProfilePage: React.FC = () => {
             {/*content*/}
             <div className="grid grid-cols-2 gap-2">
               <div>Username</div>
-              <div>
+              <div className="w-full">
                 <Input
                   value={profile?.username ?? 'None'}
                   readOnly
-                  className="w-auto bg-muted text-foreground"
+                  className="w-full bg-muted text-foreground"
                 ></Input>
               </div>
 
               <div>Name</div>
-              <div>
+              <div className="w-full">
                 <Input
                   value={profile?.displayName ?? 'None'}
                   readOnly
-                  className="w-auto bg-muted text-foreground"
+                  className="w-full bg-muted text-foreground"
                 ></Input>
               </div>
 
               <div>Email</div>
-              <div className="w-auto">
+              <div className="w-full">
                 <Input
                   value={profile?.email ?? 'None'}
                   readOnly
-                  className="w-auto bg-muted text-foreground"
+                  className="w-full bg-muted text-foreground"
                 ></Input>
               </div>
             </div>
