@@ -4,7 +4,7 @@ import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import '@/styles/index.css';
 import App from './App.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StompSessionProvider } from 'react-stomp-hooks';
 import { Toaster } from './components/ui/sonner.tsx';
 import NewGame from './pages/play/new-game.tsx';
@@ -33,7 +33,14 @@ import FriendInvitationProvider from './components/friend-invitation-provider.ts
 import InvitationsPage from './pages/invitations/invitations.tsx';
 import WaitingPage from './pages/invitations/waiting.tsx';
 
-const queryClient = new QueryClient({});
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 0,
+      gcTime: 0,
+    },
+  },
+});
 
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -68,10 +75,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: asyncStoragePersister }}
-    >
+    <QueryClientProvider client={queryClient}>
       <Auth0Provider
         domain="dev-l5aemj1026u4dqia.us.auth0.com"
         clientId="3WDtuCDz2foYFJAHjKc2FxTTJmplDfL6"
@@ -89,7 +93,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </AccessTokenProvider>
       </Auth0Provider>
       <ReactQueryDevtools initialIsOpen={false} />
-    </PersistQueryClientProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -98,38 +102,38 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<App />} />
-              <Route
-                path="/play/online"
-                element={<PlayOnline isGameWithBot={true} />}
-              />
-              <Route
-                path="/play/bot"
-                element={<PlayOnline isGameWithBot={false} />}
-              />
-              <Route path="/game/new" element={<NewGame />} />
-              <Route path="/game/:id" element={<OnlineGame />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<App />} />
+            <Route
+              path="/play/online"
+              element={<PlayOnline isGameWithBot={true} />}
+            />
+            <Route
+              path="/play/bot"
+              element={<PlayOnline isGameWithBot={false} />}
+            />
+            <Route path="/game/new" element={<NewGame />} />
+            <Route path="/game/:id" element={<OnlineGame />} />
 
-              <Route path="/me/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/me/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
 
-              <Route path="/social" element={<Friends />} />
-              <Route path="/social/friend" element={<Friends />} />
-              <Route
-                path="/social/friend/findById"
-                element={<FindFriendsByUsername />}
-              />
-              <Route path="/social/chat" element={<Chat />} />
+            <Route path="/social" element={<Friends />} />
+            <Route path="/social/friend" element={<Friends />} />
+            <Route
+              path="/social/friend/findById"
+              element={<FindFriendsByUsername />}
+            />
+            <Route path="/social/chat" element={<Chat />} />
 
-              <Route path="/document" element={<Guide />} />
-              <Route path="/document/guide" element={<Guide />} />
-              <Route path="/document/rule" element={<Rule />} />
+            <Route path="/document" element={<Guide />} />
+            <Route path="/document/guide" element={<Guide />} />
+            <Route path="/document/rule" element={<Rule />} />
 
-              <Route path="/invitations" element={<InvitationsPage />} />
-              <Route path="/invitations/waiting/:id" element={<WaitingPage />} />
-            </Route>
-            <Route path="/test" element={<Demo />} />
+            <Route path="/invitations" element={<InvitationsPage />} />
+            <Route path="/invitations/waiting/:id" element={<WaitingPage />} />
+          </Route>
+          <Route path="/test" element={<Demo />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

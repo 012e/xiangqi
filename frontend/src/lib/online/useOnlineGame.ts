@@ -69,7 +69,9 @@ export function useOnlineGame(gameId: string | undefined) {
   // Access store actions and state
   const gameState = useGameStore((state) => state.gameState);
   const playingColor = useGameStore((state) => state.playingColor);
-  const { move, handleTopicMessage, reset } = useGameStore((state) => state.actions);
+  const { move, handleTopicMessage, reset } = useGameStore(
+    (state) => state.actions,
+  );
 
   const {
     data,
@@ -77,11 +79,13 @@ export function useOnlineGame(gameId: string | undefined) {
     error,
     isError,
   } = useQuery({
-    queryKey: ['gameId', gameId],
+    queryKey: ['game', gameId],
     queryFn: async () => {
       const response = await appAxios.get<GameResponse>(`/game/${gameId}`);
       return response.data;
     },
+    staleTime: 0,
+    gcTime: 0,
     enabled: !!gameId,
   });
 

@@ -174,7 +174,7 @@ export default function OnlineGame() {
 
   // Get the appropriate game state for display
   const displayGame = isViewingHistory ? historicalGame : currentGame;
-  const displayFen = displayGame?.exportFen() || fen;
+  const displayFen = displayGame?.exportUciFen() || fen;
 
   function getPieceColor(piece: string): 'white' | 'black' {
     return piece[0] === 'b' ? 'black' : 'white';
@@ -221,7 +221,7 @@ export default function OnlineGame() {
                 boardOrientation={
                   isRotated ? enemyPlayer?.color : selfPlayer?.color
                 }
-                position={displayFen}
+                position={fen}
                 animationDuration={200}
               />
             )}

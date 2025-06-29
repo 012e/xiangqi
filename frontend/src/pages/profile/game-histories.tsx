@@ -82,11 +82,13 @@ function GameHistory({
       )}
       onClick={() => navigate(`/game/${game.id}`)}
     >
-      <AppBoard
-        boardWidth={200}
-        position={game.uciFen}
-        isDraggablePiece={() => false}
-      />
+      <div style={{ width: '225px', height: '250px' }}>
+        <AppBoard
+          boardWidth={200}
+          position={game.uciFen}
+          isDraggablePiece={() => false}
+        />
+      </div>
       <div className="flex flex-col justify-between w-full">
         <div className="flex items-start">
           <div className="flex gap-2 items-center">
@@ -199,7 +201,7 @@ export function GameHistories({ userId }: { userId: number }) {
     queries: uniqueGameTypeIds.map((id) => ({
       queryKey: ['gameType', id],
       queryFn: () => getGameTypeById(id),
-      staleTime: Infinity,
+      staleTime: 0,
     })),
   });
 
@@ -277,4 +279,3 @@ export function GameHistories({ userId }: { userId: number }) {
     </div>
   );
 }
-
