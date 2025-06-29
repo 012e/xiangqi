@@ -125,18 +125,15 @@ export function useOnlineGame(gameId: string | undefined) {
 
       init({
         gameId: gameId,
-        isStarted: false, // This could be derived from game data if available
         playingColor: currentPlayingColor,
         selfPlayer: ourPlayer,
         enemyPlayer: enemyPlayer,
         initialFen: data.uciFen,
         isEnded: !!data.result,
+        isStarted: data.isStarted,
       });
     }
 
-    // --- THIS IS THE CRITICAL FIX ---
-    // Return a cleanup function that will be called when the component unmounts
-    // (e.g., when the user navigates to a different page).
     return () => {
       reset(); // Resets the Zustand store to its initial, clean state.
     };
