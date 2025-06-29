@@ -1,5 +1,4 @@
 import { useParams } from 'react-router';
-import { Chessboard } from 'react-xiangqiboard';
 import { Square } from 'react-xiangqiboard/dist/chessboard/types';
 import { useGameStore } from '@/stores/online-game-store'; // Import the store
 import { ArrowUpDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
@@ -200,7 +199,7 @@ export default function OnlineGame() {
       <div>
         <div
           className={cn(
-            'flex flex-col justify-center items-center p-10 bg-background',
+            'flex flex-col justify-center items-center p-10 bg-background w-full',
             isRotated ? 'flex-col-reverse' : '',
           )}
         >

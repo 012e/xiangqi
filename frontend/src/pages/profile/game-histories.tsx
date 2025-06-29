@@ -5,6 +5,10 @@ import { GameResponse } from '@/lib/online/game-response';
 import AppBoard from '@/components/app-board.tsx';
 import { cn } from '@/lib/utils.ts';
 import { appAxios } from '@/services/AxiosClient.ts';
+import { useNavigate } from 'react-router';
+import { addFriend } from '@/lib/friend/useFriendRequestActions.ts';
+import PlayerCard from '@/components/play/my-hover-card.tsx';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card.tsx';
 
 async function getGameTypeById(gameId: number) {
   const response = await appAxios.get(`/game-types/${gameId}`);
@@ -21,12 +25,34 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
     queryFn: () => getGameTypeById(game.gameTypeId),
     queryKey: ['gameType', game.gameTypeId],
   });
+  const navigate = useNavigate();
+
+  // Convert GameResponse Player to PlayerCard Player format
+  const convertToPlayerCardFormat = (player: GameResponse['whitePlayer'], elo: number, eloChange?: number, color: 'white' | 'black' = 'white') => {
+    if (!player) return null;
+    return {
+      id: player.id,
+      username: player.username,
+      color: color,
+      picture: player.picture,
+      time: game[`${color}TimeLeft`],
+      name: player.name,
+      sub: player.sub,
+      email: player.email,
+      elo: elo,
+      eloChange: eloChange,
+    };
+  };
+
+  const whitePlayerForCard = convertToPlayerCardFormat(game.whitePlayer, game.whiteElo, game.whiteEloChange, 'white');
+  const blackPlayerForCard = convertToPlayerCardFormat(game.blackPlayer, game.blackElo, game.blackEloChange, 'black');
+
   if (isLoading) {
     return (
       <div>Loading</div>
     );
   }
-  return <div className={cn('p-5 flex gap-5', (index % 2 !== 0) ? 'bg-card' : 'bg-muted')}>
+  return <div className={cn('p-5 flex gap-5 hover:opacity-80 hover:cursor-pointer', (index % 2 !== 0) ? 'bg-card' : 'bg-muted')} onClick={() => navigate(`/game/${game.id}`)}>
     <div>
       <AppBoard boardWidth={250} position={game.uciFen} isDraggablePiece={() => false} />
     </div>
@@ -34,18 +60,33 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
       <div className="flex items-start">
         <div className="flex gap-2 items-center">
         <span>
-          <Crosshair></Crosshair>
+          <Crosshair className="w-7 h-auto"></Crosshair>
         </span>
           <p className="font-semibold text-2xl">{gameType.typeName}</p>
         </div>
       </div>
       <div className="flex flex-row gap-5 items-center justify-center h-full w-full">
         <div className="justify-center flex flex-col gap-1 items-center">
-          <p className="font-semibold text-xl">
-            {
-              game.whitePlayer.username
-            }
-          </p>
+          {whitePlayerForCard ? (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <p className="font-semibold text-xl cursor-pointer hover:text-primary">
+                  {game.whitePlayer.username}
+                </p>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-auto">
+                <PlayerCard 
+                  player={whitePlayerForCard} 
+                  onAddFriend={addFriend}
+                  isCurrentPlayer={false}
+                />
+              </HoverCardContent>
+            </HoverCard>
+          ) : (
+            <p className="font-semibold text-xl">
+              {game.whitePlayer.username}
+            </p>
+          )}
           <p className="text-lg ">
             <span>
               {
@@ -62,14 +103,29 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
           </p>
         </div>
         <span>
-        <Swords className="w-7 h-auto" />
+        <Swords className="w-10 h-auto" />
       </span>
         <div className="justify-center flex flex-col gap-1 items-center">
-          <p className="font-semibold text-xl">
-            {
-              game.blackPlayer.username
-            }
-          </p>
+          {blackPlayerForCard ? (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <p className="font-semibold text-xl cursor-pointer hover:text-primary">
+                  {game.blackPlayer.username}
+                </p>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-auto">
+                <PlayerCard 
+                  player={blackPlayerForCard} 
+                  onAddFriend={addFriend}
+                  isCurrentPlayer={false}
+                />
+              </HoverCardContent>
+            </HoverCard>
+          ) : (
+            <p className="font-semibold text-xl">
+              {game.blackPlayer.username}
+            </p>
+          )}
           <p className="text-lg">
             <span>
               {
