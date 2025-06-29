@@ -26,5 +26,6 @@ export type GameResponse = {
   resultDetail: string
   createdAt: string,
   isGameWithBot: boolean,
+  isStarted: boolean,
   gameTypeId: number,
 };

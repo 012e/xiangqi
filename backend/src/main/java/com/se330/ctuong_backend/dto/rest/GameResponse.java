@@ -41,6 +41,7 @@ public class GameResponse {
 
     private String result;
     private String resultDetail;
+    private Boolean isStarted;
 
     public boolean getIsGameWithBot() {
         return whitePlayer != null && whitePlayer.getId().equals(ApplicationConfiguration.getBotId()) ||
