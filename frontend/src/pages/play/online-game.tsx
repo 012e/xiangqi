@@ -200,8 +200,8 @@ export default function OnlineGame() {
   }
 
   function isPlayerTurn({
-    piece,
-  }: {
+                          piece,
+                        }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {
@@ -225,7 +225,7 @@ export default function OnlineGame() {
     }
 
     const gameState = displayGame.getState();
-    
+
     // If we have a selected piece and click on a different square, try to move
     if (selectedSquare && selectedSquare !== square) {
       const moves = displayGame.getLegalMoves(selectedSquare, true);
@@ -235,7 +235,7 @@ export default function OnlineGame() {
         const [fromRow, fromCol] = displayGame.positionToCoordinates(selectedSquare);
         const piece = gameState.board[fromRow][fromCol];
         const moveSuccess = handleMove(selectedSquare, square, piece || '');
-        
+
         if (moveSuccess) {
           // Clear selection and highlights after successful move
           setSelectedSquare('');
@@ -243,11 +243,11 @@ export default function OnlineGame() {
           return;
         }
       }
-      
+
       // If move failed or clicked on invalid square, clear selection
       setSelectedSquare('');
       setOptionSquares({});
-      
+
       // Check if clicked square has a piece to select (only our own pieces)
       const [clickedRow, clickedCol] = displayGame.positionToCoordinates(square);
       const clickedPiece = gameState.board[clickedRow][clickedCol];
@@ -256,7 +256,7 @@ export default function OnlineGame() {
         const pieceColor = getPieceColor(clickedPiece);
         const isCurrentPlayerPiece = pieceColor === selfPlayer?.color;
         const isPlayerTurn = gameState.currentPlayer === (selfPlayer?.color === 'white' ? 'w' : 'b');
-        
+
         if (isCurrentPlayerPiece && isPlayerTurn) {
           highlightMoves(square);
           setSelectedSquare(square);
@@ -280,7 +280,7 @@ export default function OnlineGame() {
       const pieceColor = getPieceColor(piece);
       const isCurrentPlayerPiece = pieceColor === selfPlayer?.color;
       const isPlayerTurn = gameState.currentPlayer === (selfPlayer?.color === 'white' ? 'w' : 'b');
-      
+
       if (isCurrentPlayerPiece && isPlayerTurn) {
         highlightMoves(square);
         setSelectedSquare(square);
@@ -302,52 +302,54 @@ export default function OnlineGame() {
 
     const gameState = displayGame.getState();
     const newSquares: Record<string, React.CSSProperties> = {};
-    
+
     moves.forEach(move => {
       // Check if there's a piece at the target square (can be attacked)
       const [targetRow, targetCol] = displayGame.positionToCoordinates(move);
       const targetPiece = gameState.board[targetRow][targetCol];
-      
+
       if (targetPiece) {
         // There's a piece that can be attacked - show green background
         newSquares[move] = {
-          background: "#008000",
-          borderRadius: "20%",
+          background: '#008000',
+          borderRadius: '20%',
           position: 'relative',
           zIndex: 999,
         };
       } else {
         // Empty square - show normal move indicator
         newSquares[move] = {
-          background: "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
-          borderRadius: "20%",
+          background: 'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
+          borderRadius: '20%',
           position: 'relative',
-          zIndex: 999
+          zIndex: 999,
         };
       }
     });
 
     // Highlight the selected piece
     newSquares[square] = {
-      background: "rgba(255, 255, 0, 0.4)",
-      borderRadius: "10%",
-      zIndex: 10
+      background: 'rgba(255, 255, 0, 0.4)',
+      borderRadius: '10%',
+      zIndex: 10,
     };
 
     setOptionSquares(newSquares);
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 w-full" key={id}>
+    <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full justify-center items-center p-10" key={id}>
       {/* Left */}
-      <div className="flex justify-center items-center w-full">
+      <div className="w-full h-auto">
         <div
           className={cn(
-            'flex flex-col justify-center items-center p-10 bg-background w-full',
+            'flex flex-col justify-center items-center bg-background w-full',
             isRotated ? 'flex-col-reverse' : '',
           )}
         >
-          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
+          <div className="flex justify-center items-center">
+            <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
+          </div>
 
           <div className="flex justify-center items-center w-full">
             {isLoading ? (
@@ -377,8 +379,9 @@ export default function OnlineGame() {
               />
             )}
           </div>
-
-          <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
+          <div className="flex justify-center items-center">
+            <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
+          </div>
         </div>
         <div className="p-3 mx-5">
           {isViewingHistory && (
