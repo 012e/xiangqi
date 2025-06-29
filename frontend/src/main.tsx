@@ -113,11 +113,10 @@ createRoot(document.getElementById('root')!).render(
                 path="/play/bot"
                 element={<PlayOnline isGameWithBot={false} />}
               />
-              <Route path="/play/friend" element={<PlayFriend />} />
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
 
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/me/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
 
               <Route path="/social" element={<Friends />} />
