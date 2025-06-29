@@ -1,10 +1,9 @@
-package com.se330.ctuong_backend.service;
+package com.se330.ctuong_backend.service.invitation;
 
-import com.se330.ctuong_backend.dto.rest.InvitationDto;
+import com.se330.ctuong_backend.dto.InvitationDto;
 import com.se330.ctuong_backend.model.Invitation;
 import com.se330.ctuong_backend.repository.InvitationRepository;
 import com.se330.ctuong_backend.repository.UserRepository;
-import com.se330.ctuong_backend.model.GameType;
 import com.se330.ctuong_backend.model.GameTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +20,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class InvitationService {
-    
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
     private final GameTypeRepository gameTypeRepository;
+    private final InvitationNotificationService invitationNotificationService;
     private final ModelMapper modelMapper;
 
     @Transactional
@@ -93,6 +92,7 @@ public class InvitationService {
         invitation = invitationRepository.save(invitation);
         
         log.info("Invitation {} accepted by user {}", invitationId, userId);
+        invitationNotificationService.notifyAccepted(invitationId);
         return modelMapper.map(invitation, InvitationDto.class);
     }
 
@@ -113,7 +113,8 @@ public class InvitationService {
 
         invitation.setIsDeclined(true);
         invitationRepository.save(invitation);
-        
+        invitationNotificationService.notifyDeclined(invitationId);
+
         log.info("Invitation {} declined by user {}", invitationId, userId);
     }
 

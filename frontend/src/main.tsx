@@ -29,6 +29,7 @@ import Chat from './pages/social/chat.tsx';
 import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
 import Guide from './pages/document/Guide.tsx';
 import Rule from './pages/document/Rule.tsx';
+import FriendInvitationProvider from './components/friend-invitation-provider.tsx';
 
 const queryClient = new QueryClient({});
 
@@ -80,8 +81,8 @@ function Providers({ children }: { children: React.ReactNode }) {
       >
         <AccessTokenProvider>
           <StompSessionProvider url={stompUrl} key={stompUrl}>
-            {children}
-            <Toaster />
+            <FriendInvitationProvider>{children}</FriendInvitationProvider>
+            <Toaster closeButton={true} expand={true} />
           </StompSessionProvider>
         </AccessTokenProvider>
       </Auth0Provider>

@@ -47,19 +47,20 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
     queryFn: getProfileMe,
   });
 
-  const {data: friendList} = useQuery({
-      queryKey: ['listFriends'],
-      queryFn: getFriendList
-    }
-  )
-  const { data: friendSent} = useQuery({
+  const { data: friendList } = useQuery({
+    queryKey: ['listFriends'],
+    queryFn: getFriendList,
+  });
+
+  const { data: friendSent } = useQuery({
     queryKey: ['listSent'],
-    queryFn: getRequestSent
-  })
-  const {data: friendPending} = useQuery({
+    queryFn: getRequestSent,
+  });
+
+  const { data: friendPending } = useQuery({
     queryKey: ['listPending'],
-    queryFn: getRequestPending
-  })
+    queryFn: getRequestPending,
+  });
 
   const { data: friendSuggestions } = useQuery({
     queryKey: ['listSuggestions'],
@@ -75,6 +76,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
       toast('Fail add friend!');
     },
   });
+
   const rejectFriendMutation = useMutation({
     mutationFn: rejectFriendRequest,
     onSuccess: () => {
@@ -84,6 +86,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
       toast('Fail reject friend!');
     },
   });
+
   const acceptFriendMutation = useMutation({
     mutationFn: acceptFriendRequest,
     onSuccess: () => {
@@ -93,6 +96,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
       toast('Fail accept friend!');
     },
   });
+
   const removeFriendMutation = useMutation({
     mutationFn: removeFriend,
     onSuccess: () => {
@@ -103,13 +107,13 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
     },
   })
   // const cancelFriend = useMutation({
-  //   mutationFn: postCancelFriend,
-  //   onSuccess: () => {
-  //     toast('Successfully canceled friend request!');
-  //   },
-  //   onError: () => {
-  //     toast('Failed to cancel friend request!');
-  //   },
+  //   mutationFn: postCancelFriend,
+  //   onSuccess: () => {
+  //     toast('Successfully canceled friend request!');
+  //   },
+  //   onError: () => {
+  //     toast('Failed to cancel friend request!');
+  //   },
   // });
 
   // Filter suggestions to exclude current user, friends, sent requests, and pending requests
@@ -148,7 +152,7 @@ export default function TabsFriend({ searchText }: TabsFriendProps) {
         { value: 'sent', list: friendSent },
         { value: 'friend', list: friendList },
         { value: 'suggestions', list: filteredSuggestions}
-      ].map(({ value, list }) =>{
+      ].map(({ value, list }) => {
         const filteredList = list?.filter(user =>
           user.username.toLowerCase().includes(searchText.toLowerCase())
         );

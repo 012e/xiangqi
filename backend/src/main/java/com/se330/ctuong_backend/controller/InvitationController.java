@@ -1,7 +1,7 @@
 package com.se330.ctuong_backend.controller;
 
-import com.se330.ctuong_backend.dto.rest.InvitationDto;
-import com.se330.ctuong_backend.service.InvitationService;
+import com.se330.ctuong_backend.dto.InvitationDto;
+import com.se330.ctuong_backend.service.invitation.InvitationService;
 import com.se330.ctuong_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

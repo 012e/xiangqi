@@ -1,4 +1,4 @@
-package com.se330.ctuong_backend.dto.rest;
+package com.se330.ctuong_backend.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

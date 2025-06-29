@@ -1,5 +1,7 @@
-package com.se330.ctuong_backend.dto.rest;
+package com.se330.ctuong_backend.dto.message.invitation;
 
+import com.se330.ctuong_backend.dto.UserDto;
+import com.se330.ctuong_backend.dto.rest.GameTypeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,18 +9,18 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
-@Data
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvitationDto {
+public class InvitationAcceptedMessage {
+    private static final String TYPE = "accepted";
+
     private Long id;
     private GameTypeResponse gameType;
     private UserDto inviter;
     private UserDto recipient;
     private Timestamp createdAt;
-    private Boolean isDeclined;
-    private Boolean isAccepted;
     private Timestamp expiresAt;
     private String message;
     private Long gameId;
