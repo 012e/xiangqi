@@ -19,7 +19,6 @@ import { GameType, getGameTypes } from '@/lib/online/game-type.ts';
 import { Slider } from '@/components/ui/slider.tsx';
 import { RiBaseStationLine } from 'react-icons/ri';
 import { FaRobot } from 'react-icons/fa';
-import { useEnsureGameTypes } from '@/hooks/use-prefetch-game-types';
 
 export default function PlayOnline({
   isGameWithBot: isOnline,
@@ -27,9 +26,6 @@ export default function PlayOnline({
   isGameWithBot: boolean;
 }) {
   const { createGame, loading } = useCreateGame();
-
-  // Ensure game types are available and fresh
-  useEnsureGameTypes();
 
   const [selectHistory, setSelectHistory] = useState<HistoryMove>();
   const [history, setHistory] = useState<string[]>([]);

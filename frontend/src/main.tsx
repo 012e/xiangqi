@@ -12,6 +12,9 @@ import OnlineGame from './pages/play/online-game.tsx';
 import PlayOnline from './pages/play/play-online.tsx';
 import Layout from './components/layout.tsx';
 import PlayFriend from './pages/play/play-friend.tsx';
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
 import Friends from './pages/social/friends.tsx';
@@ -32,18 +35,13 @@ import Rule from './pages/document/Rule.tsx';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Cache data for 10 minutes
       staleTime: 1000 * 60 * 10,
-      // Keep data in cache for 15 minutes even when not used
-      gcTime: 1000 * 60 * 15,
-      // Retry failed requests
-      retry: 3,
-      // Enable background refetching when window regains focus
-      refetchOnWindowFocus: false,
-      // Enable background refetching when reconnecting
-      refetchOnReconnect: 'always',
     },
   },
+});
+
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: window.localStorage,
 });
 
 function AccessTokenProvider({ children }: { children: React.ReactNode }) {
@@ -75,7 +73,10 @@ function Providers({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister }}
+    >
       <Auth0Provider
         domain="dev-l5aemj1026u4dqia.us.auth0.com"
         clientId="3WDtuCDz2foYFJAHjKc2FxTTJmplDfL6"
@@ -93,7 +94,7 @@ function Providers({ children }: { children: React.ReactNode }) {
         </AccessTokenProvider>
       </Auth0Provider>
       <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
 createRoot(document.getElementById('root')!).render(
@@ -104,8 +105,14 @@ createRoot(document.getElementById('root')!).render(
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<App />} />
-              <Route path="/play/online" element={<PlayOnline isGameWithBot={true} />} />
-              <Route path="/play/bot" element={<PlayOnline isGameWithBot={false} />} />
+              <Route
+                path="/play/online"
+                element={<PlayOnline isGameWithBot={true} />}
+              />
+              <Route
+                path="/play/bot"
+                element={<PlayOnline isGameWithBot={false} />}
+              />
               <Route path="/play/friend" element={<PlayFriend />} />
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:id" element={<OnlineGame />} />
@@ -115,13 +122,15 @@ createRoot(document.getElementById('root')!).render(
 
               <Route path="/social" element={<Friends />} />
               <Route path="/social/friend" element={<Friends />} />
-              <Route path="/social/friend/findById" element={<FindFriendsByUsername />} />
+              <Route
+                path="/social/friend/findById"
+                element={<FindFriendsByUsername />}
+              />
               <Route path="/social/chat" element={<Chat />} />
 
-              <Route path="/document" element={<Guide />}/>
+              <Route path="/document" element={<Guide />} />
               <Route path="/document/guide" element={<Guide />} />
               <Route path="/document/rule" element={<Rule />} />
-
             </Route>
             <Route path="/test" element={<Demo />} />
             {/* Fallback route */}
