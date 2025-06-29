@@ -66,106 +66,115 @@ export function GameHistory({ game, index }: { game: GameResponse, index: number
           <p className="font-semibold text-2xl">{gameType.typeName}</p>
         </div>
       </div>
-      <div className="flex flex-row gap-5 items-center justify-center h-full w-full">
-        <div className="justify-center flex flex-col gap-1 items-center">
-          {whitePlayerForCard ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p
-                  className="font-semibold text-xl cursor-pointer hover:text-primary"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering the game navigation
-                    navigate(`/user/profile/${game.whitePlayer.id}`);
-                  }}
-                >
-                  {game.whitePlayer.username}
-                </p>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-auto">
-                <PlayerCard
-                  player={whitePlayerForCard}
-                  onAddFriend={addFriend}
-                  isCurrentPlayer={false}
-                />
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            <p
-              className="font-semibold text-xl cursor-pointer hover:text-primary"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent triggering the game navigation
-                navigate(`/user/profile/${game.whitePlayer.id}`);
-              }}
-            >
-              {game.whitePlayer.username}
-            </p>
-          )}
-          <p className="text-lg ">
-            <span>
+      <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-row gap-5 items-center justify-center h-full w-full">
+          <div className="justify-center flex flex-col gap-1 items-center">
+            {whitePlayerForCard ? (
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <p
+                    className="font-semibold text-xl cursor-pointer hover:text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering the game navigation
+                      navigate(`/user/profile/${game.whitePlayer.id}`);
+                    }}
+                  >
+                    {game.whitePlayer.username}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-auto">
+                  <PlayerCard
+                    player={whitePlayerForCard}
+                    onAddFriend={addFriend}
+                    isCurrentPlayer={false}
+                  />
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p
+                className="font-semibold text-xl cursor-pointer hover:text-primary"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering the game navigation
+                  navigate(`/user/profile/${game.whitePlayer.id}`);
+                }}
+              >
+                {game.whitePlayer.username}
+              </p>
+            )}
+            <p className="text-lg ">
+              <span>
+                {
+                  game.whiteElo + " "
+                }
+              </span>
               {
-                game.whiteElo + " "
+                game.whiteEloChange && (
+                  <span className={cn('text-chart-2', game.whiteEloChange < 0 ? 'text-chart-5' : 'text-chart-2')}>
+                      { game.whiteEloChange < 0 ? game.whiteEloChange : "+" + (game.whiteEloChange ? game.whiteEloChange : "0") }
+                  </span>
+                )
               }
-            </span>
-            {
-              game.whiteEloChange && (
-                <span className={cn('text-chart-2', game.whiteEloChange < 0 ? 'text-chart-5' : 'text-chart-2')}>
-                    { game.whiteEloChange < 0 ? game.whiteEloChange : "+" + (game.whiteEloChange ? game.whiteEloChange : "0") }
-                </span>
-              )
-            }
-          </p>
-        </div>
-        <span>
-        <Swords className="w-10 h-auto" />
-      </span>
-        <div className="justify-center flex flex-col gap-1 items-center">
-          {blackPlayerForCard ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p
-                  className="font-semibold text-xl cursor-pointer hover:text-primary"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering the game navigation
-                    navigate(`/user/profile/${game.blackPlayer.id}`);
-                  }}
-                >
-                  {game.blackPlayer.username}
-                </p>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-auto">
-                <PlayerCard
-                  player={blackPlayerForCard}
-                  onAddFriend={addFriend}
-                  isCurrentPlayer={false}
-                />
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            <p
-              className="font-semibold text-xl cursor-pointer hover:text-primary"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent triggering the game navigation
-                navigate(`/user/profile/${game.blackPlayer.id}`);
-              }}
-            >
-              {game.blackPlayer.username}
             </p>
-          )}
-          <p className="text-lg">
-            <span>
+          </div>
+          <span>
+            <Swords className="w-10 h-auto" />
+          </span>
+          <div className="justify-center flex flex-col gap-1 items-center">
+            {blackPlayerForCard ? (
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <p
+                    className="font-semibold text-xl cursor-pointer hover:text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering the game navigation
+                      navigate(`/user/profile/${game.blackPlayer.id}`);
+                    }}
+                  >
+                    {game.blackPlayer.username}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-auto">
+                  <PlayerCard
+                    player={blackPlayerForCard}
+                    onAddFriend={addFriend}
+                    isCurrentPlayer={false}
+                  />
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p
+                className="font-semibold text-xl cursor-pointer hover:text-primary"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering the game navigation
+                  navigate(`/user/profile/${game.blackPlayer.id}`);
+                }}
+              >
+                {game.blackPlayer.username}
+              </p>
+            )}
+            <p className="text-lg">
+              <span>
+                {
+                  game.blackElo + " "
+                }
+              </span>
               {
-                game.blackElo + " "
+                game.blackEloChange && (
+                  <span className={cn('text-chart-2', game.blackEloChange < 0 ? 'text-chart-5' : 'text-chart-2')}>
+                      { game.blackEloChange < 0 ? game.blackEloChange : "+" + (game.blackEloChange ? game.blackEloChange : "0") }
+                  </span>
+                )
               }
-            </span>
-            {
-              game.blackEloChange && (
-                <span className={cn('text-chart-2', game.blackEloChange < 0 ? 'text-chart-5' : 'text-chart-2')}>
-                    { game.blackEloChange < 0 ? game.blackEloChange : "+" + (game.blackEloChange ? game.blackEloChange : "0") }
-                </span>
-              )
-            }
-          </p>
+            </p>
 
+          </div>
+        </div>
+        <div>
+          <p>
+            {
+              game.result === 'draw' ? 'Draw' : game.result === 'white' ? 'Red wins' : 'Black wins'
+            }
+          </p>
         </div>
       </div>
 
