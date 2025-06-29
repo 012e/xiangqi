@@ -211,7 +211,8 @@ export default function OnlineGame() {
 
       // Check if the clicked square is a legal move
       if (moves.includes(square)) {
-        const [fromRow, fromCol] = displayGame.positionToCoordinates(selectedSquare);
+        const [fromRow, fromCol] =
+          displayGame.positionToCoordinates(selectedSquare);
         const piece = gameState.board[fromRow][fromCol];
         const moveSuccess = handleMove(selectedSquare, square, piece || '');
 
@@ -228,13 +229,16 @@ export default function OnlineGame() {
       setOptionSquares({});
 
       // Check if clicked square has a piece to select (only our own pieces)
-      const [clickedRow, clickedCol] = displayGame.positionToCoordinates(square);
+      const [clickedRow, clickedCol] =
+        displayGame.positionToCoordinates(square);
       const clickedPiece = gameState.board[clickedRow][clickedCol];
       if (clickedPiece) {
         // Check if it's the current player's piece AND it's their turn
         const pieceColor = getPieceColor(clickedPiece);
         const isCurrentPlayerPiece = pieceColor === selfPlayer?.color;
-        const isPlayerTurn = gameState.currentPlayer === (selfPlayer?.color === 'white' ? 'w' : 'b');
+        const isPlayerTurn =
+          gameState.currentPlayer ===
+          (selfPlayer?.color === 'white' ? 'w' : 'b');
 
         if (isCurrentPlayerPiece && isPlayerTurn) {
           highlightMoves(square);
@@ -258,7 +262,8 @@ export default function OnlineGame() {
       // Check if it's the current player's piece AND it's their turn
       const pieceColor = getPieceColor(piece);
       const isCurrentPlayerPiece = pieceColor === selfPlayer?.color;
-      const isPlayerTurn = gameState.currentPlayer === (selfPlayer?.color === 'white' ? 'w' : 'b');
+      const isPlayerTurn =
+        gameState.currentPlayer === (selfPlayer?.color === 'white' ? 'w' : 'b');
 
       if (isCurrentPlayerPiece && isPlayerTurn) {
         highlightMoves(square);
@@ -282,7 +287,7 @@ export default function OnlineGame() {
     const gameState = displayGame.getState();
     const newSquares: Record<string, React.CSSProperties> = {};
 
-    moves.forEach(move => {
+    moves.forEach((move) => {
       // Check if there's a piece at the target square (can be attacked)
       const [targetRow, targetCol] = displayGame.positionToCoordinates(move);
       const targetPiece = gameState.board[targetRow][targetCol];
@@ -298,7 +303,8 @@ export default function OnlineGame() {
       } else {
         // Empty square - show normal move indicator
         newSquares[move] = {
-          background: 'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
+          background:
+            'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
           borderRadius: '20%',
           position: 'relative',
           zIndex: 999,
@@ -317,7 +323,10 @@ export default function OnlineGame() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full justify-center items-center p-10" key={id}>
+    <div
+      className="grid grid-cols-1 justify-center items-center p-20 w-full h-full lg:grid-cols-2"
+      key={id}
+    >
       {/* Left */}
       <div className="w-full h-auto">
         <div
@@ -325,8 +334,9 @@ export default function OnlineGame() {
             'flex flex-col justify-center items-center bg-background w-full',
             isRotated ? 'flex-col-reverse' : '',
           )}
+          style={{ width: 450, height: 500 }}
         >
-          <div className="flex justify-center items-center w-full pl-5 pr-7">
+          <div className="flex justify-center items-center w-full">
             <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
           </div>
 
@@ -336,38 +346,38 @@ export default function OnlineGame() {
                 <Loader2 />
               </div>
             ) : (
-              <AppBoard
-                id="online-xiangqi-board"
-                boardWidth={500}
-                onPieceDrop={handleMove}
-                onSquareClick={handleSquareClick}
-                onPieceClick={handlePieceClick}
-                customSquareStyles={{
-                  ...optionSquares,
+              <div
+                style={{
+                  width: 450,
+                  height: 500,
                 }}
-                isDraggablePiece={(piece) =>
-                  isPlayerTurn(piece) && !gameEnded && !isViewingHistory
-                }
-                boardOrientation={
-                  isRotated ? enemyPlayer?.color : selfPlayer?.color
-                }
-                position={displayFen}
-                animationDuration={200}
-                areArrowsAllowed={true}
-                arePiecesDraggable={true}
-              />
+              >
+                <AppBoard
+                  id="online-xiangqi-board"
+                  boardWidth={400}
+                  onPieceDrop={handleMove}
+                  onSquareClick={handleSquareClick}
+                  onPieceClick={handlePieceClick}
+                  customSquareStyles={{
+                    ...optionSquares,
+                  }}
+                  isDraggablePiece={(piece) =>
+                    isPlayerTurn(piece) && !gameEnded && !isViewingHistory
+                  }
+                  boardOrientation={
+                    isRotated ? enemyPlayer?.color : selfPlayer?.color
+                  }
+                  position={displayFen}
+                  animationDuration={200}
+                  areArrowsAllowed={true}
+                  arePiecesDraggable={true}
+                />
+              </div>
             )}
           </div>
-          <div className="flex justify-center items-center w-full pl-5 pr-7">
+          <div className="flex justify-center items-center w-full">
             <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
           </div>
-        </div>
-        <div className="p-3 mx-5">
-          {isViewingHistory && (
-            <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
-              Watching history
-            </div>
-          )}
         </div>
       </div>
       {/* Right */}
@@ -388,9 +398,14 @@ export default function OnlineGame() {
               onReturnToCurrentGame={handleReturnToCurrentGame}
             />
           </div>
+          {isViewingHistory && (
+            <div className="z-10 py-1 mx-5 w-full text-sm font-bold text-center text-black bg-yellow-500 rounded-xs">
+              Watching history
+            </div>
+          )}
           {/*tools*/}
           {currentPlayerOfferingDraw && (
-            <div className="p-1 font-bold tracking-tight text-center text-black bg-yellow-300 rounded-xs">
+            <div className="p-1 font-bold tracking-tight text-center text-black bg-yellow-500 rounded-xs">
               You have offered a draw. Waiting for the opponent's response.
             </div>
           )}

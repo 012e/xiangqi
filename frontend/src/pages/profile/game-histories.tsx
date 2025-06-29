@@ -187,12 +187,15 @@ function GameHistory({
             </p>
           </div>
         </div>
-        <div>
-          <p className="font-semibold">Dutch Defense:</p>
+
+        {game.uciFen.includes("|") && (
           <div>
-            <MoveHistory uciFen={game.uciFen} />
+            <p className="font-semibold">Moves</p>
+            <div>
+              <MoveHistory uciFen={game.uciFen} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -220,7 +223,8 @@ function MoveHistory({ uciFen }: { uciFen: string }) {
 
     for (let i = 0; i < totalMoveCount; i++) {
       const moveNumber = Math.floor(i / 2) + 1;
-      const moveText = i % 2 === 0 ? `${moveNumber}. ${allMoves[i]}` : allMoves[i];
+      const moveText =
+        i % 2 === 0 ? `${moveNumber}. ${allMoves[i]}` : allMoves[i];
 
       const potentialMoves = [...visibleMoves, moveText];
       const suffix = ` ... moves ${totalMoveCount}`;
@@ -235,7 +239,6 @@ function MoveHistory({ uciFen }: { uciFen: string }) {
     }
 
     setDisplayMoves(visibleMoves);
-
   }, [uciFen]);
 
   const showSuffix = displayMoves.length < totalMoves;
@@ -248,7 +251,10 @@ function MoveHistory({ uciFen }: { uciFen: string }) {
           <span className="ml-1 font-semibold">{`... moves ${totalMoves}`}</span>
         )}
       </div>
-      <span ref={measureRef} className="absolute top-[-9999px] left-[-9999px] invisible" />
+      <span
+        ref={measureRef}
+        className="absolute invisible top-[-9999px] left-[-9999px]"
+      />
     </div>
   );
 }
