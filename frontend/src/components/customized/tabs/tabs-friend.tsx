@@ -14,6 +14,9 @@ import {
   rejectFriendRequest,
 } from '@/lib/friend/useFriendRequestActions.ts';
 import { toast } from 'sonner';
+import { getSuggestion } from '@/lib/friend/find-friend.ts';
+import { getProfileMe } from '@/stores/profile-me.ts';
+
 export type TabFriend = {
   name: string;
   value: string;

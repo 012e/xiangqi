@@ -4,7 +4,6 @@ import { useTheme } from '@/styles/ThemeContext.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Archive, Palette, Settings } from 'lucide-react';
 import SettingStylesChessboard from './setting-styles-chessboard';
-import useSettingStore from '@/stores/setting-store';
 import { FaChessBoard } from "react-icons/fa";
 type TabType = {
   name: string;
@@ -31,10 +30,6 @@ const tabs: TabType[] = [
     value: 'chessboard',
     icon: FaChessBoard,
     element: <SettingChessboard />,
-    choosePieceTheme: () => {
-      const setPieceTheme = useSettingStore((state) => state.actions.setPieceTheme);
-      setPieceTheme?.('chinese');
-    }
   },
 ];
 function SettingTheme() {

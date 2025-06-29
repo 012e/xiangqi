@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FaGamepad,
 } from 'react-icons/fa';
@@ -43,59 +43,63 @@ const UserRow: React.FC<UserRowProps> = ({
                                            typeTab,
                                          }) => {
   const queryClient = useQueryClient();
+  const [isFriendRequestSent, setIsFriendRequestSent] = useState(false);
   const handlePlay = () => {
-    if(onPlayClick) {
-      onPlayClick.mutate(userId,{})
+    if (onPlayClick) {
+      onPlayClick.mutate(userId, {});
     }
-  }
+  };
   const handleRemove = () => {
-    if(onRemove) {
-      onRemove.mutate(userId,{
-        onSuccess:  () => {
-          queryClient.invalidateQueries({ queryKey: ['listFriends'] })
-        }
+    if (onRemove) {
+      onRemove.mutate(userId, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['listFriends'] });
+        },
       });
     }
-  }
+  };
   const handleCancel = () => {
-    if(onCancel) {
-      onCancel.mutate(userId,{
-        onSuccess:  () => {
-          queryClient.invalidateQueries({ queryKey: ['listSent'] })
-        }
+    if (onCancel) {
+      onCancel.mutate(userId, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['listSent'] });
+        },
       });
     }
-  }
+  };
   const handleAccept = () => {
     if (onAccept) {
       onAccept.mutate(userId, {
-        onSuccess:  () => {
-          queryClient.invalidateQueries({ queryKey: ['listPending'] })
-          queryClient.invalidateQueries({ queryKey: ['listFriends'] })
-        }
-      })
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['listPending'] });
+          queryClient.invalidateQueries({ queryKey: ['listFriends'] });
+        },
+      });
     }
-  }
+  };
   const handleDecline = () => {
     if (onDecline) {
       onDecline.mutate(userId, {
-        onSuccess:  () => {
-          queryClient.invalidateQueries({ queryKey: ['listPending'] })
-        }
-      })
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['listPending'] });
+        },
+      });
     }
-  }
+  };
   const handleAddFriend = () => {
     if (onAddFriendClick) {
       onAddFriendClick.mutate(userId, {
-        onSuccess:  () => {
-          queryClient.invalidateQueries({ queryKey: ['listSuggestions'] })
-        }
-      })
+        onSuccess: () => {
+          setIsFriendRequestSent(true);
+          queryClient.invalidateQueries({ queryKey: ['listSuggestions'] });
+          queryClient.invalidateQueries({ queryKey: ['listSent'] });
+        },
+      });
     }
-  }
+  };
   return (
-    <div className="bg-accent rounded hover:cursor-pointer hover:opacity-85 flex items-center justify-between p-3 w-full">
+    <div
+      className="bg-accent rounded hover:cursor-pointer hover:opacity-85 flex items-center justify-between p-3 w-full">
       {/* Avatar + Info */}
       <div className="flex items-center space-x-3">
         <Avatar>
@@ -111,20 +115,24 @@ const UserRow: React.FC<UserRowProps> = ({
       {/* Action Icons */}
       <div className="flex space-x-4 text-foreground text-sm">
         {
-          typeTab === 'friend' ? <div className="flex gap-2">
-              <FaGamepad className="hover:opacity-70 cursor-pointer" onClick={handlePlay} />
-              <Trash2 className="hover:opacity-70 cursor-pointer" onClick={handleRemove} />
+          typeTab === 'friend' ? <div className="flex gap-2 justify-center items-center">
+              <FaGamepad className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handlePlay} />
+              <Trash2 className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleRemove} />
             </div> :
             typeTab === 'sent' ? <div>
-              <CircleX className="hover:opacity-70 cursor-pointer" onClick={handleCancel} />
+                <CircleX className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleCancel} />
               </div> :
               typeTab === 'pending' ? <div className="flex gap-2">
-                <Check className="hover:opacity-70 cursor-pointer" onClick={handleAccept} />
-                <X className="hover:opacity-70 cursor-pointer" onClick={handleDecline} />
+                  <Check className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleAccept} />
+                  <X className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleDecline} />
                 </div> :
                 typeTab === 'suggestions' ? <div>
-                  <UserPlus className="hover:opacity-70 cursor-pointer" onClick={handleAddFriend} />
-                </div> : "Not found"
+                  {isFriendRequestSent ? (
+                    <CircleX className="hover:opacity-70 cursor-pointer text-muted-foreground w-5 h-auto" />
+                  ) : (
+                    <UserPlus className="hover:opacity-70 cursor-pointer w-5 h-auto" onClick={handleAddFriend} />
+                  )}
+                </div> : 'Not found'
         }
       </div>
     </div>

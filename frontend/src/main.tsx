@@ -29,7 +29,22 @@ import FindFriendsByUsername from './pages/social/findFriendsByUsername.tsx';
 import Guide from './pages/document/Guide.tsx';
 import Rule from './pages/document/Rule.tsx';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Cache data for 10 minutes
+      staleTime: 1000 * 60 * 10,
+      // Keep data in cache for 15 minutes even when not used
+      gcTime: 1000 * 60 * 15,
+      // Retry failed requests
+      retry: 3,
+      // Enable background refetching when window regains focus
+      refetchOnWindowFocus: false,
+      // Enable background refetching when reconnecting
+      refetchOnReconnect: 'always',
+    },
+  },
+});
 
 function AccessTokenProvider({ children }: { children: React.ReactNode }) {
   const { getAccessTokenSilently, user } = useAuth0();

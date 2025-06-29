@@ -7,7 +7,7 @@ import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
-import useSettingStore from '@/stores/setting-store';
+import { usePieceTheme } from '@/stores/setting-store';
 import { PlayerCard } from '@/components/play/my-hover-card.tsx';
 import { addFriend as addFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { useState, useCallback, useEffect, useMemo } from 'react';
@@ -44,7 +44,7 @@ export default function OnlineGame() {
   const fen = useGameStore((state) => state.fen);
   const gameEnded = useGameStore((state) => state.isEnded);
   const gameState = useGameStore((state) => state.gameState);
-  const pieceTheme = useSettingStore((state) => state.pieceTheme);
+  const pieceTheme = usePieceTheme();
 
   // Get game history from gameState
   const gameHistory = useMemo(() => gameState?.getHistory() || [], [gameState]);
@@ -106,15 +106,18 @@ export default function OnlineGame() {
       isViewingHistory &&
       currentHistoryIndex === gameHistory.length - 1
     ) {
-      // If at the end of history, return to current game
+      // If at the end of history, return to the current game
       handleReturnToCurrentGame();
     }
   }
 
+  const [bottomPlayerOrientation, setBottomPlayerOrientation] = useState<'white' | 'black'>(selfPlayer.color);
+  const [topPlayerOrientation, setTopPlayerOrientation] = useState<'white' | 'black'>(enemyPlayer.color);
+
+  // Function to toggle player card positions and board orientation
   function togglePlayer() {
-    // This function might not be as relevant for online games since orientation is fixed
-    // but keeping it for consistency
-    console.log('Toggle player orientation');
+    setBottomPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
+    setTopPlayerOrientation((prev) => (prev === 'white' ? 'black' : 'white'));
   }
 
   function splitTwoParts(input: string): [string, string] | null {
@@ -129,7 +132,7 @@ export default function OnlineGame() {
     return [part1, part2];
   }
 
-  // Update current game when gameState changes
+  // Update the current game when gameState changes
   useEffect(() => {
     if (gameState && !isViewingHistory) {
       setCurrentGame(gameState);
@@ -165,10 +168,10 @@ export default function OnlineGame() {
 
   const handleMove = useCallback(
     (from: string, to: string, piece: string): boolean => {
-      // If viewing history, return to current game first
+      // If viewing history, return to the current game first
       if (isViewingHistory) {
         handleReturnToCurrentGame();
-        // Don't make the move immediately, let user try again
+        // Don't make the move immediately, let the user try again
         return false;
       }
 
@@ -186,8 +189,8 @@ export default function OnlineGame() {
   }
 
   function isPlayerTurn({
-    piece,
-  }: {
+                          piece,
+                        }: {
     piece: string;
     sourceSquare: Square;
   }): boolean {

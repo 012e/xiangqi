@@ -4,8 +4,6 @@ import { FaLink, FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import TabsFriend from '@/components/customized/tabs/tabs-friend.tsx';
 import { Input } from '@/components/ui/input.tsx';
-
-
 const Friends: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState<string>('');

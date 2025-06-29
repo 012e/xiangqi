@@ -6,10 +6,6 @@ import {
   RedKingPiece,
 } from './pieces-styles/clubxiangqi-pieces';
 import {
-  BlackKingPieceOk,
-  RedKingPieceOk,
-} from './pieces-styles/playok-pieces';
-import {
   BlackKingPiecexahlee,
   RedKingPiecexahlee,
 } from './pieces-styles/xahlee-pieces';
@@ -18,9 +14,29 @@ import {
   RedKingPieceXboard,
 } from './pieces-styles/xboard-pieces';
 import { CircleCheck } from 'lucide-react';
-import { ThemeNames } from '@/stores/setting-store';
+import { ThemeNamesPiece } from '@/stores/setting-store';
+import { BlackKingPieceOk, RedKingPieceOk } from '@/components/chessboard-styles/pieces-styles/playok-pieces.tsx';
+import { usePieceThemeName } from '@/stores/setting-store';
+import {
+  BlackKingPieceDefault,
+  RedKingPieceDefault,
+} from '@/components/chessboard-styles/pieces-styles/default-pieces.tsx';
+
 
 const radioOptions = [
+  {
+    value: 'default',
+    content: (
+      <div className="flex items-center justify-center scale-[1] origin-center">
+        <div className="w-10 h-10">
+          <RedKingPieceDefault></RedKingPieceDefault>
+        </div>
+        <div className="w-10 h-10">
+          <BlackKingPieceDefault></BlackKingPieceDefault>
+        </div>
+      </div>
+    ),
+  },
   {
     value: 'chinese',
     content: (
@@ -50,7 +66,7 @@ const radioOptions = [
   {
     value: 'playok',
     content: (
-      <div className=" flex items-center justify-center scale-[1.25] origin-center">
+      <div className=" flex items-center justify-center scale-[1] origin-center">
         <div>
           <RedKingPieceOk />
         </div>
@@ -88,12 +104,19 @@ const radioOptions = [
   },
 ];
 
-
-export function PieceStyleSelector({ pieceTheme }: { pieceTheme: (theme: ThemeNames) => void }) {
+export function PieceStyleSelector({ pieceTheme }: { pieceTheme: (theme: ThemeNamesPiece) => void }) {
+  const currentPieceThemeName = usePieceThemeName();
+  
+  const handleSetPieceTheme = (value: ThemeNamesPiece) => {
+    pieceTheme(value as ThemeNamesPiece);
+    console.log('Piece Theme set', value);
+  };
+  
   return (
     <RadioGroup.Root
       className="flex items-center flex-col gap-3"
-      onValueChange={(value) => pieceTheme(value as ThemeNames)}
+      value={currentPieceThemeName}
+      onValueChange={handleSetPieceTheme}
     >
       {radioOptions.map((option) => (
         <RadioGroup.Item
