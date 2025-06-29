@@ -34,6 +34,7 @@ type Actions = {
     }): void;
     handleTopicMessage(message: GameState): void;
     setGameEndedDialog(showGameEndedDialog: boolean): void;
+    reset(): void;
   };
 };
 
@@ -348,16 +349,35 @@ export const useGameStore = create<GameStore>()(
               },
             );
           },
-          init({
-            gameId,
-            selfPlayer,
-            enemyPlayer,
-            playingColor,
+          reset(): void {
+            const interval = get().interval;
+            if (interval) {
+              clearInterval(interval);
+            }
 
-            initialFen,
-            isStarted = false,
-            isEnded = false,
-          }) {
+            set(
+              () => ({
+                ...DEFAULT_STATE,
+                gameState: new Xiangqi(),
+                gameResult: null,
+                gameResultDetail: null,
+              }),
+              false,
+              {
+                type: 'game.reset',
+              },
+            );
+          },
+          init({
+                 gameId,
+                 selfPlayer,
+                 enemyPlayer,
+                 playingColor,
+
+                 initialFen,
+                 isStarted = false,
+                 isEnded = false,
+               }) {
             const gameState = initialFen
               ? new Xiangqi(initialFen)
               : new Xiangqi();

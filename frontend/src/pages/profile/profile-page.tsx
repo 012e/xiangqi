@@ -44,14 +44,14 @@ const ProfilePage: React.FC = () => {
         </header>
 
         {/* Avatar & Bio */}
-        <section className="mb-8">
-          <div className="flex flex-wrap items-center justify-between gap-5">
-            <div className="flex-1 max-w-[150px] text-center p-4 rounded-lg pt-13">
+        <section >
+          <div className="flex flex-wrap items-center justify-start">
+            <div className="flex p-3 rounded-lg ">
               <div
                 className="relative cursor-pointer inline-block border border-muted "
                 onClick={() => document.getElementById('avatarInput')?.click()}
               >
-                <Avatar className="size-full">
+                <Avatar className="w-30 h-auto">
                   <AvatarImage src={myProfile?.picture} alt="image not found" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
