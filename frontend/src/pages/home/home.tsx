@@ -62,31 +62,33 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full h-fulltext-foreground ">
-      <AlertLogin showAlert={showAlert} setShowAlert={setShowAlert} />
-      <div className="bg-background grid grid-cols-1 lg:grid-cols-[550px_400px]">
+    <div className="w-full h-full text-foreground">
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full justify-center items-center p-10">
         {/* Left */}
-        <div className="p-4 lg:block hidden mt-30">
-          <div className="text-foreground flex flex-wrap space-x-2 justify-center">
-            <span className="">
-              <SquareUser size={30} />
-            </span>
-            <span>Opponent</span>
-          </div>
-          <div className="flex justify-center p-3">
-            <div className="border-2">
-              <SelfPlayBoard boardOrientation="white" />
+        <div className="w-full h-full">
+          <AlertLogin showAlert={showAlert} setShowAlert={setShowAlert} />
+          <div className="flex flex-col justify-center items-center bg-background w-full h-full gap-3 ">
+            <div className="flex justify-center items-center">
+              <span>
+                <SquareUser size={30} />
+              </span>
+              <span>Opponent</span>
             </div>
-          </div>
-          <div className="flex flex-wrap space-x-2 justify-center ">
-            <span>
-              <SquareUser size={30} />
-            </span>
-            <span>Me</span>
+            <div className="flex justify-center items-center">
+              <div className="border-2">
+                <SelfPlayBoard boardOrientation="white" />
+              </div>
+            </div>
+            <div className="flex flex-wrap justify-center space-x-2">
+              <span>
+                <SquareUser size={30} />
+              </span>
+              <span>Me</span>
+            </div>
           </div>
         </div>
         {/* Right */}
-        <div className="rounded-4xl my-5 h-auto bg-muted shadow-lg shadow-ring">
+        <div className="m-20 w-auto h-auto select-none shadow-lg rounded-4xl bg-muted shadow-ring">
           <div className="h-auto flex flex-col items-center p-6 space-y-6">
             <div className="h-auto flex gap-1">
               <span className="">
@@ -97,7 +99,7 @@ export default function Home() {
               </h1>
             </div>
             <div className="">
-              <div className="min-h-60 p-6 space-y-4 overflow-auto w-75">
+              <div className="min-h-60 p-6 space-y-4 overflow-auto w-auto">
                 {menuItems.map((item, index) => (
                   <div
                     onClick={() => handleNavigate(item.link)}

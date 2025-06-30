@@ -70,7 +70,7 @@ const navItems: NavItem[] = [
   },
   {
     title: 'Profile',
-    url: '/me/profile',
+    url: 'user/profile/me',
     icon: SquareUser,
   },
   {
@@ -112,7 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     avatar: '/avatars/shadcn.jpg',
   };
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} >
       <SidebarHeader>
         <NavHeader teams={teams} />
       </SidebarHeader>

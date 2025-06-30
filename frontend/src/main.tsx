@@ -11,8 +11,6 @@ import NewGame from './pages/play/new-game.tsx';
 import OnlineGame from './pages/play/online-game.tsx';
 import PlayOnline from './pages/play/play-online.tsx';
 import Layout from './components/layout.tsx';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 
 import { ThemeProvider } from '@/styles/ThemeContext.tsx';
 import Friends from './pages/social/friends.tsx';
@@ -40,10 +38,6 @@ const queryClient = new QueryClient({
       gcTime: 0,
     },
   },
-});
-
-const asyncStoragePersister = createAsyncStoragePersister({
-  storage: window.localStorage,
 });
 
 function AccessTokenProvider({ children }: { children: React.ReactNode }) {
@@ -115,8 +109,9 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/game/new" element={<NewGame />} />
             <Route path="/game/:id" element={<OnlineGame />} />
 
-            <Route path="/me/profile" element={<ProfilePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+              <Route path="user/profile/me" element={<ProfilePage />} />
+              <Route path="user/profile/:id" element={<ProfilePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
 
             <Route path="/social" element={<Friends />} />
             <Route path="/social/friend" element={<Friends />} />

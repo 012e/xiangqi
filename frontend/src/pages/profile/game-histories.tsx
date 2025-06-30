@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -105,7 +105,13 @@ function GameHistory({
             {whitePlayerForCard ? (
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <p className="text-xl font-semibold cursor-pointer hover:text-primary">
+                  <p
+                    className="text-xl font-semibold cursor-pointer hover:text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/user/profile/${game.whitePlayer.id}`);
+                    }}
+                  >
                     {game.whitePlayer.username}
                   </p>
                 </HoverCardTrigger>
@@ -143,7 +149,13 @@ function GameHistory({
             {blackPlayerForCard ? (
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <p className="text-xl font-semibold cursor-pointer hover:text-primary">
+                  <p
+                    className="text-xl font-semibold cursor-pointer hover:text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/user/profile/${game.blackPlayer.id}`);
+                    }}
+                  >
                     {game.blackPlayer.username}
                   </p>
                 </HoverCardTrigger>
@@ -175,12 +187,77 @@ function GameHistory({
             </p>
           </div>
         </div>
-        <div />
+
+        {game.uciFen.includes("|") && (
+          <div>
+            <p className="font-semibold">Moves</p>
+            <div>
+              <MoveHistory uciFen={game.uciFen} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+function MoveHistory({ uciFen }: { uciFen: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLSpanElement>(null);
 
+  const [displayMoves, setDisplayMoves] = useState<string[]>([]);
+  const [totalMoves, setTotalMoves] = useState(0);
+
+  useEffect(() => {
+    const parts = uciFen.split('|');
+    const moveHistoryString = parts.length > 1 ? parts[1].trim() : '';
+    if (!moveHistoryString) return;
+
+    const allMoves = moveHistoryString.split(/\s+/).filter(Boolean);
+    const totalMoveCount = allMoves.length;
+    setTotalMoves(totalMoveCount);
+
+    if (!containerRef.current || !measureRef.current) return;
+
+    const containerWidth = containerRef.current.offsetWidth;
+    let visibleMoves: string[] = [];
+
+    for (let i = 0; i < totalMoveCount; i++) {
+      const moveNumber = Math.floor(i / 2) + 1;
+      const moveText =
+        i % 2 === 0 ? `${moveNumber}. ${allMoves[i]}` : allMoves[i];
+
+      const potentialMoves = [...visibleMoves, moveText];
+      const suffix = ` ... moves ${totalMoveCount}`;
+
+      measureRef.current.textContent = potentialMoves.join(' ') + suffix;
+
+      if (measureRef.current.offsetWidth > containerWidth) {
+        break;
+      }
+
+      visibleMoves = potentialMoves;
+    }
+
+    setDisplayMoves(visibleMoves);
+  }, [uciFen]);
+
+  const showSuffix = displayMoves.length < totalMoves;
+
+  return (
+    <div className="w-full">
+      <div ref={containerRef} className="w-full text-ellipsis">
+        <span>{displayMoves.join(' ')}</span>
+        {showSuffix && (
+          <span className="ml-1 font-semibold">{`... moves ${totalMoves}`}</span>
+        )}
+      </div>
+      <span
+        ref={measureRef}
+        className="absolute invisible top-[-9999px] left-[-9999px]"
+      />
+    </div>
+  );
+}
 export function GameHistories({ userId }: { userId: number }) {
   const {
     data: games,

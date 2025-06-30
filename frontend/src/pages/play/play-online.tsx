@@ -133,35 +133,37 @@ export default function PlayOnline({
   }
 
   return (
-    <div className="w-full h-auto text-foreground">
-      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px]">
+    <div className="w-full h-full text-foreground">
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full justify-center items-center p-10">
         {/* Left */}
-        <div className="hidden p-4 h-auto lg:block mt-25 bg-background">
-          <div className="flex flex-wrap justify-center space-x-2">
+        <div className="w-full h-full">
+          <div className="flex flex-col justify-center items-center bg-background w-full h-full gap-3">
+            <div className="flex justify-center items-center">
             <span>
               <SquareUser size={30} />
             </span>
-            <span>Opponent</span>
-          </div>{' '}
-          <div className="flex justify-center p-3">
-            <div className="border-2">
-              <SelfPlayBoard
-                boardOrientation={player}
-                onMove={({ newBoard }) => {
-                  updateHistory(newBoard.getHistory());
-                }}
-                currentHistory={history}
-                restoreGameState={selectHistory}
-                isViewingHistory={isViewingHistory}
-                onReturnToCurrentGame={handleReturnToCurrentGame}
-              />
+              <span>Opponent</span>
             </div>
-          </div>
-          <div className="flex flex-wrap justify-center space-x-2">
-            <span>
-              <SquareUser size={30} />
-            </span>
-            <span>Me</span>
+            <div className="flex justify-center items-center">
+              <div className="border-2">
+                <SelfPlayBoard
+                  boardOrientation={player}
+                  onMove={({ newBoard }) => {
+                    updateHistory(newBoard.getHistory());
+                  }}
+                  currentHistory={history}
+                  restoreGameState={selectHistory}
+                  isViewingHistory={isViewingHistory}
+                  onReturnToCurrentGame={handleReturnToCurrentGame}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap justify-center space-x-2">
+              <span>
+                <SquareUser size={30} />
+              </span>
+                <span>Me</span>
+            </div>
           </div>
           <div className="p-3 mx-5">
             {isViewingHistory && (
@@ -172,7 +174,7 @@ export default function PlayOnline({
           </div>
         </div>
         {/* Right */}
-        <div className="my-5 w-auto h-auto shadow-lg select-none rounded-4xl bg-muted shadow-ring">
+        <div className="m-5 w-auto h-auto select-none shadow-lg rounded-4xl bg-muted shadow-ring">
           <div className="flex flex-col p-6 space-y-6 w-auto">
             <div className="flex flex-col space-y-5 w-auto">
               <h1 className="flex gap-1 justify-center self-center w-auto text-4xl font-bold tracking-tight">

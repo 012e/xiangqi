@@ -1,6 +1,7 @@
 import { useGameStore } from '@/stores/online-game-store';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
+import { useNavigate } from 'react-router';
 
 const detailReasons = [
   {
@@ -49,15 +50,23 @@ export default function GameEndedDialog() {
   const showGameEndedDialog = useGameStore(state => state.showGameEndedDialog);
   const gameResult = useGameStore(state => state.gameResult);
   const gameResultDetail = useGameStore(state => state.gameResultDetail);
+  const navigate = useNavigate()
   const { setGameEndedDialog } = useGameStore(state => state.actions);
 
   return <Dialog open={showGameEndedDialog} onOpenChange={setGameEndedDialog}>
     <DialogContent className="h-auto w-80 p-0 rounded-lg border-none shadow-lg">
       <DialogHeader>
-        <DialogTitle className="flex justify-center font-bold tracking-tight text-3xl bg-sidebar-border border-none rounded-t-lg p-3 text-destructive">Game Over</DialogTitle>
+        <DialogTitle
+          className="flex justify-center font-bold tracking-tight text-3xl bg-sidebar-border border-none rounded-t-lg p-3 text-destructive">Game
+          Over</DialogTitle>
       </DialogHeader>
       <div className="flex flex-col gap-2 items-center h-full">
-        <div className="text-2xl font-bold text-chart-2">{gameResult === 'white_win' ? 'Red Won' : 'Black Won'}</div>
+        <div className="text-2xl font-bold text-chart-2">
+          {
+            gameResult === 'white_win' ? 'Red Won' :
+              gameResult === 'black_win' ? 'Black Won' :
+                'A Tied Game'}
+        </div>
         <div className="text-lg text-ring">
           {
             detailReasons.find((r) => r.result === gameResultDetail)?.description
@@ -70,8 +79,8 @@ export default function GameEndedDialog() {
           <Button className="w-full font-bold text-2xl h-full tracking-tight">Game review</Button>
         </div>
         <div className="grid grid-cols-2 gap-2 ">
-          <Button className="text-ring bg-accent border tracking-tight hover:opacity-80">Play again</Button>
-          <Button className="text-ring bg-accent border tracking-tight hover:opacity-80">Rematch</Button>
+          <Button className="text-ring bg-accent border tracking-tight hover:opacity-80" onClick={() => navigate('/play/online')}>Play again</Button>
+          <Button className="text-ring bg-accent border tracking-tight hover:opacity-80" onClick={() => navigate('play/online')}>Rematch</Button>
         </div>
       </div>
     </DialogContent>

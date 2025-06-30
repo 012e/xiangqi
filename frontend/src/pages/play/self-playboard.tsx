@@ -238,7 +238,7 @@ export default function SelfPlayBoard({
         // There's a piece that can be attacked - show red border
         newSquares[move] = {
           background: "#008000",
-          borderRadius: "20%",
+          borderRadius: "50%",
           position: 'relative',
           zIndex: 999,
         };
@@ -246,7 +246,7 @@ export default function SelfPlayBoard({
         // Empty square - show normal move indicator
         newSquares[move] = {
           background: "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
-          borderRadius: "20%",
+          borderRadius: "50%",
           position: 'relative',
           zIndex: 999
         };
@@ -255,8 +255,8 @@ export default function SelfPlayBoard({
 
     // Highlight the selected piece
     newSquares[square] = {
-      background: "rgba(255, 255, 0, 0.4)",
-      borderRadius: "10%",
+      background: "#FFD700",
+      borderRadius: "50%",
       zIndex: 10
     };
 
@@ -265,7 +265,7 @@ export default function SelfPlayBoard({
   return (
     <AppBoard
       {...chessboardProps}
-      boardWidth={400}
+      boardWidth={500}
       id="online-xiangqi-board"
       onPieceDrop={handleMoveInternal}
       onSquareClick={handleSquareClick}

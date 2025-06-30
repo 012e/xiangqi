@@ -112,7 +112,7 @@ export function PlayerCard({
   return (
     <div className="w-full">
       <HoverCard>
-        <div className="flex items-center justify-between w-[450px]">
+        <div className="flex items-center justify-between w-full">
           <div className="flex">
             <HoverCardTrigger asChild>
               <div className="flex items-center">

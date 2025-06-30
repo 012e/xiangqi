@@ -4,12 +4,11 @@ import { useGameStore } from '@/stores/online-game-store'; // Import the store
 import { ArrowUpDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useOnlineGame } from '@/lib/online/useOnlineGame';
 import { Button } from '@/components/ui/button.tsx';
-import { Textarea } from '@/components/ui/textarea.tsx';
 import GameEndedDialog from '@/components/game-ended-dialog.tsx';
-import { usePieceTheme } from '@/stores/setting-store';
 import { PlayerCard } from '@/components/play/my-hover-card.tsx';
 import { addFriend as addFriend } from '@/lib/friend/useFriendRequestActions.ts';
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import React from 'react';
 import OfferDrawButton from '@/components/ui/offer-draw-button.tsx';
 import MovePosition, { HistoryMove } from '@/components/move-position';
 import Xiangqi from '@/lib/xiangqi';
@@ -36,6 +35,10 @@ export default function OnlineGame() {
   const [historicalGame, setHistoricalGame] = useState<Xiangqi>(new Xiangqi());
   const [isRotated, setIsRotated] = useState(false);
 
+  // Click-to-move state management
+  const [selectedSquare, setSelectedSquare] = useState<string>('');
+  const [optionSquares, setOptionSquares] = useState({});
+
   const selfPlayer = useGameStore((state) => state.selfPlayer);
   const enemyPlayer = useGameStore((state) => state.enemyPlayer);
   const fen = useGameStore((state) => state.fen);
@@ -61,6 +64,9 @@ export default function OnlineGame() {
     setSelectHistory(undefined);
     setIsViewingHistory(false);
     setCurrentHistoryIndex(-1);
+    // Clear selection when returning to current game
+    setSelectedSquare('');
+    setOptionSquares({});
   }
 
   function navigateToHistoryMove(historyIndex: number) {
@@ -136,8 +142,18 @@ export default function OnlineGame() {
         }
       }
       setHistoricalGame(newGame);
+    } else if (!isViewingHistory) {
+      setHistoricalGame(gameState);
     }
-  }, [isViewingHistory, currentHistoryIndex, gameHistory]);
+  }, [isViewingHistory, currentHistoryIndex, gameHistory, gameState]);
+
+  // Clear selection when game state changes
+  useEffect(() => {
+    if (!isViewingHistory) {
+      setSelectedSquare('');
+      setOptionSquares({});
+    }
+  }, [gameState, isViewingHistory]);
 
   const handleMove = useCallback(
     (from: string, to: string, piece: string): boolean => {
@@ -163,6 +179,7 @@ export default function OnlineGame() {
 
   function isPlayerTurn({
     piece,
+    sourceSquare,
   }: {
     piece: string;
     sourceSquare: Square;
@@ -170,17 +187,158 @@ export default function OnlineGame() {
     return getPieceColor(piece) === selfPlayer?.color;
   }
 
+  function handlePieceClick(_piece: string, square: string) {
+    // When clicking on a piece, treat it as a square click
+    handleSquareClick(square);
+  }
+
+  function handleSquareClick(square: string) {
+    // If viewing history, don't allow interactions
+    if (isViewingHistory) {
+      return;
+    }
+
+    // If game has ended, don't allow interactions
+    if (gameEnded) {
+      return;
+    }
+
+    const gameState = displayGame.getState();
+
+    // If we have a selected piece and click on a different square, try to move
+    if (selectedSquare && selectedSquare !== square) {
+      const moves = displayGame.getLegalMoves(selectedSquare, true);
+
+      // Check if the clicked square is a legal move
+      if (moves.includes(square)) {
+        const [fromRow, fromCol] =
+          displayGame.positionToCoordinates(selectedSquare);
+        const piece = gameState.board[fromRow][fromCol];
+        const moveSuccess = handleMove(selectedSquare, square, piece || '');
+
+        if (moveSuccess) {
+          // Clear selection and highlights after successful move
+          setSelectedSquare('');
+          setOptionSquares({});
+          return;
+        }
+      }
+
+      // If move failed or clicked on invalid square, clear selection
+      setSelectedSquare('');
+      setOptionSquares({});
+
+      // Check if clicked square has a piece to select (only our own pieces)
+      const [clickedRow, clickedCol] =
+        displayGame.positionToCoordinates(square);
+      const clickedPiece = gameState.board[clickedRow][clickedCol];
+      if (clickedPiece) {
+        // Check if it's the current player's piece AND it's their turn
+        const pieceColor = getPieceColor(clickedPiece);
+        const isCurrentPlayerPiece = pieceColor === selfPlayer?.color;
+        const isPlayerTurn =
+          gameState.currentPlayer ===
+          (selfPlayer?.color === 'white' ? 'w' : 'b');
+
+        if (isCurrentPlayerPiece && isPlayerTurn) {
+          highlightMoves(square);
+          setSelectedSquare(square);
+        }
+      }
+      return;
+    }
+
+    // If clicking on the same selected square, deselect it
+    if (selectedSquare === square) {
+      setSelectedSquare('');
+      setOptionSquares({});
+      return;
+    }
+
+    // If no piece selected, try to select the clicked piece (only our own pieces)
+    const [row, col] = displayGame.positionToCoordinates(square);
+    const piece = gameState.board[row][col];
+    if (piece) {
+      // Check if it's the current player's piece AND it's their turn
+      const pieceColor = getPieceColor(piece);
+      const isCurrentPlayerPiece = pieceColor === selfPlayer?.color;
+      const isPlayerTurn =
+        gameState.currentPlayer === (selfPlayer?.color === 'white' ? 'w' : 'b');
+
+      if (isCurrentPlayerPiece && isPlayerTurn) {
+        highlightMoves(square);
+        setSelectedSquare(square);
+      }
+    } else {
+      // Clicked on empty square with no selection
+      setSelectedSquare('');
+      setOptionSquares({});
+    }
+  }
+
+  function highlightMoves(square: string) {
+    const moves = displayGame.getLegalMoves(square, true);
+
+    if (moves.length === 0) {
+      setOptionSquares({});
+      return;
+    }
+
+    const gameState = displayGame.getState();
+    const newSquares: Record<string, React.CSSProperties> = {};
+
+    moves.forEach((move) => {
+      // Check if there's a piece at the target square (can be attacked)
+      const [targetRow, targetCol] = displayGame.positionToCoordinates(move);
+      const targetPiece = gameState.board[targetRow][targetCol];
+
+      if (targetPiece) {
+        // There's a piece that can be attacked - show green background
+        newSquares[move] = {
+          background: '#008000',
+          borderRadius: '20%',
+          position: 'relative',
+          zIndex: 999,
+        };
+      } else {
+        // Empty square - show normal move indicator
+        newSquares[move] = {
+          background:
+            'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
+          borderRadius: '20%',
+          position: 'relative',
+          zIndex: 999,
+        };
+      }
+    });
+
+    // Highlight the selected piece
+    newSquares[square] = {
+      background: 'rgba(255, 255, 0, 0.4)',
+      borderRadius: '10%',
+      zIndex: 10,
+    };
+
+    setOptionSquares(newSquares);
+  }
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2" key={id}>
+    <div
+      className="grid grid-cols-1 justify-center items-center p-20 w-full h-full lg:grid-cols-2"
+      key={id}
+    >
       {/* Left */}
-      <div>
+      <div className="w-full h-auto">
         <div
           className={cn(
-            'flex flex-col justify-center items-center p-10 bg-background w-full',
+            'flex flex-col justify-center items-center bg-background w-full',
             isRotated ? 'flex-col-reverse' : '',
           )}
+          style={{ width: 450, height: 500 }}
         >
-          <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
+          <div className="flex justify-center items-center w-full">
+            <PlayerCard player={enemyPlayer} onAddFriend={addFriend} />
+          </div>
 
           <div className="flex justify-center items-center w-full">
             {isLoading ? (
@@ -188,30 +346,38 @@ export default function OnlineGame() {
                 <Loader2 />
               </div>
             ) : (
-              <AppBoard
-                id="online-xiangqi-board"
-                boardWidth={400}
-                onPieceDrop={handleMove}
-                isDraggablePiece={(piece) =>
-                  isPlayerTurn(piece) && !gameEnded && !isViewingHistory
-                }
-                boardOrientation={
-                  isRotated ? enemyPlayer?.color : selfPlayer?.color
-                }
-                position={displayFen}
-                animationDuration={200}
-              />
+              <div
+                style={{
+                  width: 450,
+                  height: 500,
+                }}
+              >
+                <AppBoard
+                  id="online-xiangqi-board"
+                  boardWidth={400}
+                  onPieceDrop={handleMove}
+                  onSquareClick={handleSquareClick}
+                  onPieceClick={handlePieceClick}
+                  customSquareStyles={{
+                    ...optionSquares,
+                  }}
+                  isDraggablePiece={(piece) =>
+                    isPlayerTurn(piece) && !gameEnded && !isViewingHistory
+                  }
+                  boardOrientation={
+                    isRotated ? enemyPlayer?.color : selfPlayer?.color
+                  }
+                  position={displayFen}
+                  animationDuration={200}
+                  areArrowsAllowed={true}
+                  arePiecesDraggable={true}
+                />
+              </div>
             )}
           </div>
-
-          <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
-        </div>
-        <div className="p-3 mx-5">
-          {isViewingHistory && (
-            <div className="z-10 py-1 text-sm font-bold text-center text-black bg-yellow-500">
-              Watching history
-            </div>
-          )}
+          <div className="flex justify-center items-center w-full">
+            <PlayerCard player={selfPlayer} isCurrentPlayer={true} />
+          </div>
         </div>
       </div>
       {/* Right */}
@@ -232,9 +398,14 @@ export default function OnlineGame() {
               onReturnToCurrentGame={handleReturnToCurrentGame}
             />
           </div>
+          {isViewingHistory && (
+            <div className="z-10 py-1 mx-5 w-full text-sm font-bold text-center text-black bg-yellow-500 rounded-xs">
+              Watching history
+            </div>
+          )}
           {/*tools*/}
           {currentPlayerOfferingDraw && (
-            <div className="p-1 font-bold tracking-tight text-center text-black bg-yellow-300 rounded-xs">
+            <div className="p-1 font-bold tracking-tight text-center text-black bg-yellow-500 rounded-xs">
               You have offered a draw. Waiting for the opponent's response.
             </div>
           )}
@@ -279,21 +450,6 @@ export default function OnlineGame() {
             <Button className="group" onClick={togglePlayer}>
               <ArrowUpDown className="text-blue-400 transition-transform group-hover:scale-150" />
             </Button>
-          </div>
-          <div className="grid gap-2 w-full">
-            {!isPlayWithBot && (
-              <div>
-                <Textarea
-                  placeholder="Your Message"
-                  className="pointer-events-none resize-none read-only:opacity-80 h-30"
-                  readOnly
-                ></Textarea>
-                <Textarea
-                  placeholder="Type your message here."
-                  className="resize-none"
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>

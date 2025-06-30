@@ -24,6 +24,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar.tsx';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router';
 
 export function NavUser({
   user,
@@ -34,6 +35,7 @@ export function NavUser({
     avatar?: string;
   };
 }) {
+  const navigate  = useNavigate();
   const { isMobile } = useSidebar();
   const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
   const login = async () => {
@@ -54,7 +56,7 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className=" rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
@@ -73,7 +75,7 @@ export function NavUser({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="h-10 w-10 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
@@ -96,7 +98,7 @@ export function NavUser({
               </DropdownMenuGroup>
             ) : (
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/user/profile/me')}>
                   <BadgeCheck />
                   Account
                 </DropdownMenuItem>

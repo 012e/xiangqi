@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Player } from '@/lib/online/game-response.ts';
+import { useNavigate } from 'react-router';
 type AddFriendRowProps = {
   user: Player;
   avatarUrl: string;
@@ -15,6 +16,7 @@ type AddFriendRowProps = {
 };
 
 const AddFriendRow: React.FC<AddFriendRowProps> = ({
+                                                     user,
                                                      avatarUrl,
                                                      username,
                                                      email,
@@ -22,6 +24,12 @@ const AddFriendRow: React.FC<AddFriendRowProps> = ({
                                                      isMe,
                                                      isFriend,
                                                    }) => {
+  const navigate = useNavigate();
+  
+  const handleProfileClick = () => {
+    navigate(`/user/profile/${user.id}`);
+  };
+  
   return (
     <div className="bg-accent rounded flex items-center justify-between p-3 w-full">
       {/* Avatar + Info */}
@@ -31,7 +39,12 @@ const AddFriendRow: React.FC<AddFriendRowProps> = ({
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-1.5">
-          <p className="text-foreground font-semibold leading-none">{username}</p>
+          <p 
+            className="text-foreground font-semibold leading-none cursor-pointer hover:text-primary"
+            onClick={handleProfileClick}
+          >
+            {username}
+          </p>
           <p className="text-sm text-foreground leading-none">{email}</p>
         </div>
       </div>

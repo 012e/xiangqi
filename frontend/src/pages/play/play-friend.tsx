@@ -113,16 +113,16 @@ export default function PlayFriend() {
   }
   return (
     <div className="w-full h-full text-foreground flex justify-center items-center">
-      <div className="grid grid-cols-1 lg:grid-cols-[550px_400px] bg-background">
+      <div className="grid grid-cols-1 lg:grid-cols-2 bg-background">
         {/* Left */}
-        <div className="p-4 lg:block hidden mt-5">
+        <div className="p-4 w-full">
           <div className="flex flex-wrap space-x-2 justify-center">
             <span>
               <SquareUser size={30} />
             </span>
             <span>opponent</span>
           </div>
-          <div className="flex justify-center p-3 items-center">
+          <div className="flex justify-center p-3 items-center w-full">
             <div className="border-2">
               <SelfPlayBoard
                               boardOrientation={player}
@@ -223,7 +223,12 @@ export default function PlayFriend() {
                               <AvatarImage src={fr.picture} ></AvatarImage>
                               <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
-                            {fr.username}
+                            <span 
+                              className="cursor-pointer hover:text-primary"
+                              onClick={() => navigate(`/user/profile/${fr.id}`)}
+                            >
+                              {fr.username}
+                            </span>
                             <span className="ml-auto ">
                               <Send className="hover:cursor-pointer hover:opacity-70 font-semibold" ></Send>
                             </span>
